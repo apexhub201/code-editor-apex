@@ -1,12 +1,14 @@
-let database = {};
+export default async function handler(req, res) {
+  const { id } = req.query;
 
-export default function handler(req, res) {
-    const { id } = req.query;
+  const url = `https://apex-hub-global-ffd6a-default-rtdb.firebaseio.com/scripts/${id}.json`;
 
-    if (!id || !database[id]) {
-        return res.status(404).send("Không tìm thấy script");
-    }
+  const data = await fetch(url).then(r => r.json());
 
-    res.setHeader("Content-Type", "text/plain");
-    res.status(200).send(database[id]);
+  if (!data) {
+    return res.send("-- không tìm thấy");
+  }
+
+  res.setHeader("Content-Type", "text/plain");
+  res.send(data.content);
 }
