@@ -1,20 +1,15 @@
-let database = {};
+export default async function handler(req, res) {
+  const { content, id } = req.body;
 
-export default function handler(req, res) {
-    if (req.method === 'POST') {
-        const { content, id } = req.body;
+  const url = `https://apex-hub-global-ffd6a-default-rtdb.firebaseio.com/scripts/${id}.json`;
 
-        if (!content || !id) {
-            return res.status(400).json({ error: "Thiếu dữ liệu" });
-        }
+  await fetch(url, {
+    method: "PUT",
+    body: JSON.stringify({ content })
+  });
 
-        database[id] = content;
-
-        return res.status(200).json({
-            success: true,
-            url: `https://code-editor-apex-ccmf.vercel.app/api/get?id=${id}`
-        });
-    }
-
-    res.status(405).end();
+  res.json({
+    success: true,
+    url: `https://code-editor-apex-ccmf.vercel.app/api/get?id=${id}`
+  });
 }
