@@ -1,7 +1,6 @@
 {
-  "name": "apex-hub",
+  "name": "code-editor-apex",
   "version": "1.0.0",
-  "description": "APEX HUB Code Editor",
   "dependencies": {
     "@vercel/blob": "latest"
   }
