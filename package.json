@@ -1,6 +1,0 @@
-{
-  "name": "code-editor-apex",
-  "dependencies": {
-    "@vercel/blob": "latest"
-  }
-}
