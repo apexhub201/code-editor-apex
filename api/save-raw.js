@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const { content, name = 'script' } = req.body;
 
     if (!content || !content.trim()) {
-        return res.status(400).json({ success: false, error: 'Không có nội dung code' });
+        return res.status(400).json({ success: false, error: 'Không có nội dung' });
     }
 
     try {
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
             addRandomSuffix: false
         });
 
-        res.status(200).json({ success: true, url: url });
+        res.json({ success: true, url: url });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, error: 'Upload Blob thất bại' });
