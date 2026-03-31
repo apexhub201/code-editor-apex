@@ -1,6 +1,5 @@
 {
   "name": "code-editor-apex",
-  "version": "1.0.0",
   "dependencies": {
     "@vercel/blob": "latest"
   }
