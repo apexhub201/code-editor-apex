@@ -2,6 +2,7 @@ let scripts = {};
 
 export default function handler(req, res) {
 
+    // TẠO RAW
     if (req.method === "POST") {
 
         const { code } = req.body;
@@ -18,6 +19,7 @@ export default function handler(req, res) {
         });
     }
 
+    // XEM RAW
     if (req.method === "GET") {
 
         const { id } = req.query;
@@ -26,12 +28,36 @@ export default function handler(req, res) {
             return res.status(404).send("Not Found");
         }
 
+        const userAgent =
+            req.headers["user-agent"] || "";
+
+        // Người mở bằng trình duyệt
+        if (
+            userAgent.includes("Mozilla")
+        ) {
+
+            res.setHeader(
+                "Content-Type",
+                "text/plain"
+            );
+
+            return res.send(
+`ACTIVATE PROTECTION
+
+Access:
+https://code-editor-apex-ccmf.vercel.app/`
+            );
+        }
+
+        // Trả code thật
         res.setHeader(
             "Content-Type",
             "text/plain"
         );
 
-        return res.send(scripts[id]);
+        return res.send(
+            scripts[id]
+        );
     }
 
     return res.status(405).end();
