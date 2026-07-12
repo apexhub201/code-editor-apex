@@ -1251,90 +1251,97 @@
         }
 
         // ================== VERCEL RAW API FUNCTIONS ==================
-        async function createRawWithVercelAPI() {
-            const content = document.getElementById('codeEditor').value;
+       async function createRawWithVercelAPI() {
+    const content = document.getElementById('codeEditor').value;
+    const scriptName = document.getElementById('scriptName').value.trim();
 
-            if (!content.trim()) {
-                showNotification('Vui lòng nhập code!', 'warning');
-                return;
+    if (!content.trim()) {
+        showNotification('Vui lòng nhập code!', 'warning');
+        return;
+    }
+
+    const createBtn = document.getElementById('createRawBtn');
+    createBtn.innerHTML = '<span class="loading-spinner"></span> Đang tạo...';
+    createBtn.disabled = true;
+    updateSyncStatus('Đang tạo RAW...', true);
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        // Thêm name vào body request
+        const requestBody = { 
+            code: content,
+            name: scriptName || 'Unnamed Script' // Gửi tên script
+        };
+
+        const response = await fetch('/api/raw', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+
+        if (data.success && data.raw) {
+            currentRawId = data.id;
+            currentRawUrl = data.raw;
+            
+            // Lưu vào localStorage
+            if (currentUser) {
+                localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
+                    id: currentRawId,
+                    url: currentRawUrl,
+                    name: data.name || scriptName,
+                    code: content,
+                    timestamp: Date.now()
+                }));
             }
-
-            const createBtn = document.getElementById('createRawBtn');
-            createBtn.innerHTML = '<span class="loading-spinner"></span> Đang tạo...';
-            createBtn.disabled = true;
-            updateSyncStatus('Đang tạo RAW...', true);
 
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-                const response = await fetch('/api/raw', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ code: content }),
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                const data = await response.json();
-
-                if (data.success && data.raw) {
-                    currentRawId = data.id;
-                    currentRawUrl = data.raw;
-                    
-                    // Lưu vào localStorage
-                    if (currentUser) {
-                        localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
-                            id: currentRawId,
-                            url: currentRawUrl,
-                            code: content,
-                            timestamp: Date.now()
-                        }));
-                    }
-
-                    try {
-                        await navigator.clipboard.writeText(data.raw);
-                        showNotification('✅ Đã tạo RAW và copy link!', 'success');
-                    } catch(e) {
-                        showNotification('✅ Đã tạo RAW!', 'success');
-                    }
-
-                    updateSyncStatus('Tạo RAW thành công!');
-                    
-                    // Đổi nút thành "Cập nhật RAW"
-                    createBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Cập nhật RAW';
-                    createBtn.onclick = updateRaw;
-                    
-                    // Hiện nút "RAW mới"
-                    document.getElementById('resetRawBtn').style.display = 'inline-flex';
-                    
-                    // Mở tab mới
-                    setTimeout(() => window.open(data.raw, '_blank'), 100);
-
-                } else {
-                    throw new Error('API không trả về URL');
-                }
-            } catch (err) {
-                console.error('Lỗi tạo RAW:', err);
-                let errorMsg = 'Lỗi tạo RAW! ';
-                if (err.name === 'AbortError') errorMsg += 'Timeout.';
-                else if (err.message.includes('Failed to fetch')) errorMsg += 'Không kết nối được server.';
-                else errorMsg += err.message;
-                showNotification(errorMsg, 'error');
-                updateSyncStatus('Tạo RAW thất bại');
-            } finally {
-                createBtn.disabled = false;
-                setTimeout(() => {
-                    if (document.getElementById('syncText').innerHTML.includes('Đang tạo')) {
-                        updateSyncStatus('Sẵn sàng');
-                    }
-                }, 2000);
+                await navigator.clipboard.writeText(data.raw);
+                showNotification('✅ Đã tạo RAW và copy link!', 'success');
+            } catch(e) {
+                showNotification('✅ Đã tạo RAW!', 'success');
             }
-        }
 
+            updateSyncStatus('Tạo RAW thành công!');
+            
+            // Đổi nút thành "Cập nhật RAW"
+            createBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Cập nhật RAW';
+            createBtn.onclick = updateRaw;
+            
+            // Hiện nút "RAW mới"
+            document.getElementById('resetRawBtn').style.display = 'inline-flex';
+            
+            // Mở tab mới
+            setTimeout(() => window.open(data.raw, '_blank'), 100);
+
+        } else {
+            throw new Error('API không trả về URL');
+        }
+    } catch (err) {
+        console.error('Lỗi tạo RAW:', err);
+        let errorMsg = 'Lỗi tạo RAW! ';
+        if (err.name === 'AbortError') errorMsg += 'Timeout.';
+        else if (err.message.includes('Failed to fetch')) errorMsg += 'Không kết nối được server.';
+        else errorMsg += err.message;
+        showNotification(errorMsg, 'error');
+        updateSyncStatus('Tạo RAW thất bại');
+    } finally {
+        createBtn.disabled = false;
+        setTimeout(() => {
+            if (document.getElementById('syncText').innerHTML.includes('Đang tạo')) {
+                updateSyncStatus('Sẵn sàng');
+            }
+        }, 2000);
+    }
+}
         async function updateRaw() {
             const content = document.getElementById('codeEditor').value;
 
