@@ -24,10 +24,15 @@ export default function handler(req, res) {
                 });
             }
 
-            const id = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
-            
-            // Tạo slug từ tên (nếu có)
-            const scriptName = name && name.trim() ? name.trim() : id;
+            if (!name || !name.trim()) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'Name is required' 
+                });
+            }
+
+            // Tạo slug từ tên để làm key
+            const scriptName = name.trim();
             const nameSlug = scriptName
                 .toLowerCase()
                 .replace(/[^a-z0-9\u00C0-\u1EF9\s-]/g, '') // Cho phép tiếng Việt
@@ -35,26 +40,31 @@ export default function handler(req, res) {
                 .replace(/-+/g, '-')
                 .replace(/^-|-$/g, '') || 'script';
             
-            // Lưu vào global
-            global.scripts[id] = {
+            // Kiểm tra trùng tên
+            if (global.scripts[nameSlug]) {
+                return res.status(409).json({ 
+                    success: false, 
+                    error: 'Script name already exists. Please use a different name.' 
+                });
+            }
+            
+            // Lưu vào global với key là nameSlug
+            global.scripts[nameSlug] = {
                 code: code,
                 name: scriptName,
-                nameSlug: nameSlug,
                 created: Date.now(),
                 lastAccessed: Date.now()
             };
 
-            console.log(`✅ Script created: ${id} (${scriptName}) | Total scripts: ${Object.keys(global.scripts).length}`);
+            console.log(`✅ Script created: ${nameSlug} | Total scripts: ${Object.keys(global.scripts).length}`);
 
-            // Trả về URL với cả ID và tên
-            const rawUrl = `https://${req.headers.host}/api/raw?id=${id}&name=${encodeURIComponent(nameSlug)}`;
+            // Trả về URL với tên
+            const rawUrl = `https://${req.headers.host}/api/raw/${nameSlug}`;
             
             return res.status(200).json({
                 success: true,
                 raw: rawUrl,
-                id: id,
-                name: scriptName,
-                nameSlug: nameSlug
+                name: nameSlug
             });
         } catch (error) {
             console.error('POST Error:', error);
@@ -68,9 +78,9 @@ export default function handler(req, res) {
     // PUT - Cập nhật RAW đã tồn tại
     if (req.method === 'PUT') {
         try {
-            const { id, code, name } = req.body;
+            const { name, code } = req.body;
             
-            if (!id || !global.scripts[id]) {
+            if (!name || !global.scripts[name]) {
                 return res.status(404).json({ 
                     success: false, 
                     error: 'Script not found. It may have expired after server restart.' 
@@ -85,34 +95,19 @@ export default function handler(req, res) {
             }
             
             // Cập nhật code
-            global.scripts[id].code = code;
-            global.scripts[id].updated = Date.now();
-            global.scripts[id].lastAccessed = Date.now();
+            global.scripts[name].code = code;
+            global.scripts[name].updated = Date.now();
+            global.scripts[name].lastAccessed = Date.now();
             
-            // Cập nhật tên nếu có
-            if (name && name.trim()) {
-                const scriptName = name.trim();
-                global.scripts[id].name = scriptName;
-                global.scripts[id].nameSlug = scriptName
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\u00C0-\u1EF9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-|-$/g, '') || 'script';
-            }
+            const rawUrl = `https://${req.headers.host}/api/raw/${name}`;
             
-            const currentName = global.scripts[id].nameSlug || 'script';
-            const rawUrl = `https://${req.headers.host}/api/raw?id=${id}&name=${encodeURIComponent(currentName)}`;
-            
-            console.log(`✅ Script updated: ${id} (${global.scripts[id].name})`);
+            console.log(`✅ Script updated: ${name}`);
 
             return res.status(200).json({
                 success: true,
                 message: 'Script updated successfully!',
                 raw: rawUrl,
-                id: id,
-                name: global.scripts[id].name,
-                nameSlug: currentName
+                name: name
             });
         } catch (error) {
             console.error('PUT Error:', error);
@@ -125,11 +120,10 @@ export default function handler(req, res) {
 
     // DELETE - Xóa script
     if (req.method === 'DELETE') {
-        const { id } = req.query;
-        if (id && global.scripts[id]) {
-            const scriptName = global.scripts[id].name || id;
-            delete global.scripts[id];
-            console.log(`🗑️ Script deleted: ${id} (${scriptName})`);
+        const { name } = req.query;
+        if (name && global.scripts[name]) {
+            delete global.scripts[name];
+            console.log(`🗑️ Script deleted: ${name}`);
             return res.status(200).json({ success: true, message: 'Script deleted' });
         }
         return res.status(404).json({ success: false, error: 'Script not found' });
@@ -137,22 +131,26 @@ export default function handler(req, res) {
 
     // GET - Xem RAW
     if (req.method === 'GET') {
-        const { id, name } = req.query;
+        const url = new URL(req.url, `http://${req.headers.host}`);
+        const pathParts = url.pathname.split('/').filter(Boolean);
+        
+        // Lấy tên script từ path: /api/raw/script-name
+        const scriptName = pathParts[pathParts.length - 1];
 
-        // Nếu không có id -> trả về trang chủ
-        if (!id) {
+        // Nếu không có tên script -> trả về trang chủ
+        if (!scriptName || pathParts[pathParts.length - 2] !== 'raw') {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
             return res.send(getWelcomePage());
         }
 
         // Nếu script không tồn tại
-        if (!global.scripts[id]) {
+        if (!global.scripts[scriptName]) {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
             return res.status(404).send(getErrorPage());
         }
 
         // Cập nhật thời gian truy cập
-        global.scripts[id].lastAccessed = Date.now();
+        global.scripts[scriptName].lastAccessed = Date.now();
 
         const ua = (req.headers['user-agent'] || '').toLowerCase();
         const acceptHeader = (req.headers['accept'] || '').toLowerCase();
@@ -172,13 +170,13 @@ export default function handler(req, res) {
         // Nếu là trình duyệt và muốn HTML -> hiển thị trang bảo vệ
         if (isBrowser && wantsHTML) {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
-            return res.send(getProtectionPage(id, global.scripts[id].name));
+            return res.send(getProtectionPage());
         }
 
         // Executor hoặc tool -> trả về code thật
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        return res.send(global.scripts[id].code);
+        return res.send(global.scripts[scriptName].code);
     }
 
     // Method không được hỗ trợ
@@ -188,7 +186,7 @@ export default function handler(req, res) {
     });
 }
 
-// Trang chào mừng khi truy cập /api/raw không có id
+// Trang chào mừng khi truy cập /api/raw không có tên
 function getWelcomePage() {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -283,31 +281,29 @@ function getWelcomePage() {
             </div>
             <div class="endpoint">
                 <span class="method get">GET</span>
-                <span style="color:#ccc">/api/raw?id=xxx&name=xxx</span>
+                <span style="color:#ccc">/api/raw/script-name</span>
                 <span style="color:#666"> - View script</span>
             </div>
             <div class="endpoint">
                 <span class="method delete">DELETE</span>
-                <span style="color:#ccc">/api/raw?id=xxx</span>
+                <span style="color:#ccc">/api/raw?name=xxx</span>
                 <span style="color:#666"> - Delete script</span>
             </div>
         </div>
-        <a href="https://code-editor-apex-ccmf.vercel.app/" class="link">Open Editor →</a>
+        <a href="https://code-editor-apex-ccmf.vercel.app/" class="link">Open Editor</a>
     </div>
 </body>
 </html>`;
 }
 
-// Trang bảo vệ - hiển thị khi truy cập bằng trình duyệt
-function getProtectionPage(id, scriptName) {
-    const displayName = scriptName || id || 'Unknown Script';
-    
+// Trang bảo vệ - KHÔNG hiển thị tên script và icon
+function getProtectionPage() {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APEX HUB - Protected: ${escapeHtml(displayName)}</title>
+    <title>APEX HUB - Protected</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -404,22 +400,6 @@ function getProtectionPage(id, scriptName) {
             50% { opacity: 1; }
         }
         
-        .card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 50% 50%, rgba(102,126,234,0.03), transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
         .content {
             position: relative;
             z-index: 1;
@@ -428,21 +408,6 @@ function getProtectionPage(id, scriptName) {
         .brand {
             text-align: center;
             margin-bottom: 35px;
-        }
-        
-        .logo-text {
-            font-size: 0.85rem;
-            font-weight: 300;
-            letter-spacing: 0.6em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.3);
-            margin-bottom: 20px;
-            animation: letterSpacing 3s ease-in-out infinite;
-        }
-        
-        @keyframes letterSpacing {
-            0%, 100% { letter-spacing: 0.6em; }
-            50% { letter-spacing: 0.8em; }
         }
         
         .title-line {
@@ -487,12 +452,6 @@ function getProtectionPage(id, scriptName) {
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08), transparent);
             margin: 30px 0;
-            animation: dividerPulse 4s ease-in-out infinite;
-        }
-        
-        @keyframes dividerPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
         }
         
         .info-section {
@@ -652,16 +611,6 @@ function getProtectionPage(id, scriptName) {
             .title-word:nth-child(2) {
                 font-size: 2.2rem;
             }
-            
-            .logo-text {
-                font-size: 0.7rem;
-                letter-spacing: 0.4em;
-            }
-            
-            @keyframes letterSpacing {
-                0%, 100% { letter-spacing: 0.4em; }
-                50% { letter-spacing: 0.6em; }
-            }
         }
     </style>
 </head>
@@ -672,7 +621,6 @@ function getProtectionPage(id, scriptName) {
         <div class="card">
             <div class="content">
                 <div class="brand">
-                    <div class="logo-text">APEX HUB</div>
                     <div class="title-line">
                         <span class="title-word">ACTIVATE</span>
                         <span class="title-word">PROTECTION</span>
@@ -680,11 +628,6 @@ function getProtectionPage(id, scriptName) {
                 </div>
                 
                 <div class="divider"></div>
-                
-                <div class="info-section">
-                    <div class="info-label">Script Name</div>
-                    <div class="info-value">${escapeHtml(displayName)}</div>
-                </div>
                 
                 <div class="info-section">
                     <div class="info-label">Access URL</div>
@@ -706,7 +649,6 @@ function getProtectionPage(id, scriptName) {
     </div>
     
     <script>
-        // Particle animation
         (function() {
             const container = document.getElementById('particles');
             const count = 40;
@@ -739,17 +681,6 @@ function getProtectionPage(id, scriptName) {
     </script>
 </body>
 </html>`;
-}
-
-// Hàm escape HTML để tránh XSS
-function escapeHtml(text) {
-    if (!text) return '';
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
 }
 
 // Trang lỗi 404
@@ -816,8 +747,8 @@ function getErrorPage() {
     <div class="card">
         <div class="error-code">404</div>
         <h1>Script Not Found</h1>
-        <p>The requested script does not exist or may have expired. Scripts are stored in memory and will be lost when the server restarts.</p>
-        <a href="https://code-editor-apex-ccmf.vercel.app/" class="link">← Back to Editor</a>
+        <p>The requested script does not exist or may have expired.</p>
+        <a href="https://code-editor-apex-ccmf.vercel.app/" class="link">Back to Editor</a>
     </div>
 </body>
 </html>`;
