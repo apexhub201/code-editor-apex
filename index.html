@@ -1260,6 +1260,11 @@
         return;
     }
 
+    if (!scriptName) {
+        showNotification('Vui lòng đặt tên cho script!', 'warning');
+        return;
+    }
+
     const createBtn = document.getElementById('createRawBtn');
     createBtn.innerHTML = '<span class="loading-spinner"></span> Đang tạo...';
     createBtn.disabled = true;
@@ -1269,35 +1274,33 @@
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-        // Thêm name vào body request
-        const requestBody = { 
-            code: content,
-            name: scriptName || 'Unnamed Script' // Gửi tên script
-        };
-
         const response = await fetch('/api/raw', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify({ 
+                code: content,
+                name: scriptName
+            }),
             signal: controller.signal
         });
 
         clearTimeout(timeoutId);
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
 
         const data = await response.json();
 
         if (data.success && data.raw) {
-            currentRawId = data.id;
+            currentRawId = data.name; // Lưu tên thay vì ID
             currentRawUrl = data.raw;
             
-            // Lưu vào localStorage
             if (currentUser) {
                 localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
-                    id: currentRawId,
+                    name: data.name,
                     url: currentRawUrl,
-                    name: data.name || scriptName,
                     code: content,
                     timestamp: Date.now()
                 }));
@@ -1305,21 +1308,17 @@
 
             try {
                 await navigator.clipboard.writeText(data.raw);
-                showNotification('✅ Đã tạo RAW và copy link!', 'success');
+                showNotification('Đã tạo RAW và copy link!', 'success');
             } catch(e) {
-                showNotification('✅ Đã tạo RAW!', 'success');
+                showNotification('Đã tạo RAW!', 'success');
             }
 
             updateSyncStatus('Tạo RAW thành công!');
             
-            // Đổi nút thành "Cập nhật RAW"
             createBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Cập nhật RAW';
             createBtn.onclick = updateRaw;
-            
-            // Hiện nút "RAW mới"
             document.getElementById('resetRawBtn').style.display = 'inline-flex';
             
-            // Mở tab mới
             setTimeout(() => window.open(data.raw, '_blank'), 100);
 
         } else {
@@ -1327,19 +1326,67 @@
         }
     } catch (err) {
         console.error('Lỗi tạo RAW:', err);
-        let errorMsg = 'Lỗi tạo RAW! ';
-        if (err.name === 'AbortError') errorMsg += 'Timeout.';
-        else if (err.message.includes('Failed to fetch')) errorMsg += 'Không kết nối được server.';
-        else errorMsg += err.message;
-        showNotification(errorMsg, 'error');
+        showNotification('Lỗi: ' + err.message, 'error');
         updateSyncStatus('Tạo RAW thất bại');
     } finally {
         createBtn.disabled = false;
-        setTimeout(() => {
-            if (document.getElementById('syncText').innerHTML.includes('Đang tạo')) {
-                updateSyncStatus('Sẵn sàng');
+    }
+}
+
+async function updateRaw() {
+    const content = document.getElementById('codeEditor').value;
+
+    if (!content.trim()) {
+        showNotification('Vui lòng nhập code!', 'warning');
+        return;
+    }
+
+    if (!currentRawId) {
+        showNotification('Chưa có RAW để cập nhật!', 'warning');
+        return;
+    }
+
+    const updateBtn = document.getElementById('createRawBtn');
+    updateBtn.innerHTML = '<span class="loading-spinner"></span> Đang cập nhật...';
+    updateBtn.disabled = true;
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        const response = await fetch('/api/raw', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ 
+                name: currentRawId, // Gửi tên thay vì ID
+                code: content 
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        const data = await response.json();
+
+        if (data.success) {
+            if (currentUser) {
+                localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
+                    name: currentRawId,
+                    url: currentRawUrl,
+                    code: content,
+                    timestamp: Date.now()
+                }));
             }
-        }, 2000);
+            showNotification('RAW đã được cập nhật!', 'success');
+            setTimeout(() => window.open(currentRawUrl, '_blank'), 100);
+        } else {
+            throw new Error(data.error || 'Cập nhật thất bại');
+        }
+    } catch (err) {
+        console.error('Lỗi cập nhật RAW:', err);
+        showNotification('Lỗi: ' + err.message, 'error');
+    } finally {
+        updateBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Cập nhật RAW';
+        updateBtn.disabled = false;
     }
 }
         async function updateRaw() {
