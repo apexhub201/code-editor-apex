@@ -1,11 +1,93 @@
 {
     "functions": {
-        "api/load.js": { "memory": 1024, "maxDuration": 30 },
-        "api/auth.js": { "memory": 512, "maxDuration": 10 },
-        "api/get-script.js": { "memory": 512, "maxDuration": 10 },
-        "api/raw.js": { "memory": 512, "maxDuration": 10 },
-        "api/verify.js": { "memory": 256, "maxDuration": 5 },
-        "api/ping.js": { "memory": 256, "maxDuration": 5 },
-        "api/challenge.js": { "memory": 256, "maxDuration": 5 }
-    }
+        "api/load.js": {
+            "memory": 1024,
+            "maxDuration": 30
+        },
+        "api/auth.js": {
+            "memory": 512,
+            "maxDuration": 10
+        },
+        "api/get-script.js": {
+            "memory": 512,
+            "maxDuration": 10
+        },
+        "api/raw.js": {
+            "memory": 512,
+            "maxDuration": 15
+        },
+        "api/verify.js": {
+            "memory": 256,
+            "maxDuration": 5
+        },
+        "api/ping.js": {
+            "memory": 256,
+            "maxDuration": 5
+        },
+        "api/challenge.js": {
+            "memory": 256,
+            "maxDuration": 5
+        }
+    },
+    "rewrites": [
+        {
+            "source": "/load",
+            "destination": "/api/load"
+        },
+        {
+            "source": "/auth",
+            "destination": "/api/auth"
+        },
+        {
+            "source": "/get-script",
+            "destination": "/api/get-script"
+        },
+        {
+            "source": "/raw",
+            "destination": "/api/raw"
+        },
+        {
+            "source": "/verify",
+            "destination": "/api/verify"
+        },
+        {
+            "source": "/ping",
+            "destination": "/api/ping"
+        },
+        {
+            "source": "/challenge",
+            "destination": "/api/challenge"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/api/(.*)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                },
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                },
+                {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET, POST, PUT, DELETE, OPTIONS"
+                },
+                {
+                    "key": "Access-Control-Allow-Headers",
+                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
+                }
+            ]
+        }
+    ]
 }
