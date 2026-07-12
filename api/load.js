@@ -1,6 +1,6 @@
 // api/load.js
-const Crypto = require('../lib/crypto.js');
-const Security = require('../lib/security.js');
+import Crypto from '../lib/crypto.js';
+import Security from '../lib/security.js';
 
 global.challenges = global.challenges || {};
 
@@ -19,18 +19,15 @@ export default function handler(req, res) {
     const ua = (req.headers['user-agent'] || '').toLowerCase();
     const acceptHeader = (req.headers['accept'] || '').toLowerCase();
 
-    // IP Ban Check
     if (Security.isIPBanned(clientIP)) {
         return res.status(403).json({ error: 'IP banned' });
     }
 
-    // Rate Limiting
     if (!Security.checkRateLimit(clientIP, 60, 60000)) {
         Security.banIP(clientIP, 300000);
         return res.status(429).json({ error: 'Rate limit exceeded' });
     }
 
-    // Browser Detection -> Show Protection Page
     const isBrowser = ua.includes('mozilla') || ua.includes('chrome') || 
                       ua.includes('safari') || ua.includes('firefox');
     const wantsHTML = acceptHeader.includes('text/html') || !acceptHeader;
@@ -40,7 +37,6 @@ export default function handler(req, res) {
         return res.send(getProtectionHTML(host));
     }
 
-    // Challenge-Response
     const challengeToken = req.headers['x-challenge-token'] || req.query['challenge-token'];
     const challengeAnswer = req.headers['x-challenge-answer'] || req.query['challenge-answer'];
 
@@ -66,7 +62,6 @@ export default function handler(req, res) {
         });
     }
 
-    // Verify Challenge
     const challenge = global.challenges[challengeToken];
     
     if (!challenge || challenge.used) {
@@ -91,7 +86,6 @@ export default function handler(req, res) {
     
     challenge.used = true;
 
-    // Generate Loader
     const loaderKey = Crypto.generateKey();
     const loaderCode = generateLoaderCode(host);
     const encryptedLoader = Crypto.encrypt(loaderCode, loaderKey.key);
@@ -117,7 +111,6 @@ local HttpService = game:GetService("HttpService")
 local BASE_URL = "https://${host}"
 local VERSION = "3.0.0"
 
--- Anti-Debug
 local function AntiDebug()
     pcall(function()
         if debug and debug.getinfo then
@@ -130,7 +123,6 @@ local function AntiDebug()
     end)
 end
 
--- Anti-Dump
 local function ProtectMemory()
     local dangerous = {"writefile", "readfile", "appendfile", "listfiles", "loadfile", "dofile", "decompile", "dumpstring"}
     for _, fn in ipairs(dangerous) do
@@ -138,7 +130,6 @@ local function ProtectMemory()
     end
 end
 
--- Decrypt
 local function Decrypt(data, key)
     local decoded = HttpService:JSONDecode(data)
     local result = {}
@@ -150,39 +141,34 @@ local function Decrypt(data, key)
     return table.concat(result)
 end
 
--- Main
 local function Main()
     AntiDebug()
     ProtectMemory()
     
-    -- Get key
     local key = ""
     pcall(function() if getclipboard then key = getclipboard() end end)
     
     if key == "" then
-        error("No key found. Please enter your APEX HUB key.")
+        error("No key found")
     end
     
-    -- Authenticate
     local hwid = HttpService:JSONEncode({hwid = game:GetService("RbxAnalyticsService"):GetClientId()})
     local authResponse = HttpService:PostAsync(BASE_URL .. "/api/auth", HttpService:JSONEncode({
         key = key, hwid = hwid, version = VERSION
     }), Enum.HttpContentType.ApplicationJson, false)
     
     local authData = HttpService:JSONDecode(authResponse)
-    if not authData.success then error("Auth failed: " .. (authData.message or authData.error)) end
+    if not authData.success then error("Auth failed") end
     
     key = nil
     
-    -- Get script
     local scriptResponse = HttpService:PostAsync(BASE_URL .. "/api/get-script", HttpService:JSONEncode({
         sessionToken = authData.sessionToken
     }), Enum.HttpContentType.ApplicationJson, false)
     
     local scriptData = HttpService:JSONDecode(scriptResponse)
-    if not scriptData.success then error("Script load failed: " .. scriptData.error) end
+    if not scriptData.success then error("Script load failed") end
     
-    -- Execute
     local decrypted = Decrypt(scriptData.payload, scriptData.decryptKey)
     local func = loadstring(decrypted)
     decrypted = nil
