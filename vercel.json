@@ -1,93 +1,93 @@
 {
-    "functions": {
-        "api/load.js": {
-            "memory": 1024,
-            "maxDuration": 30
-        },
-        "api/auth.js": {
-            "memory": 512,
-            "maxDuration": 10
-        },
-        "api/get-script.js": {
-            "memory": 512,
-            "maxDuration": 10
-        },
-        "api/raw.js": {
-            "memory": 512,
-            "maxDuration": 15
-        },
-        "api/verify.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/ping.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/challenge.js": {
-            "memory": 256,
-            "maxDuration": 5
-        }
+  "functions": {
+    "api/load.js": {
+      "memory": 1024,
+      "maxDuration": 30
     },
-    "rewrites": [
+    "api/auth.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/get-script.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/raw.js": {
+      "memory": 512,
+      "maxDuration": 15
+    },
+    "api/verify.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/ping.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/challenge.js": {
+      "memory": 256,
+      "maxDuration": 5
+    }
+  },
+  "rewrites": [
+    {
+      "source": "\u002F\u006c\u{0006f}\u{00061}\x64",
+      "destination": "\x2f\u{00061}\u{00070}\u0069\u{0002F}\x6c\x6fa\u0064"
+    },
+    {
+      "source": "\x2Fa\u0075\u{00074}\x68",
+      "destination": "\u{0002f}\x61p\x69/\x61\u0075\x74\x68"
+    },
+    {
+      "source": "/\u{00067}\u{00065}t\u002d\x73c\u0072i\u{00070}\u{00074}",
+      "destination": "\u002F\x61\u{00070}\u{00069}\u{0002f}g\u{00065}t\u002Ds\x63\u0072i\u{00070}\x74"
+    },
+    {
+      "source": "\x2Fr\u{00061}w",
+      "destination": "\u002F\x61\u{00070}\x69\x2fr\u{00061}w"
+    },
+    {
+      "source": "\u{0002F}v\x65\x72i\u{00066}\x79",
+      "destination": "\u{0002f}ap\x69\x2F\x76\u{00065}\u0072if\u{00079}"
+    },
+    {
+      "source": "/\u0070\u{00069}\u{0006e}\u0067",
+      "destination": "\u{0002f}ap\x69/\x70\x69\u006E\u{00067}"
+    },
+    {
+      "source": "\u{0002f}\u0063\x68\u{00061}\u006Cl\u{00065}\x6e\u{00067}\x65",
+      "destination": "/ap\u0069\u002fc\u{00068}\u0061\u006C\u{0006c}e\u006Eg\u{00065}"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/\u{00061}\u{00070}\u{00069}\u002F\u0028\x2E\x2A)",
+      "headers": [
         {
-            "source": "/load",
-            "destination": "/api/load"
+          "key": "\x58-\u0043\x6f\u{0006E}\u{00074}\u{00065}\x6e\u{00074}-\x54y\u{00070}\u0065\u002d\u004F\x70\x74\x69\u{0006f}\x6e\u0073",
+          "value": "\u{0006e}o\x73\u006ei\u0066\u{00066}"
         },
         {
-            "source": "/auth",
-            "destination": "/api/auth"
+          "key": "\u{00058}\x2D\u0046\u{00072}\x61\u{0006D}\u0065\u{0002D}\u{0004f}\u{00070}\u0074\u0069o\x6Es",
+          "value": "\u0044\x45\u004EY"
         },
         {
-            "source": "/get-script",
-            "destination": "/api/get-script"
+          "key": "\x58-\u{00058}S\u0053\x2dP\x72\x6F\x74\x65\u0063\u{00074}io\u006e",
+          "value": "\u{00031}; \u006Dode\u003D\u0062\u{0006c}\u006f\u0063\u006b"
         },
         {
-            "source": "/raw",
-            "destination": "/api/raw"
+          "key": "A\x63\u{00063}\u{00065}\u0073\x73-\x43\x6f\x6E\x74r\u{0006F}l\u002d\u{00041}\x6cl\u{0006f}\u{00077}\u002d\u{0004f}\u0072ig\u{00069}\u{0006e}",
+          "value": "\u002a"
         },
         {
-            "source": "/verify",
-            "destination": "/api/verify"
+          "key": "\u0041\u0063c\u{00065}\u0073\x73\u{0002D}C\u{0006f}\u{0006e}\u0074\u0072\u{0006F}\u006c\u{0002D}\u0041\u006c\u006C\x6fw-\u{0004d}e\u0074\u{00068}\x6f\u0064\u0073",
+          "value": "\u0047\x45\x54\u{0002c}\u{00020}\x50\x4f\x53\u{00054}\u002C\u{00020}\u{00050}\u{00055}\u{00054}\u{0002c}\x20\u{00044}\u{00045}\u004c\x45\u{00054}\u{00045},\u0020O\u{00050}\x54\x49\x4F\u004E\u{00053}"
         },
         {
-            "source": "/ping",
-            "destination": "/api/ping"
-        },
-        {
-            "source": "/challenge",
-            "destination": "/api/challenge"
+          "key": "A\u0063\u0063\u{00065}\u{00073}\u0073\u{0002d}\x43\u006f\u{0006e}\x74\u{00072}\u{0006F}\u{0006C}\u{0002D}\u{00041}\u{0006C}l\x6f\u{00077}\x2D\u0048\u0065a\u{00064}e\u0072\x73",
+          "value": "\x43\u006f\u{0006e}t\x65\u{0006e}\x74\x2d\u0054yp\u{00065}\u002C \u{00058}-S\x65\x73s\x69\x6f\x6e\u{0002D}To\u{0006B}\u{00065}\x6e, \u0058-\u{00043}\u0068\u0061\u{0006C}l\u{00065}n\u{00067}\x65\u{0002d}\x54\u006f\x6Be\u006E\u{0002C}\u0020X\x2dC\x68\u0061\u006Cl\u0065\u{0006E}\u0067\u{00065}\u002D\u{00041}\u006E\u{00073}w\u{00065}r"
         }
-    ],
-    "headers": [
-        {
-            "source": "/api/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                },
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                },
-                {
-                    "key": "Access-Control-Allow-Methods",
-                    "value": "GET, POST, PUT, DELETE, OPTIONS"
-                },
-                {
-                    "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
-                }
-            ]
-        }
-    ]
+      ]
+    }
+  ]
 }
