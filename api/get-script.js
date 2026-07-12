@@ -1,8 +1,8 @@
 // api/get-script.js
+import Crypto from '../lib/crypto.js';
+
 global.scripts = global.scripts || {};
 global.sessions = global.sessions || {};
-
-const Crypto = require('../lib/crypto.js');
 
 export default function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
