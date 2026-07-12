@@ -1,6 +1,6 @@
 // api/auth.js
-const Crypto = require('../lib/crypto.js');
-const Security = require('../lib/security.js');
+import Crypto from '../lib/crypto.js';
+import Security from '../lib/security.js';
 
 global.sessions = global.sessions || {};
 global.keys = global.keys || {};
