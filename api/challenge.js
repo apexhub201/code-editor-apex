@@ -1,5 +1,5 @@
 // api/challenge.js
-const Security = require('../lib/security.js');
+import Security from '../lib/security.js';
 
 global.challenges = global.challenges || {};
 
