@@ -12,6 +12,14 @@ export default function handler(req, res) {
         return res.status(200).end();
     }
 
+    // Parse URL để lấy path và query
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const pathname = url.pathname;
+    
+    // Lấy tên script từ path: /api/raw/script-name
+    const pathParts = pathname.split('/').filter(Boolean);
+    const scriptName = pathParts.length > 2 ? pathParts[2] : null;
+
     // POST - Tạo RAW mới
     if (req.method === 'POST') {
         try {
@@ -32,10 +40,10 @@ export default function handler(req, res) {
             }
 
             // Tạo slug từ tên để làm key
-            const scriptName = name.trim();
-            const nameSlug = scriptName
+            const scriptTitle = name.trim();
+            const nameSlug = scriptTitle
                 .toLowerCase()
-                .replace(/[^a-z0-9\u00C0-\u1EF9\s-]/g, '') // Cho phép tiếng Việt
+                .replace(/[^a-z0-9\u00C0-\u1EF9\s-]/g, '')
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-')
                 .replace(/^-|-$/g, '') || 'script';
@@ -51,7 +59,7 @@ export default function handler(req, res) {
             // Lưu vào global với key là nameSlug
             global.scripts[nameSlug] = {
                 code: code,
-                name: scriptName,
+                name: scriptTitle,
                 created: Date.now(),
                 lastAccessed: Date.now()
             };
@@ -120,25 +128,20 @@ export default function handler(req, res) {
 
     // DELETE - Xóa script
     if (req.method === 'DELETE') {
-        const { name } = req.query;
-        if (name && global.scripts[name]) {
-            delete global.scripts[name];
-            console.log(`🗑️ Script deleted: ${name}`);
+        const nameToDelete = req.query.name || scriptName;
+        
+        if (nameToDelete && global.scripts[nameToDelete]) {
+            delete global.scripts[nameToDelete];
+            console.log(`🗑️ Script deleted: ${nameToDelete}`);
             return res.status(200).json({ success: true, message: 'Script deleted' });
         }
         return res.status(404).json({ success: false, error: 'Script not found' });
     }
 
-    // GET - Xem RAW
+    // GET - Xem RAW hoặc trả về trang
     if (req.method === 'GET') {
-        const url = new URL(req.url, `http://${req.headers.host}`);
-        const pathParts = url.pathname.split('/').filter(Boolean);
-        
-        // Lấy tên script từ path: /api/raw/script-name
-        const scriptName = pathParts[pathParts.length - 1];
-
-        // Nếu không có tên script -> trả về trang chủ
-        if (!scriptName || pathParts[pathParts.length - 2] !== 'raw') {
+        // Nếu không có scriptName -> trả về trang chủ
+        if (!scriptName) {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
             return res.send(getWelcomePage());
         }
@@ -186,7 +189,7 @@ export default function handler(req, res) {
     });
 }
 
-// Trang chào mừng khi truy cập /api/raw không có tên
+// Trang chào mừng
 function getWelcomePage() {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -272,7 +275,7 @@ function getWelcomePage() {
             <div class="endpoint">
                 <span class="method post">POST</span>
                 <span style="color:#ccc">/api/raw</span>
-                <span style="color:#666"> - Create new script (with name)</span>
+                <span style="color:#666"> - Create new script</span>
             </div>
             <div class="endpoint">
                 <span class="method put">PUT</span>
@@ -296,7 +299,7 @@ function getWelcomePage() {
 </html>`;
 }
 
-// Trang bảo vệ - KHÔNG hiển thị tên script và icon
+// Trang bảo vệ - không hiển thị icon và tên script
 function getProtectionPage() {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -317,35 +320,6 @@ function getProtectionPage() {
             align-items: center;
             padding: 20px;
             overflow: hidden;
-        }
-        
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: float linear infinite;
-        }
-        
-        @keyframes float {
-            0% {
-                opacity: 0;
-                transform: translateY(100vh) scale(0);
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                opacity: 0;
-                transform: translateY(-100px) scale(1);
-            }
         }
         
         .container {
@@ -372,32 +346,12 @@ function getProtectionPage() {
         .card {
             background: linear-gradient(135deg, rgba(15,15,30,0.95), rgba(20,20,40,0.9));
             backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
             border-radius: 28px;
             padding: 45px 35px;
             border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 
-                0 0 0 1px rgba(255,255,255,0.03) inset,
-                0 30px 60px rgba(0,0,0,0.6),
-                0 0 120px rgba(102,126,234,0.08);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             position: relative;
             overflow: hidden;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
         }
         
         .content {
@@ -437,7 +391,6 @@ function getProtectionPage() {
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             font-size: 3rem;
         }
         
@@ -450,7 +403,7 @@ function getProtectionPage() {
         
         .divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
             margin: 30px 0;
         }
         
@@ -464,14 +417,8 @@ function getProtectionPage() {
         }
         
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .info-label {
@@ -484,7 +431,7 @@ function getProtectionPage() {
         }
         
         .info-value {
-            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-family: 'SF Mono', 'Fira Code', monospace;
             font-size: 0.8rem;
             color: rgba(255,255,255,0.55);
             word-break: break-all;
@@ -493,66 +440,28 @@ function getProtectionPage() {
             background: rgba(0,0,0,0.35);
             border-radius: 10px;
             border: 1px solid rgba(255,255,255,0.04);
-            transition: all 0.3s ease;
-        }
-        
-        .info-value:hover {
-            color: rgba(255,255,255,0.85);
-            border-color: rgba(102,126,234,0.25);
-            background: rgba(0,0,0,0.45);
         }
         
         .access-link {
             display: block;
             text-align: center;
             padding: 15px;
-            background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
             border: 1px solid rgba(102,126,234,0.2);
             border-radius: 14px;
             color: #667eea;
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 600;
-            letter-spacing: 0.02em;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s ease;
             animation: fadeInUp 0.6s ease 0.9s both;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .access-link::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(102,126,234,0.2);
-            border-radius: 50%;
-            transition: all 0.6s ease;
-            transform: translate(-50%, -50%);
-        }
-        
-        .access-link:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .access-link:active::before {
-            width: 200px;
-            height: 200px;
         }
         
         .access-link:hover {
             color: #fff;
             border-color: rgba(102,126,234,0.5);
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102,126,234,0.15);
-        }
-        
-        .access-link span {
-            position: relative;
-            z-index: 1;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.2);
         }
         
         .status-row {
@@ -573,12 +482,8 @@ function getProtectionPage() {
         }
         
         @keyframes dotPulse {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(255,71,87,0.6);
-            }
-            50% {
-                box-shadow: 0 0 0 12px rgba(255,71,87,0);
-            }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,71,87,0.6); }
+            50% { box-shadow: 0 0 0 12px rgba(255,71,87,0); }
         }
         
         .status-text {
@@ -595,28 +500,10 @@ function getProtectionPage() {
             font-size: 0.65rem;
             color: rgba(255,255,255,0.1);
             letter-spacing: 0.05em;
-            animation: fadeInUp 0.6s ease 1.3s both;
-        }
-        
-        @media (max-width: 480px) {
-            .card {
-                padding: 35px 22px;
-                border-radius: 22px;
-            }
-            
-            .title-word {
-                font-size: 1.6rem;
-            }
-            
-            .title-word:nth-child(2) {
-                font-size: 2.2rem;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-    
     <div class="container">
         <div class="card">
             <div class="content">
@@ -634,7 +521,7 @@ function getProtectionPage() {
                     <div class="info-value">https://code-editor-apex-ccmf.vercel.app/</div>
                 </div>
                 
-                <a href="https://code-editor-apex-ccmf.vercel.app/" class="access-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://code-editor-apex-ccmf.vercel.app/" class="access-link" target="_blank">
                     <span>Open Editor</span>
                 </a>
                 
@@ -647,38 +534,6 @@ function getProtectionPage() {
         
         <div class="footer-text">APEX HUB PROTECTION SYSTEM</div>
     </div>
-    
-    <script>
-        (function() {
-            const container = document.getElementById('particles');
-            const count = 40;
-            
-            for (let i = 0; i < count; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 3 + 1;
-                const posX = Math.random() * 100;
-                const duration = Math.random() * 12 + 15;
-                const delay = Math.random() * 10;
-                const colors = ['102, 126, 234', '118, 75, 162'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const opacity = Math.random() * 0.4 + 0.2;
-                
-                particle.style.cssText = [
-                    'width: ' + size + 'px',
-                    'height: ' + size + 'px',
-                    'left: ' + posX + '%',
-                    'background: rgba(' + color + ', ' + opacity + ')',
-                    'animation-duration: ' + duration + 's',
-                    'animation-delay: ' + delay + 's',
-                    'box-shadow: 0 0 ' + (size * 4) + 'px rgba(' + color + ', 0.4)'
-                ].join(';');
-                
-                container.appendChild(particle);
-            }
-        })();
-    </script>
 </body>
 </html>`;
 }
@@ -706,7 +561,6 @@ function getErrorPage() {
         .card {
             background: rgba(15,15,30,0.9);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 40px 30px;
             text-align: center;
@@ -722,24 +576,9 @@ function getErrorPage() {
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
-        h1 { 
-            font-size: 1.3rem; 
-            color: #ff4757; 
-            margin-bottom: 12px; 
-            font-weight: 600;
-        }
-        p { 
-            color: rgba(255,255,255,0.5); 
-            line-height: 1.6; 
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-        .link {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
+        h1 { font-size: 1.3rem; color: #ff4757; margin-bottom: 12px; }
+        p { color: rgba(255,255,255,0.5); line-height: 1.6; font-size: 0.9rem; margin-bottom: 20px; }
+        .link { color: #667eea; text-decoration: none; font-weight: 500; }
         .link:hover { color: #764ba2; }
     </style>
 </head>
