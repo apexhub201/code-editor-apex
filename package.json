@@ -1,8 +1,8 @@
 {
-  "name": "apex-hub",
-  "version": "1.0.0",
-  "type": "module",
+  "name": "ap\x65x-\u0068u\u{00062}",
+  "version": "\u0031\u002E\x30\u{0002E}\u{00030}",
+  "type": "\x6D\u006f\u{00064}ule",
   "dependencies": {
-    "firebase-admin": "^13.4.0"
+    "firebase-admin": "^13.4\x2e\x30"
   }
 }
