@@ -1,74 +1,79 @@
-import crypto from 'crypto';
-
-// Sử dụng global để lưu scripts.
-// LƯU Ý QUAN TRỌNG: trên môi trường serverless (Vercel), bộ nhớ "global"
-// KHÔNG đảm bảo tồn tại giữa các lần gọi hàm — mỗi cold start / mỗi
-// instance có thể có bộ nhớ riêng, nên script có thể "biến mất" bất chợt.
-// Nếu cần lưu trữ ổn định lâu dài, nên chuyển sang Vercel KV, Upstash
-// Redis, hoặc một database thật (Postgres, MongoDB...).
+// Sử dụng global để lưu scripts với mã hóa
 global.scripts = global.scripts || {};
+global.scriptKeys = global.scriptKeys || {};
 
-// Rate limit rất cơ bản theo IP (best-effort, cũng reset khi cold start,
-// không thay thế được rate limit ở tầng edge/CDN nếu bạn cần chống spam mạnh hơn).
-global.rateLimits = global.rateLimits || {};
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const RATE_LIMIT_MAX = 20;
-
-function checkRateLimit(ip) {
-    const now = Date.now();
-    const record = global.rateLimits[ip] || { count: 0, start: now };
-    if (now - record.start > RATE_LIMIT_WINDOW_MS) {
-        record.count = 0;
-        record.start = now;
+// Hàm mã hóa đơn giản (nên thay bằng crypto thực tế trong production)
+function simpleEncrypt(text, key) {
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
     }
-    record.count += 1;
-    global.rateLimits[ip] = record;
-    return record.count <= RATE_LIMIT_MAX;
+    return Buffer.from(result).toString('base64');
 }
 
-function hashKey(key) {
-    return crypto.createHash('sha256').update(String(key)).digest('hex');
+function simpleDecrypt(encrypted, key) {
+    const text = Buffer.from(encrypted, 'base64').toString();
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return result;
 }
 
-function keyMatches(inputKey, storedHash) {
-    if (!inputKey || !storedHash) return false;
-    const inputHash = hashKey(inputKey);
-    const a = Buffer.from(inputHash, 'hex');
-    const b = Buffer.from(storedHash, 'hex');
-    if (a.length !== b.length) return false;
-    return crypto.timingSafeEqual(a, b);
+// Tạo key ngẫu nhiên
+function generateKey() {
+    return Array.from({length: 32}, () => Math.random().toString(36)[2]).join('');
+}
+
+// Bot detection
+function detectBot(req) {
+    const ua = (req.headers['user-agent'] || '').toLowerCase();
+    const acceptHeader = (req.headers['accept'] || '').toLowerCase();
+    
+    // Discord bot patterns
+    const discordPatterns = [
+        'discordbot', 'discord', 'telegrambot', 'slackbot', 'whatsapp',
+        'facebookexternalhit', 'twitterbot', 'linkedinbot', 'googlebot',
+        'bingbot', 'yandexbot', 'baiduspider', 'duckduckbot',
+        'ahrefsbot', 'semrushbot', 'mj12bot', 'dotbot', 'rogerbot'
+    ];
+    
+    const isBot = discordPatterns.some(pattern => ua.includes(pattern));
+    
+    // Check if request wants HTML (browser)
+    const wantsHTML = acceptHeader.includes('text/html') || 
+                      acceptHeader.includes('application/xhtml') ||
+                      acceptHeader.includes('*/*');
+    
+    return {
+        isDiscordBot: discordPatterns.some(p => ua.includes(p)),
+        isBot: isBot || ua.includes('bot') || ua.includes('crawler') || ua.includes('spider'),
+        wantsHTML: wantsHTML,
+        isBrowser: ua.includes('mozilla') || ua.includes('chrome') || ua.includes('safari') || ua.includes('firefox')
+    };
 }
 
 export default function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, X-Script-Key, X-Access-Token');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    const ip = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown')
-        .split(',')[0].trim();
-
-    // POST - Tạo RAW mới
+    // POST - Tạo RAW mới với mã hóa
     if (req.method === 'POST') {
         try {
-            if (!checkRateLimit(ip)) {
-                return res.status(429).json({ success: false, error: 'Quá nhiều yêu cầu, thử lại sau' });
-            }
-
-            const { code, name, key } = req.body;
-
+            const { code, name } = req.body;
+            
             if (!code || !code.trim()) {
                 return res.status(400).json({ success: false, error: 'Code is required' });
             }
+
             if (!name || !name.trim()) {
                 return res.status(400).json({ success: false, error: 'Name is required' });
-            }
-            if (!key || String(key).trim().length < 4) {
-                return res.status(400).json({ success: false, error: 'Key phải có ít nhất 4 ký tự' });
             }
 
             const nameSlug = name.trim()
@@ -77,60 +82,72 @@ export default function handler(req, res) {
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-')
                 .replace(/^-|-$/g, '') || 'script';
-
+            
             if (global.scripts[nameSlug]) {
                 return res.status(409).json({ success: false, error: 'Script name already exists' });
             }
-
-            const cleanKey = String(key).trim();
-
+            
+            // Tạo key mã hóa duy nhất cho script này
+            const scriptKey = generateKey();
+            
+            // Mã hóa nội dung trước khi lưu
+            const encryptedCode = simpleEncrypt(code, scriptKey);
+            
             global.scripts[nameSlug] = {
-                code: code,
+                encryptedCode: encryptedCode,
                 name: name.trim(),
-                keyHash: hashKey(cleanKey),
                 created: Date.now(),
-                lastAccessed: Date.now()
+                lastAccessed: Date.now(),
+                accessCount: 0
             };
+            
+            // Lưu key riêng
+            global.scriptKeys[nameSlug] = scriptKey;
 
-            const rawUrl = `https://${req.headers.host}/api/raw?name=${nameSlug}&key=${encodeURIComponent(cleanKey)}`;
+            console.log('Scripts in memory:', Object.keys(global.scripts));
 
+            // URL truy cập đã được bảo vệ
+            const rawUrl = `https://${req.headers.host}/api/raw?name=${nameSlug}&key=${scriptKey}`;
+            
             return res.status(200).json({
                 success: true,
                 raw: rawUrl,
-                name: nameSlug
+                name: nameSlug,
+                accessKey: scriptKey, // Gửi key cho người dùng (chỉ hiển thị 1 lần)
+                note: 'Hãy lưu key này! Nó sẽ không hiển thị lại.'
             });
         } catch (error) {
             return res.status(500).json({ success: false, error: error.message });
         }
     }
 
-    // PUT - Cập nhật (yêu cầu đúng key mới cho sửa)
+    // PUT - Cập nhật
     if (req.method === 'PUT') {
         try {
-            if (!checkRateLimit(ip)) {
-                return res.status(429).json({ success: false, error: 'Quá nhiều yêu cầu, thử lại sau' });
-            }
-
-            const { name, code, key } = req.body;
-
+            const { name, code, accessKey } = req.body;
+            
             if (!name || !global.scripts[name]) {
                 return res.status(404).json({ success: false, error: 'Script not found' });
             }
-
-            if (!keyMatches(key, global.scripts[name].keyHash)) {
-                return res.status(401).json({ success: false, error: 'Sai key' });
-            }
-
+            
             if (!code || !code.trim()) {
                 return res.status(400).json({ success: false, error: 'Code is required' });
             }
-
-            global.scripts[name].code = code;
+            
+            // Xác thực key
+            if (!accessKey || accessKey !== global.scriptKeys[name]) {
+                return res.status(403).json({ success: false, error: 'Invalid access key' });
+            }
+            
+            // Mã hóa nội dung mới
+            const encryptedCode = simpleEncrypt(code, global.scriptKeys[name]);
+            
+            global.scripts[name].encryptedCode = encryptedCode;
             global.scripts[name].updated = Date.now();
             global.scripts[name].lastAccessed = Date.now();
-
-            const rawUrl = `https://${req.headers.host}/api/raw?name=${name}&key=${encodeURIComponent(key)}`;
-
+            
+            const rawUrl = `https://${req.headers.host}/api/raw?name=${name}&key=${global.scriptKeys[name]}`;
+            
             return res.status(200).json({
                 success: true,
                 message: 'Updated successfully',
@@ -142,16 +159,21 @@ export default function handler(req, res) {
         }
     }
 
-    // DELETE - cũng yêu cầu đúng key (trước đây không cần, ai biết tên cũng xoá được)
+    // DELETE
     if (req.method === 'DELETE') {
-        const { name, key } = req.query;
+        const { name, accessKey } = req.query;
+        
         if (!name || !global.scripts[name]) {
             return res.status(404).json({ success: false, error: 'Script not found' });
         }
-        if (!keyMatches(key, global.scripts[name].keyHash)) {
-            return res.status(401).json({ success: false, error: 'Sai key' });
+        
+        // Xác thực key
+        if (!accessKey || accessKey !== global.scriptKeys[name]) {
+            return res.status(403).json({ success: false, error: 'Invalid access key' });
         }
+        
         delete global.scripts[name];
+        delete global.scriptKeys[name];
         return res.status(200).json({ success: true, message: 'Deleted' });
     }
 
@@ -165,35 +187,72 @@ export default function handler(req, res) {
             return res.send(getWelcomePage());
         }
 
+        console.log('Looking for script:', name);
+        console.log('Available scripts:', Object.keys(global.scripts));
+
         // Script không tồn tại
         if (!global.scripts[name]) {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
             return res.status(404).send(getErrorPage());
         }
 
-        const record = global.scripts[name];
-        const ua = (req.headers['user-agent'] || '').toLowerCase();
-        const acceptHeader = (req.headers['accept'] || '').toLowerCase();
-        const isBrowser = ua.includes('mozilla') || ua.includes('chrome') || ua.includes('safari') || ua.includes('firefox') || ua.includes('edge');
-        const wantsHTML = acceptHeader.includes('text/html');
-
-        // Không đúng key -> không ai lấy được code thật, bất kể là trình
-        // duyệt, bot, hay executor. Đây là điểm bảo vệ thật sự, thay cho
-        // việc đoán "client này có phải bot hay không".
-        if (!keyMatches(key, record.keyHash)) {
-            if (isBrowser && wantsHTML) {
-                res.setHeader('Content-Type', 'text/html; charset=utf-8');
-                return res.status(401).send(getProtectionPage());
-            }
-            return res.status(401).json({ success: false, error: 'Thiếu hoặc sai key' });
+        // Bot detection
+        const botInfo = detectBot(req);
+        
+        // Chặn bot
+        if (botInfo.isBot || botInfo.isDiscordBot) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(403).send(getBotBlockPage(botInfo.isDiscordBot ? 'Discord Bot' : 'Bot'));
         }
 
-        record.lastAccessed = Date.now();
+        global.scripts[name].lastAccessed = Date.now();
+        global.scripts[name].accessCount = (global.scripts[name].accessCount || 0) + 1;
 
-        // Có key đúng -> trả code thật (dùng cho executor qua HttpGet)
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        return res.send(record.code);
+        // Kiểm tra key truy cập
+        const accessKey = key || req.headers['x-script-key'] || req.headers['x-access-token'];
+        
+        // Nếu không có key hoặc key sai -> trang bảo vệ
+        if (!accessKey || accessKey !== global.scriptKeys[name]) {
+            const ua = (req.headers['user-agent'] || '').toLowerCase();
+            const acceptHeader = (req.headers['accept'] || '').toLowerCase();
+            
+            const isBrowser = ua.includes('mozilla') || ua.includes('chrome') || ua.includes('safari') || ua.includes('firefox');
+            const wantsHTML = acceptHeader.includes('text/html') || acceptHeader.includes('*/*');
+
+            if (isBrowser || wantsHTML) {
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.send(getProtectionPage());
+            }
+            
+            // Nếu là request API (không phải browser) -> trả về lỗi
+            return res.status(403).json({ 
+                success: false, 
+                error: 'Access denied. Valid key required.',
+                hint: 'Use ?key=YOUR_ACCESS_KEY in URL or X-Script-Key header'
+            });
+        }
+
+        // Key hợp lệ -> giải mã và trả về nội dung
+        try {
+            const decryptedCode = simpleDecrypt(global.scripts[name].encryptedCode, global.scriptKeys[name]);
+            
+            // Trả về code cho executor (không phải browser)
+            const ua = (req.headers['user-agent'] || '').toLowerCase();
+            const acceptHeader = (req.headers['accept'] || '').toLowerCase();
+            
+            // Nếu là browser với key hợp lệ -> hiển thị trang download
+            if (ua.includes('mozilla') && acceptHeader.includes('text/html')) {
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.send(getDownloadPage(name, decryptedCode));
+            }
+            
+            // Trả về code thật cho executor
+            res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            return res.send(decryptedCode);
+        } catch (error) {
+            return res.status(500).json({ success: false, error: 'Decryption failed' });
+        }
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
@@ -206,6 +265,7 @@ function getWelcomePage() {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APEX HUB | Raw API</title>
+    <meta name="robots" content="noindex, nofollow">
     <style>
         :root {
             --bg-primary: #0a0a1a;
@@ -220,7 +280,13 @@ function getWelcomePage() {
             --blue: #667eea;
             --red: #ff4757;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg-primary);
@@ -232,79 +298,336 @@ function getWelcomePage() {
             overflow: hidden;
             position: relative;
         }
-        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; animation: float 20s infinite ease-in-out; }
-        .orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, #667eea, transparent); top: -100px; left: -100px; animation-delay: 0s; }
-        .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, #764ba2, transparent); bottom: -100px; right: -100px; animation-delay: -7s; }
-        .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #ff4757, transparent); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -14s; }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #667eea, transparent);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #764ba2, transparent);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #ff4757, transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(100px, -50px) scale(1.1); }
-            50% { transform: translate(50px, 100px) scale(0.9); }
-            75% { transform: translate(-100px, 50px) scale(1.05); }
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(100px, -50px) scale(1.1);
+            }
+            50% {
+                transform: translate(50px, 100px) scale(0.9);
+            }
+            75% {
+                transform: translate(-100px, 50px) scale(1.05);
+            }
         }
+
         .grid-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(100, 100, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(100, 100, 255, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px; z-index: 0; pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(100, 100, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 100, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
         }
-        .container { position: relative; z-index: 1; width: 90%; max-width: 500px; }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 500px;
+        }
+
         .card {
-            background: var(--bg-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px; padding: 48px 40px; border: 1px solid var(--border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(100, 100, 255, 0.05) inset, 0 0 120px rgba(102, 126, 234, 0.1);
-            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            border: 1px solid var(--border);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(100, 100, 255, 0.05) inset,
+                0 0 120px rgba(102, 126, 234, 0.1);
+            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
         .card::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
             background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.05), transparent, rgba(118, 75, 162, 0.05), transparent);
-            animation: rotate 10s linear infinite; pointer-events: none;
+            animation: rotate 10s linear infinite;
+            pointer-events: none;
         }
-        @keyframes cardAppear { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .logo-icon {
-            width: 64px; height: 64px; background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
-            border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto;
-            position: relative; animation: logoPulse 3s ease-in-out infinite; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            animation: logoPulse 3s ease-in-out infinite;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
         }
-        .logo-icon svg { width: 32px; height: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+
+        .logo-icon svg {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
         @keyframes logoPulse {
-            0%, 100% { box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3); transform: scale(1); }
-            50% { box-shadow: 0 8px 48px rgba(118, 75, 162, 0.5); transform: scale(1.05); }
+            0%, 100% {
+                box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 8px 48px rgba(118, 75, 162, 0.5);
+                transform: scale(1.05);
+            }
         }
+
         .logo-text {
-            font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 50%, #ff6b81 100%);
-            background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            animation: gradientShift 4s ease-in-out infinite; letter-spacing: -0.5px;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 50%, #ff6b81 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+            letter-spacing: -0.5px;
         }
-        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 32px; letter-spacing: 0.05em; }
-        .endpoints { background: rgba(15, 15, 35, 0.6); border-radius: 16px; padding: 24px; border: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 1; }
-        .endpoint { display: flex; align-items: center; padding: 12px 16px; margin-bottom: 8px; border-radius: 10px; background: rgba(255,255,255,0.02); transition: all 0.3s ease; cursor: default; position: relative; }
-        .endpoint:last-child { margin-bottom: 0; }
-        .endpoint:hover { background: rgba(255,255,255,0.05); transform: translateX(4px); }
-        .method { display: inline-flex; align-items: center; justify-content: center; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.05em; min-width: 56px; margin-right: 12px; text-transform: uppercase; box-shadow: 0 2px 8px rgba(0,0,0,0.3); animation: methodGlow 2s ease-in-out infinite; }
-        .method.post { background: linear-gradient(135deg, #00d25b, #00a844); color: #fff; }
-        .method.put { background: linear-gradient(135deg, #ffa502, #e68a00); color: #fff; }
-        .method.get { background: linear-gradient(135deg, #667eea, #4c63d2); color: #fff; }
-        .method.delete { background: linear-gradient(135deg, #ff4757, #e03444); color: #fff; }
-        @keyframes methodGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
-        .path { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.82rem; color: #aab; }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+            letter-spacing: 0.05em;
+        }
+
+        .endpoints {
+            background: rgba(15, 15, 35, 0.6);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .endpoint:last-child {
+            margin-bottom: 0;
+        }
+
+        .endpoint:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateX(4px);
+        }
+
+        .method {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            min-width: 56px;
+            margin-right: 12px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .method.post {
+            background: linear-gradient(135deg, #00d25b, #00a844);
+            color: #fff;
+        }
+
+        .method.put {
+            background: linear-gradient(135deg, #ffa502, #e68a00);
+            color: #fff;
+        }
+
+        .method.get {
+            background: linear-gradient(135deg, #667eea, #4c63d2);
+            color: #fff;
+        }
+
+        .method.delete {
+            background: linear-gradient(135deg, #ff4757, #e03444);
+            color: #fff;
+        }
+
+        .path {
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.82rem;
+            color: #aab;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: rgba(0, 210, 91, 0.1);
+            border: 1px solid rgba(0, 210, 91, 0.3);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: #00d25b;
+        }
+
         .cta-button {
-            display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; padding: 14px 32px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 28px;
+            padding: 14px 32px;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-            border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 14px; color: #aab; text-decoration: none;
-            font-weight: 600; font-size: 0.9rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; overflow: hidden;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 14px;
+            color: #aab;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
         }
-        .cta-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.5s ease; }
-        .cta-button:hover { background: linear-gradient(135deg, rgba(102, 126, 234, 0.35), rgba(118, 75, 162, 0.35)); border-color: var(--gradient-1); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2); }
-        .cta-button:hover::before { left: 100%; }
-        .cta-button svg { width: 16px; height: 16px; transition: transform 0.3s ease; }
-        .cta-button:hover svg { transform: translateX(3px); }
-        .status-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; font-size: 0.7rem; color: #555; letter-spacing: 0.15em; text-transform: uppercase; }
-        .status-dot { width: 6px; height: 6px; background: #00d25b; border-radius: 50%; animation: statusPulse 2s ease-in-out infinite; }
-        @keyframes statusPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 210, 91, 0.6); } 50% { box-shadow: 0 0 0 12px rgba(0, 210, 91, 0); } }
+
+        .cta-button:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.35), rgba(118, 75, 162, 0.35));
+            border-color: var(--gradient-1);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #555;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #00d25b;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 210, 91, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 0 12px rgba(0, 210, 91, 0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -314,6 +637,7 @@ function getWelcomePage() {
         <div class="orb orb-3"></div>
     </div>
     <div class="grid-overlay"></div>
+
     <div class="container">
         <div class="card">
             <div style="text-align: center;">
@@ -325,14 +649,36 @@ function getWelcomePage() {
                     </svg>
                 </div>
                 <div class="logo-text">APEX HUB</div>
-                <div class="subtitle">Raw API Service</div>
+                <div class="subtitle">Secure Raw API Service</div>
+                <div class="security-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Protected & Encrypted
+                </div>
             </div>
+
             <div class="endpoints">
-                <div class="endpoint"><span class="method post">POST</span><span class="path">/api/raw</span><span style="margin-left: auto; color: #555; font-size: 0.7rem;">Create</span></div>
-                <div class="endpoint"><span class="method put">PUT</span><span class="path">/api/raw</span><span style="margin-left: auto; color: #555; font-size: 0.7rem;">Update</span></div>
-                <div class="endpoint"><span class="method get">GET</span><span class="path">/api/raw?name=...&amp;key=...</span><span style="margin-left: auto; color: #555; font-size: 0.7rem;">Retrieve</span></div>
-                <div class="endpoint"><span class="method delete">DEL</span><span class="path">/api/raw?name=...&amp;key=...</span><span style="margin-left: auto; color: #555; font-size: 0.7rem;">Delete</span></div>
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/raw</span>
+                    <span style="margin-left: auto; color: #555; font-size: 0.7rem;">Create</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method put">PUT</span>
+                    <span class="path">/api/raw</span>
+                    <span style="margin-left: auto; color: #555; font-size: 0.7rem;">Update</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/raw?name=...&key=...</span>
+                    <span style="margin-left: auto; color: #555; font-size: 0.7rem;">Retrieve</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method delete">DEL</span>
+                    <span class="path">/api/raw?name=...</span>
+                    <span style="margin-left: auto; color: #555; font-size: 0.7rem;">Delete</span>
+                </div>
             </div>
+
             <div style="text-align: center;">
                 <a href="https://code-editor-apex-ccmf.vercel.app/" class="cta-button" target="_blank">
                     Open Editor
@@ -342,6 +688,7 @@ function getWelcomePage() {
                     </svg>
                 </a>
             </div>
+
             <div class="status-bar">
                 <span class="status-dot"></span>
                 <span>System Online</span>
@@ -358,49 +705,541 @@ function getProtectionPage() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APEX HUB | Unauthorized</title>
+    <title>APEX HUB | Protected</title>
+    <meta name="robots" content="noindex, nofollow">
     <style>
         :root {
             --bg-primary: #0a0a1a;
             --bg-card: rgba(21, 21, 48, 0.8);
             --border: rgba(100, 100, 255, 0.15);
             --text-primary: #e0e0ff;
+            --text-secondary: #8888aa;
+            --gradient-1: #667eea;
+            --gradient-2: #764ba2;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg-primary); color: var(--text-primary); min-height: 100vh;
-            display: flex; justify-content: center; align-items: center; position: relative;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
         }
-        .container { position: relative; z-index: 1; width: 90%; max-width: 460px; }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff4757, transparent);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #667eea, transparent);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #764ba2, transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(80px, -40px) scale(1.1); }
+            50% { transform: translate(30px, 80px) scale(0.9); }
+            75% { transform: translate(-80px, 30px) scale(1.05); }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 71, 87, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 71, 87, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 460px;
+        }
+
         .card {
-            background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 24px; padding: 48px 40px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
             border: 1px solid var(--border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 120px rgba(255, 71, 87, 0.08);
-            text-align: center;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 71, 87, 0.05) inset,
+                0 0 120px rgba(255, 71, 87, 0.08);
+            animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .shield-svg { width: 80px; height: 80px; margin-bottom: 20px; }
-        .title { font-size: 1.6rem; font-weight: 900; margin-bottom: 12px; color: #ff6b81; }
-        .info-box { background: rgba(15, 15, 35, 0.6); border-radius: 14px; padding: 20px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .info-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 10px; font-weight: 600; }
-        .info-value { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.8rem; color: #888; }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,71,87,0.3), transparent);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .shield-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: shieldPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes shieldPulse {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 71, 87, 0.4)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 71, 87, 0.8)); transform: scale(1.08); }
+        }
+
+        .shield-svg {
+            width: 80px;
+            height: 80px;
+            animation: shieldRotate 3s ease-in-out infinite;
+        }
+
+        @keyframes shieldRotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(2deg); }
+            75% { transform: rotate(-2deg); }
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, #ff6b81, #ff4757, #ff6b81);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            margin: 28px 0;
+        }
+
+        .info-box {
+            background: rgba(15, 15, 35, 0.6);
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-label {
+            font-size: 0.65rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #888;
+            word-break: break-all;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .cta-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            margin-top: 24px;
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 107, 129, 0.15));
+            border: 1px solid rgba(255, 71, 87, 0.25);
+            border-radius: 14px;
+            color: #ff6b81;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            letter-spacing: 0.02em;
+        }
+
+        .cta-button:hover {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.25), rgba(255, 107, 129, 0.25));
+            border-color: #ff4757;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 71, 87, 0.2);
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.6); }
+            50% { box-shadow: 0 0 0 12px rgba(255, 71, 87, 0); }
+        }
+
+        .status-text {
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 600;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.6rem;
+            color: #333;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="grid-overlay"></div>
+
+    <div class="container">
+        <div class="card">
+            <div style="text-align: center;">
+                <div class="shield-container">
+                    <svg class="shield-svg" viewBox="0 0 24 24" fill="none" stroke="url(#shieldGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs>
+                            <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff6b81;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff4757;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="M9 12l2 2 4-4" stroke="#ff4757" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="title">
+                ACTIVATE<br>
+                <span class="title-gradient">PROTECTION</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="info-box">
+                <div class="info-label">🔒 Protected Script</div>
+                <div class="info-value">This script requires a valid access key to view.</div>
+            </div>
+
+            <a href="https://code-editor-apex-ccmf.vercel.app/" class="cta-button" target="_blank">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Open Editor
+            </a>
+
+            <div class="status-container">
+                <div class="status-dot"></div>
+                <span class="status-text">Protected Script</span>
+            </div>
+
+            <div class="footer-text">APEX HUB PROTECTION SYSTEM</div>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+function getBotBlockPage(botType) {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | APEX HUB</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0ff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #ff4757;
+        }
+        p {
+            color: #888;
+            margin-bottom: 20px;
+        }
+        .bot-type {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 50px;
+            color: #ff4757;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <svg class="shield-svg" viewBox="0 0 24 24" fill="none" stroke="#ff4757" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                <line x1="12" y1="8" x2="12" y2="13"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <div class="title">KHÔNG CÓ QUYỀN TRUY CẬP</div>
-            <div class="info-box">
-                <div class="info-label">🔒 Yêu cầu key hợp lệ</div>
-                <div class="info-value">Thêm ?key=... đúng với key đã tạo script để truy cập.</div>
-            </div>
-        </div>
+        <div class="icon">🚫</div>
+        <h1>Access Denied</h1>
+        <p>Automated access is not allowed.</p>
+        <div class="bot-type">Detected: ${botType}</div>
+        <p style="margin-top: 20px; font-size: 0.8rem;">Please use the official editor to access scripts.</p>
     </div>
+</body>
+</html>`;
+}
+
+function getDownloadPage(scriptName, code) {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Script | APEX HUB</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #1a1a2e);
+            color: #e0e0ff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(21, 21, 48, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(100, 100, 255, 0.15);
+        }
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-bottom: 10px;
+        }
+        .script-name {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        .btn-download {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+        .btn-copy {
+            background: rgba(255,255,255,0.1);
+            color: #aab;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-left: 10px;
+        }
+        .btn-copy:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .code-preview {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #888;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📥</div>
+        <h2>Script Ready</h2>
+        <div class="script-name">${scriptName}</div>
+        <p style="color: #888; margin-bottom: 20px;">Your script is ready to download or copy.</p>
+        <div class="actions">
+            <button class="btn btn-download" onclick="downloadScript()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download .lua
+            </button>
+            <button class="btn btn-copy" onclick="copyCode()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy Code
+            </button>
+        </div>
+        <div class="code-preview" id="codePreview">${code.substring(0, 300)}${code.length > 300 ? '...' : ''}</div>
+    </div>
+    <script>
+        const code = ${JSON.stringify(code)};
+        function downloadScript() {
+            const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '${scriptName}.lua';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        function copyCode() {
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target.closest('button');
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Code', 2000);
+            });
+        }
+    </script>
 </body>
 </html>`;
 }
@@ -412,24 +1251,37 @@ function getErrorPage() {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 | APEX HUB</title>
+    <meta name="robots" content="noindex, nofollow">
     <style>
-        :root { --bg-primary: #0a0a1a; --bg-card: rgba(21, 21, 48, 0.8); --border: rgba(100, 100, 255, 0.15); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: #e0e0ff; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .container { width: 90%; max-width: 420px; }
-        .card { background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 24px; padding: 48px 40px; border: 1px solid var(--border); text-align: center; }
-        .error-code { font-size: 6rem; font-weight: 900; background: linear-gradient(135deg, #ff4757, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
-        .error-title { font-size: 1.4rem; font-weight: 700; margin: 16px 0 8px; color: #ff4757; }
-        .error-message { color: #888; font-size: 0.9rem; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0ff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container { text-align: center; padding: 40px; }
+        h1 { font-size: 6rem; background: linear-gradient(135deg, #ff4757, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p { color: #888; margin: 20px 0; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <div class="error-code">404</div>
-            <div class="error-title">Script Not Found</div>
-            <div class="error-message">The script doesn't exist or has expired.</div>
-        </div>
+        <h1>404</h1>
+        <p>Script not found or has been removed.</p>
+        <a href="https://code-editor-apex-ccmf.vercel.app/" class="btn">Back to Editor</a>
     </div>
 </body>
 </html>`;
