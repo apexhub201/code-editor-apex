@@ -142,6 +142,15 @@
             background: #00b894;
         }
 
+        .btn-warning {
+            background: #ffa502;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68a00;
+        }
+
         .btn-logout {
             background: #ff4757;
             color: white;
@@ -149,6 +158,12 @@
 
         .btn-logout:hover {
             background: #ff3838;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         .modal {
@@ -588,6 +603,10 @@
             z-index: 1000;
         }
 
+        .sync-status i {
+            color: #667eea;
+        }
+
         .sync-status span {
             color: #333;
         }
@@ -608,6 +627,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Notification */
         .notification {
             position: fixed;
             top: 20px;
@@ -632,16 +652,26 @@
             to { transform: translateX(100%); opacity: 0; }
         }
 
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        /* RAW Status Badge */
+        .raw-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
 
-        .key-highlight {
-            background: #f0f0f0;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            word-break: break-all;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
+        .raw-status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .raw-status-badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         @media (max-width: 768px) {
@@ -683,70 +713,91 @@
     </style>
 </head>
 <body>
+    <!-- Sync Status -->
     <div class="sync-status" id="syncStatus">
-        <span id="syncText">San sang</span>
+        <i class="fas fa-sync-alt"></i>
+        <span id="syncText">Sẵn sàng</span>
     </div>
 
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">APEX HUB</div>
         <div class="nav-links">
             <div class="user-info" id="userInfo" style="display: none;">
                 <div class="user-avatar" id="userAvatar">U</div>
                 <span class="username" id="username"></span>
-                <button class="btn btn-logout" onclick="logout()">Dang xuat</button>
+                <button class="btn btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
             </div>
-            <button class="btn btn-primary" onclick="openLoginModal()" id="loginBtn">Dang nhap</button>
+            <button class="btn btn-primary" onclick="openLoginModal()" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+            </button>
         </div>
     </nav>
 
+    <!-- Main Container -->
     <div class="container">
+        <!-- Welcome Section -->
         <div class="welcome-section">
-            <h1>APEX HUB - BAO VE</h1>
-            <p>SU THOAI MAI KHI TAO SCRIPT</p>
+            <h1>APEX HUB - BẢO VỆ</h1>
+            <p>SỰ THOẢI MÁI KHI TẠO SCRIPT</p>
         </div>
 
+        <!-- Editor Section -->
         <div class="editor-section" id="editorSection" style="display: none;">
             <div class="script-info">
-                <input type="text" class="script-name-input" id="scriptName" placeholder="Dat ten cho script cua ban...">
-                <input type="password" class="script-name-input" id="scriptPassword" placeholder="Dat mat khau cho script...">
+                <input type="text" class="script-name-input" id="scriptName" placeholder="Đặt tên cho script của bạn...">
+                <input type="password" class="script-name-input" id="scriptPassword" placeholder="Đặt mật khẩu cho script...">
             </div>
             
             <div class="editor-wrapper">
                 <div class="editor-header">
-                    <span>Code Editor</span>
-                    <span class="word-count" id="wordCount">0 dong | 0 tu</span>
+                    <span><i class="fas fa-code"></i> Code Editor</span>
+                    <span class="word-count" id="wordCount">0 dòng | 0 từ</span>
                 </div>
                 <div class="editor-container">
                     <div class="line-numbers" id="lineNumbers">
                         <div>1</div>
                     </div>
-                    <textarea class="code-input" id="codeEditor" placeholder="Viet code cua ban o day..." oninput="updateEditor()" onscroll="syncScroll()" onkeydown="handleTab(event)" spellcheck="false"></textarea>
+                    <textarea class="code-input" id="codeEditor" placeholder="Viết code của bạn ở đây..." oninput="updateEditor()" onscroll="syncScroll()" onkeydown="handleTab(event)" spellcheck="false"></textarea>
                 </div>
             </div>
 
+            <!-- RAW Status -->
+            <div id="rawStatusContainer" style="margin-bottom: 1rem; display: none;">
+                <span class="raw-status-badge active" id="rawStatusBadge">
+                    <i class="fas fa-link"></i>
+                    <span id="rawStatusText">RAW Active</span>
+                </span>
+                <button class="btn btn-outline" onclick="copyRawUrl()" style="margin-left: 8px; padding: 4px 12px; font-size: 0.8rem;">
+                    <i class="fas fa-copy"></i> Copy URL
+                </button>
+                <button class="btn btn-outline" onclick="resetRaw()" style="margin-left: 4px; padding: 4px 12px; font-size: 0.8rem;">
+                    <i class="fas fa-plus"></i> RAW mới
+                </button>
+            </div>
+
+            <!-- Editor Actions -->
             <div class="editor-actions">
-                <button class="btn btn-outline" id="createRawBtn" onclick="createOrUpdateRaw()">
-                    Tao RAW
+                <!-- NÚT GỘP: Lưu + Tạo/Cập nhật RAW -->
+                <button class="btn btn-primary" id="saveAndRawBtn" onclick="saveScriptAndRaw()">
+                    <i class="fas fa-save"></i> <span id="saveAndRawBtnText">Lưu & Tạo RAW</span>
                 </button>
-                <button class="btn btn-outline" id="resetRawBtn" onclick="resetRaw()" style="display:none;">
-                    RAW moi
+                <button class="btn btn-outline" onclick="downloadProtectedFile()">
+                    <i class="fas fa-download"></i> Tải Raw (.lua)
                 </button>
-                <button class="btn btn-primary" onclick="downloadProtectedFile()">
-                    Tai Raw (.lua)
-                </button>
-                <button class="btn btn-success" onclick="saveScript()">
-                    Luu script
-                </button>
-                <button class="btn btn-primary" onclick="clearEditor()">
-                    Them script moi
+                <button class="btn btn-outline" onclick="clearEditor()">
+                    <i class="fas fa-plus"></i> Thêm script mới
                 </button>
             </div>
         </div>
 
+        <!-- Scripts Library -->
         <div class="scripts-library">
             <div class="library-header">
-                <h2>Thu vien script cua ban</h2>
-                <input type="text" class="search-box" id="searchBox" placeholder="Tim kiem script..." oninput="filterScripts()">
+                <h2><i class="fas fa-book"></i> Thư viện script của bạn</h2>
+                <input type="text" class="search-box" id="searchBox" placeholder="Tìm kiếm script..." oninput="filterScripts()">
             </div>
             <div class="scripts-grid" id="scriptsGrid">
             </div>
@@ -759,75 +810,54 @@
             <span class="close" onclick="closeAuthModal()">&times;</span>
             
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('login')" id="loginTab">Dang nhap</button>
-                <button class="tab" onclick="switchTab('register')" id="registerTab">Dang ky</button>
+                <button class="tab active" onclick="switchTab('login')" id="loginTab">Đăng nhập</button>
+                <button class="tab" onclick="switchTab('register')" id="registerTab">Đăng ký</button>
             </div>
 
             <div class="tab-content active" id="loginForm">
                 <form onsubmit="handleLogin(event)">
                     <div class="form-group">
                         <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="Nhap email cua ban" required>
+                        <input type="email" id="loginEmail" placeholder="Nhập email của bạn" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="loginPassword">Mat khau</label>
-                        <input type="password" id="loginPassword" placeholder="Nhap mat khau" required>
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" placeholder="Nhập mật khẩu" required>
                     </div>
-
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Dang nhap</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Đăng nhập</button>
                 </form>
             </div>
 
             <div class="tab-content" id="registerForm">
                 <form onsubmit="handleRegister(event)">
                     <div class="form-group">
-                        <label for="registerName">Ten hien thi</label>
-                        <input type="text" id="registerName" placeholder="Nhap ten cua ban" required>
+                        <label for="registerName">Tên hiển thị</label>
+                        <input type="text" id="registerName" placeholder="Nhập tên của bạn" required>
                     </div>
-
                     <div class="form-group">
                         <label for="registerEmail">Email</label>
-                        <input type="email" id="registerEmail" placeholder="Nhap email" required>
+                        <input type="email" id="registerEmail" placeholder="Nhập email" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="registerPassword">Mat khau</label>
-                        <input type="password" id="registerPassword" placeholder="Nhap mat khau" required>
+                        <label for="registerPassword">Mật khẩu</label>
+                        <input type="password" id="registerPassword" placeholder="Nhập mật khẩu" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="confirmPassword">Xac nhan mat khau</label>
-                        <input type="password" id="confirmPassword" placeholder="Xac nhan mat khau" required>
+                        <label for="confirmPassword">Xác nhận mật khẩu</label>
+                        <input type="password" id="confirmPassword" placeholder="Xác nhận mật khẩu" required>
                     </div>
-
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Dang ky</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Đăng ký</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Key Modal -->
-    <div class="modal" id="keyModal">
-        <div class="modal-content" style="text-align: center;">
-            <span class="close" onclick="document.getElementById('keyModal').classList.remove('active')">&times;</span>
-            <h3 style="margin-bottom: 10px; color: #333;">Access Key Cua Ban</h3>
-            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">
-                Canh bao: Key nay chi hien thi MOT LAN!<br>
-                Hay luu lai de cap nhat/xoa script sau nay.
-            </p>
-            <div class="key-highlight" id="keyDisplay"></div>
-            <button class="btn btn-primary" onclick="copyKeyFromModal()" style="width: 100%;">Copy Key</button>
-            <button class="btn btn-outline" onclick="document.getElementById('keyModal').classList.remove('active')" style="width: 100%; margin-top: 10px;">Toi da luu key</button>
-        </div>
-    </div>
-
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics-compat.js"></script>
 
     <script>
-        // Firebase Configuration
+        // ==================== FIREBASE CONFIG ====================
         const firebaseConfig = {
             apiKey: "AIzaSyD15lVtS0FSNhWroWKqF0e3ZjZ5q7KApTU",
             authDomain: "apex-hub-global-ffd6a.firebaseapp.com",
@@ -841,14 +871,14 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
+        // ==================== GLOBAL STATE ====================
         let currentUser = null;
         let currentEditingId = null;
         let currentRawId = null;
         let currentRawUrl = null;
-        let currentAccessKey = null;
         const SYNC_KEY = 'APEX_HUB_SYNC';
 
-        // ================== HELPER FUNCTIONS ==================
+        // ==================== HELPER FUNCTIONS ====================
         function updateSyncStatus(text, isLoading = false) {
             const syncText = document.getElementById('syncText');
             if (isLoading) {
@@ -858,15 +888,24 @@
             }
         }
 
-        function showNotification(message, type) {
+        function showNotification(message, type = 'info') {
             const existingNotif = document.querySelector('.notification');
             if (existingNotif) existingNotif.remove();
 
             const notification = document.createElement('div');
             notification.className = 'notification';
-            notification.style.background = type === 'success' ? '#00d25b' : type === 'error' ? '#ff4757' : type === 'warning' ? '#ffa502' : '#667eea';
+            
+            const colors = {
+                success: '#00d25b',
+                error: '#ff4757',
+                warning: '#ffa502',
+                info: '#667eea'
+            };
+            
+            notification.style.backgroundColor = colors[type] || colors.info;
             notification.textContent = message;
             document.body.appendChild(notification);
+            
             setTimeout(() => {
                 notification.style.animation = 'slideOutRight 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
@@ -879,7 +918,7 @@
             return div.innerHTML;
         }
 
-        // ================== EDITOR FUNCTIONS ==================
+        // ==================== EDITOR FUNCTIONS ====================
         function updateEditor() {
             const editor = document.getElementById('codeEditor');
             const lineNumbers = document.getElementById('lineNumbers');
@@ -888,12 +927,12 @@
             
             let lineNumbersHtml = '';
             for (let i = 1; i <= lineCount; i++) {
-                lineNumbersHtml += '<div>' + i + '</div>';
+                lineNumbersHtml += `<div>${i}</div>`;
             }
             lineNumbers.innerHTML = lineNumbersHtml;
             
             const words = editor.value.trim().split(/\s+/).filter(w => w.length > 0).length;
-            document.getElementById('wordCount').textContent = lineCount + ' dong | ' + words + ' tu';
+            document.getElementById('wordCount').textContent = `${lineCount} dòng | ${words} từ`;
         }
 
         function syncScroll() {
@@ -919,11 +958,95 @@
             document.getElementById('scriptPassword').value = '';
             document.getElementById('codeEditor').value = '';
             currentEditingId = null;
-            document.querySelector('.btn-success').innerHTML = 'Luu script';
+            resetRawState();
+            updateSaveButtonState();
             updateEditor();
+            showNotification('Đã reset editor!', 'info');
         }
 
-        // ================== AUTH FUNCTIONS ==================
+        function updateSaveButtonState() {
+            const btn = document.getElementById('saveAndRawBtn');
+            const btnText = document.getElementById('saveAndRawBtnText');
+            const rawContainer = document.getElementById('rawStatusContainer');
+            
+            if (currentRawId) {
+                // Đã có RAW -> Hiển thị nút "Lưu & Cập nhật RAW"
+                btn.className = 'btn btn-warning';
+                btnText.textContent = 'Lưu & Cập nhật RAW';
+                btn.querySelector('i').className = 'fas fa-sync-alt';
+                
+                // Hiển thị RAW status
+                rawContainer.style.display = 'block';
+                document.getElementById('rawStatusBadge').className = 'raw-status-badge active';
+                document.getElementById('rawStatusText').textContent = 'RAW: ' + currentRawId;
+            } else {
+                // Chưa có RAW -> Hiển thị nút "Lưu & Tạo RAW"
+                btn.className = 'btn btn-primary';
+                btnText.textContent = 'Lưu & Tạo RAW';
+                btn.querySelector('i').className = 'fas fa-save';
+                
+                // Ẩn RAW status
+                rawContainer.style.display = 'none';
+            }
+        }
+
+        function resetRawState() {
+            currentRawId = null;
+            currentRawUrl = null;
+            if (currentUser) {
+                localStorage.removeItem('currentRaw_' + currentUser.uid);
+            }
+            updateSaveButtonState();
+        }
+
+        function restoreRawState() {
+            if (currentUser) {
+                const savedRaw = localStorage.getItem('currentRaw_' + currentUser.uid);
+                if (savedRaw) {
+                    try {
+                        const rawData = JSON.parse(savedRaw);
+                        if (Date.now() - rawData.timestamp < 7 * 24 * 60 * 60 * 1000) {
+                            currentRawId = rawData.name;
+                            currentRawUrl = rawData.url;
+                            
+                            // Khôi phục code vào editor nếu có
+                            if (rawData.code) {
+                                document.getElementById('codeEditor').value = rawData.code;
+                                updateEditor();
+                            }
+                            if (rawData.scriptName) {
+                                document.getElementById('scriptName').value = rawData.scriptName;
+                            }
+                            if (rawData.scriptPassword) {
+                                document.getElementById('scriptPassword').value = rawData.scriptPassword;
+                            }
+                        }
+                    } catch(e) {
+                        console.error('Error restoring RAW state:', e);
+                    }
+                }
+            }
+            updateSaveButtonState();
+        }
+
+        function copyRawUrl() {
+            if (currentRawUrl) {
+                navigator.clipboard.writeText(currentRawUrl).then(() => {
+                    showNotification('Đã copy RAW URL!', 'success');
+                });
+            } else {
+                showNotification('Chưa có RAW URL!', 'warning');
+            }
+        }
+
+        function resetRaw() {
+            if (confirm('Bạn có chắc muốn tạo RAW mới? RAW cũ sẽ không thể cập nhật được nữa.')) {
+                resetRawState();
+                showNotification('Đã reset! Có thể tạo RAW mới.', 'info');
+            }
+        }
+
+        // ==================== AUTH FUNCTIONS ====================
         function openLoginModal() {
             document.getElementById('authModal').classList.add('active');
             switchTab('login');
@@ -969,7 +1092,7 @@
             const password = document.getElementById('loginPassword').value;
 
             if (!email || !password) {
-                showNotification('Vui long nhap day du!', 'warning');
+                showNotification('Vui lòng nhập đầy đủ!', 'warning');
                 return;
             }
 
@@ -987,13 +1110,13 @@
                     closeAuthModal();
                     loadScripts();
                     restoreRawState();
-                    showNotification('Chao mung ' + currentUser.name + '!', 'success');
+                    showNotification(`Chào mừng ${currentUser.name}!`, 'success');
                 })
                 .catch(error => {
-                    let msg = 'Dang nhap that bai!';
-                    if (error.code === 'auth/user-not-found') msg = 'Tai khoan khong ton tai!';
-                    if (error.code === 'auth/wrong-password') msg = 'Mat khau sai!';
-                    if (error.code === 'auth/invalid-email') msg = 'Email khong hop le!';
+                    let msg = 'Đăng nhập thất bại!';
+                    if (error.code === 'auth/user-not-found') msg = 'Tài khoản không tồn tại!';
+                    if (error.code === 'auth/wrong-password') msg = 'Mật khẩu sai!';
+                    if (error.code === 'auth/invalid-email') msg = 'Email không hợp lệ!';
                     showNotification(msg, 'error');
                 });
         }
@@ -1006,15 +1129,15 @@
             const confirm = document.getElementById('confirmPassword').value;
 
             if (password !== confirm) {
-                showNotification('Mat khau xac nhan khong khop!', 'error');
+                showNotification('Mật khẩu xác nhận không khớp!', 'error');
                 return;
             }
             if (!name || !email || !password) {
-                showNotification('Vui long nhap day du!', 'warning');
+                showNotification('Vui lòng nhập đầy đủ!', 'warning');
                 return;
             }
             if (password.length < 6) {
-                showNotification('Mat khau phai co it nhat 6 ky tu!', 'warning');
+                showNotification('Mật khẩu phải có ít nhất 6 ký tự!', 'warning');
                 return;
             }
 
@@ -1032,13 +1155,13 @@
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     updateUI();
                     closeAuthModal();
-                    showNotification('Dang ky thanh cong! Chao ' + name, 'success');
+                    showNotification('Đăng ký thành công! Chào ' + name, 'success');
                     loadScripts();
                 })
                 .catch(error => {
-                    let msg = 'Dang ky that bai!';
-                    if (error.code === 'auth/email-already-in-use') msg = 'Email da duoc su dung!';
-                    if (error.code === 'auth/weak-password') msg = 'Mat khau qua yeu!';
+                    let msg = 'Đăng ký thất bại!';
+                    if (error.code === 'auth/email-already-in-use') msg = 'Email đã được sử dụng!';
+                    if (error.code === 'auth/weak-password') msg = 'Mật khẩu quá yếu!';
                     showNotification(msg, 'error');
                 });
         }
@@ -1051,9 +1174,10 @@
                 loadScripts();
                 resetForms();
                 closeAuthModal();
-                showNotification('Da dang xuat!', 'info');
+                resetRawState();
+                showNotification('Đã đăng xuất!', 'info');
             }).catch(error => {
-                showNotification('Loi khi dang xuat!', 'error');
+                showNotification('Lỗi khi đăng xuất!', 'error');
             });
         }
 
@@ -1088,7 +1212,7 @@
                 loginBtn.style.display = 'none';
                 username.textContent = currentUser.name;
                 if (currentUser.photoURL) {
-                    userAvatar.innerHTML = '<img src="' + currentUser.photoURL + '" alt="Avatar">';
+                    userAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="Avatar">`;
                 } else {
                     userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
                 }
@@ -1100,11 +1224,11 @@
             }
         }
 
-        // ================== SCRIPT MANAGEMENT ==================
-        function saveScript() {
+        // ==================== SCRIPT MANAGEMENT ====================
+        function saveScriptToLocal() {
             if (!currentUser) {
-                showNotification('Vui long dang nhap de luu script!', 'warning');
-                return;
+                showNotification('Vui lòng đăng nhập để lưu script!', 'warning');
+                return false;
             }
 
             const name = document.getElementById('scriptName').value.trim();
@@ -1112,11 +1236,11 @@
             const content = document.getElementById('codeEditor').value;
 
             if (!name || !password || !content) {
-                showNotification('Vui long nhap day du!', 'warning');
-                return;
+                showNotification('Vui lòng nhập đầy đủ!', 'warning');
+                return false;
             }
 
-            const userScriptsKey = 'scripts_' + currentUser.uid;
+            const userScriptsKey = `scripts_${currentUser.uid}`;
             const userScripts = JSON.parse(localStorage.getItem(userScriptsKey) || '[]');
 
             if (currentEditingId) {
@@ -1136,26 +1260,165 @@
                     createdAt: new Date().toISOString()
                 };
                 userScripts.push(newScript);
+                currentEditingId = newScript.id;
             }
 
             localStorage.setItem(userScriptsKey, JSON.stringify(userScripts));
             localStorage.setItem(SYNC_KEY, Date.now().toString());
             
             loadScripts();
-            clearEditor();
-            currentEditingId = null;
-            document.querySelector('.btn-success').innerHTML = 'Luu script';
-            showNotification('Luu script thanh cong!', 'success');
-            updateSyncStatus('Da dong bo');
+            updateSyncStatus('Script đã lưu local');
+            return true;
         }
 
-        function loadScripts(filterText = '') {
-            if (!currentUser) {
-                document.getElementById('scriptsGrid').innerHTML = '<p style="text-align: center; color: #999; grid-column: 1/-1;">Vui long dang nhap de xem script cua ban</p>';
+        // ==================== GỘP NÚT: LƯU + TẠO/CẬP NHẬT RAW ====================
+        async function saveScriptAndRaw() {
+            const content = document.getElementById('codeEditor').value;
+            const scriptName = document.getElementById('scriptName').value.trim();
+            const scriptPassword = document.getElementById('scriptPassword').value.trim();
+
+            // Validate
+            if (!content.trim()) {
+                showNotification('Vui lòng nhập code!', 'warning');
                 return;
             }
 
-            const userScriptsKey = 'scripts_' + currentUser.uid;
+            if (!scriptName) {
+                showNotification('Vui lòng đặt tên cho script!', 'warning');
+                return;
+            }
+
+            if (!scriptPassword) {
+                showNotification('Vui lòng đặt mật khẩu cho script!', 'warning');
+                return;
+            }
+
+            if (!currentUser) {
+                showNotification('Vui lòng đăng nhập!', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('saveAndRawBtn');
+            const btnText = document.getElementById('saveAndRawBtnText');
+            const originalHTML = btn.innerHTML;
+            
+            btn.disabled = true;
+            
+            try {
+                // Bước 1: Luôn lưu script vào localStorage
+                const saved = saveScriptToLocal();
+                if (!saved) {
+                    btn.disabled = false;
+                    return;
+                }
+
+                updateSyncStatus('Đang lưu script...', true);
+                showNotification('Đã lưu script vào local!', 'success');
+
+                // Bước 2: Tạo hoặc cập nhật RAW
+                if (currentRawId) {
+                    // CẬP NHẬT RAW
+                    btn.innerHTML = '<span class="loading-spinner"></span> Đang cập nhật RAW...';
+                    
+                    const response = await fetch('/api/raw', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: currentRawId, code: content })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Cập nhật localStorage
+                        localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
+                            name: currentRawId,
+                            url: currentRawUrl,
+                            code: content,
+                            scriptName: scriptName,
+                            scriptPassword: scriptPassword,
+                            timestamp: Date.now()
+                        }));
+
+                        showNotification('✅ RAW đã được cập nhật!', 'success');
+                        updateSyncStatus('RAW đã cập nhật');
+                        
+                        // Mở RAW trong tab mới
+                        setTimeout(() => window.open(currentRawUrl, '_blank'), 100);
+                    } else {
+                        throw new Error(data.error || 'Cập nhật thất bại');
+                    }
+                } else {
+                    // TẠO RAW MỚI
+                    btn.innerHTML = '<span class="loading-spinner"></span> Đang tạo RAW...';
+                    
+                    const response = await fetch('/api/raw', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code: content, name: scriptName })
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw new Error(err.error || 'Lỗi server');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        currentRawId = data.name;
+                        currentRawUrl = data.raw;
+                        
+                        // Lưu RAW state
+                        localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
+                            name: data.name,
+                            url: currentRawUrl,
+                            code: content,
+                            scriptName: scriptName,
+                            scriptPassword: scriptPassword,
+                            timestamp: Date.now()
+                        }));
+
+                        // Copy URL vào clipboard
+                        await navigator.clipboard.writeText(data.raw);
+                        
+                        showNotification('✅ Đã tạo RAW: ' + data.raw, 'success');
+                        updateSyncStatus('RAW đã tạo');
+                        
+                        // Mở RAW trong tab mới
+                        setTimeout(() => window.open(data.raw, '_blank'), 100);
+                    }
+                }
+
+                // Cập nhật UI
+                updateSaveButtonState();
+                loadScripts();
+                
+            } catch (err) {
+                console.error('Lỗi RAW:', err);
+                showNotification('Lỗi: ' + err.message, 'error');
+                updateSyncStatus('Lỗi RAW');
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                updateSaveButtonState();
+                
+                // Reset sync status sau 2 giây
+                setTimeout(() => {
+                    if (document.getElementById('syncText').textContent.includes('RAW')) {
+                        updateSyncStatus('Sẵn sàng');
+                    }
+                }, 2000);
+            }
+        }
+
+        // ==================== SCRIPT LIBRARY ====================
+        function loadScripts(filterText = '') {
+            if (!currentUser) {
+                document.getElementById('scriptsGrid').innerHTML = '<p style="text-align: center; color: #999; grid-column: 1/-1;">Vui lòng đăng nhập để xem script của bạn</p>';
+                return;
+            }
+
+            const userScriptsKey = `scripts_${currentUser.uid}`;
             let userScripts = JSON.parse(localStorage.getItem(userScriptsKey) || '[]');
             
             if (filterText) {
@@ -1165,32 +1428,42 @@
             }
 
             if (userScripts.length === 0) {
-                document.getElementById('scriptsGrid').innerHTML = '<p style="text-align: center; color: #999; grid-column: 1/-1;">' + (filterText ? 'Khong tim thay script nao.' : 'Ban chua co script nao. Hay tao script dau tien!') + '</p>';
+                document.getElementById('scriptsGrid').innerHTML = `<p style="text-align: center; color: #999; grid-column: 1/-1;">${filterText ? 'Không tìm thấy script nào.' : 'Bạn chưa có script nào. Hãy tạo script đầu tiên!'}</p>`;
                 return;
             }
 
             const grid = document.getElementById('scriptsGrid');
-            grid.innerHTML = userScripts.map(script => 
-                '<div class="script-card">' +
-                    '<div class="script-card-header">' +
-                        '<h3>' + escapeHtml(script.name) + '</h3>' +
-                        '<div class="script-menu">' +
-                            '<button class="menu-trigger" onclick="toggleMenu(\'' + script.id + '\')">&#8942;</button>' +
-                            '<div class="menu-dropdown" id="menu-' + script.id + '">' +
-                                '<div class="menu-item" onclick="renameScript(\'' + script.id + '\')">Doi ten</div>' +
-                                '<div class="menu-item delete" onclick="deleteScript(\'' + script.id + '\')">Xoa</div>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="script-preview">' +
-                        '<code>' + escapeHtml(script.content.substring(0, 100)) + (script.content.length > 100 ? '...' : '') + '</code>' +
-                    '</div>' +
-                    '<div class="script-card-footer">' +
-                        '<button class="btn btn-outline" onclick="editScript(\'' + script.id + '\')">Sua</button>' +
-                        '<button class="btn btn-primary" onclick="copyScriptContent(\'' + script.id + '\')">Copy</button>' +
-                    '</div>' +
-                '</div>'
-            ).join('');
+            grid.innerHTML = userScripts.map(script => `
+                <div class="script-card">
+                    <div class="script-card-header">
+                        <h3>${escapeHtml(script.name)}</h3>
+                        <div class="script-menu">
+                            <button class="menu-trigger" onclick="toggleMenu('${script.id}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="menu-dropdown" id="menu-${script.id}">
+                                <div class="menu-item" onclick="renameScript('${script.id}')">
+                                    <i class="fas fa-edit"></i> Đổi tên
+                                </div>
+                                <div class="menu-item delete" onclick="deleteScript('${script.id}')">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="script-preview">
+                        <code>${escapeHtml(script.content.substring(0, 100))}${script.content.length > 100 ? '...' : ''}</code>
+                    </div>
+                    <div class="script-card-footer">
+                        <button class="btn btn-outline" onclick="editScript('${script.id}')">
+                            <i class="fas fa-edit"></i> Sửa
+                        </button>
+                        <button class="btn btn-primary" onclick="copyScriptContent('${script.id}')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function filterScripts() {
@@ -1207,7 +1480,7 @@
         }
 
         function editScript(scriptId) {
-            const userScriptsKey = 'scripts_' + currentUser.uid;
+            const userScriptsKey = `scripts_${currentUser.uid}`;
             const userScripts = JSON.parse(localStorage.getItem(userScriptsKey) || '[]');
             const script = userScripts.find(s => s.id === scriptId);
             
@@ -1217,16 +1490,15 @@
                 document.getElementById('codeEditor').value = script.content;
                 updateEditor();
                 currentEditingId = scriptId;
-                document.querySelector('.btn-success').innerHTML = 'Cap nhat script';
             }
             
             document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.remove('active'));
         }
 
         function renameScript(scriptId) {
-            const newName = prompt('Nhap ten moi cho script:');
+            const newName = prompt('Nhập tên mới cho script:');
             if (newName && newName.trim()) {
-                const userScriptsKey = 'scripts_' + currentUser.uid;
+                const userScriptsKey = `scripts_${currentUser.uid}`;
                 const userScripts = JSON.parse(localStorage.getItem(userScriptsKey) || '[]');
                 const scriptIndex = userScripts.findIndex(s => s.id === scriptId);
                 if (scriptIndex !== -1) {
@@ -1234,16 +1506,16 @@
                     localStorage.setItem(userScriptsKey, JSON.stringify(userScripts));
                     localStorage.setItem(SYNC_KEY, Date.now().toString());
                     loadScripts();
-                    showNotification('Da doi ten script!', 'success');
-                    updateSyncStatus('Da dong bo');
+                    showNotification('Đã đổi tên script!', 'success');
+                    updateSyncStatus('Đã đồng bộ');
                 }
             }
             document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.remove('active'));
         }
 
         function deleteScript(scriptId, showNotif = true) {
-            if (confirm('Ban co chac muon xoa script nay?')) {
-                const userScriptsKey = 'scripts_' + currentUser.uid;
+            if (confirm('Bạn có chắc muốn xóa script này?')) {
+                const userScriptsKey = `scripts_${currentUser.uid}`;
                 const userScripts = JSON.parse(localStorage.getItem(userScriptsKey) || '[]');
                 const updatedScripts = userScripts.filter(s => s.id !== scriptId);
                 localStorage.setItem(userScriptsKey, JSON.stringify(updatedScripts));
@@ -1253,193 +1525,31 @@
                 
                 loadScripts();
                 if (showNotif) {
-                    showNotification('Da xoa script!', 'info');
-                    updateSyncStatus('Da dong bo');
+                    showNotification('Đã xóa script!', 'info');
+                    updateSyncStatus('Đã đồng bộ');
                 }
             }
             document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.remove('active'));
         }
 
         function copyScriptContent(scriptId) {
-            const userScriptsKey = 'scripts_' + currentUser.uid;
+            const userScriptsKey = `scripts_${currentUser.uid}`;
             const userScripts = JSON.parse(localStorage.getItem(userScriptsKey) || '[]');
             const script = userScripts.find(s => s.id === scriptId);
             if (script) {
                 navigator.clipboard.writeText(script.content).then(() => {
-                    showNotification('Da copy script vao clipboard!', 'success');
+                    showNotification('Đã copy script vào clipboard!', 'success');
                 });
             }
         }
 
-        // ================== VERCEL RAW API FUNCTIONS (GOP NUT) ==================
-        async function createOrUpdateRaw() {
-            const content = document.getElementById('codeEditor').value;
-            const scriptName = document.getElementById('scriptName').value.trim();
-
-            if (!content.trim()) {
-                showNotification('Vui long nhap code!', 'warning');
-                return;
-            }
-
-            if (!scriptName) {
-                showNotification('Vui long dat ten cho script!', 'warning');
-                return;
-            }
-
-            const rawBtn = document.getElementById('createRawBtn');
-            const isUpdating = rawBtn.innerHTML.includes('Cap nhat');
-            
-            rawBtn.innerHTML = '<span class="loading-spinner"></span>' + (isUpdating ? 'Dang cap nhat...' : 'Dang tao...');
-            rawBtn.disabled = true;
-            updateSyncStatus(isUpdating ? 'Dang cap nhat RAW...' : 'Dang tao RAW...', true);
-
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-                let response;
-                
-                if (isUpdating && currentRawId && currentAccessKey) {
-                    response = await fetch('/api/raw', {
-                        method: 'PUT',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            name: currentRawId, 
-                            code: content,
-                            accessKey: currentAccessKey
-                        }),
-                        signal: controller.signal
-                    });
-                } else {
-                    response = await fetch('/api/raw', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ code: content, name: scriptName }),
-                        signal: controller.signal
-                    });
-                }
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.error || 'HTTP ' + response.status);
-                }
-
-                const data = await response.json();
-
-                if (data.success) {
-                    currentRawId = data.name;
-                    currentRawUrl = data.raw;
-                    
-                    if (data.accessKey) {
-                        currentAccessKey = data.accessKey;
-                        showKeyModal(data.accessKey);
-                    }
-                    
-                    if (currentUser) {
-                        localStorage.setItem('currentRaw_' + currentUser.uid, JSON.stringify({
-                            name: currentRawId,
-                            url: currentRawUrl,
-                            accessKey: currentAccessKey,
-                            code: content,
-                            timestamp: Date.now()
-                        }));
-                    }
-
-                    rawBtn.innerHTML = 'Cap nhat RAW';
-                    document.getElementById('resetRawBtn').style.display = 'inline-flex';
-                    
-                    await navigator.clipboard.writeText(data.raw);
-                    showNotification((isUpdating ? 'Da cap nhat' : 'Da tao') + ' RAW! URL da duoc copy.', 'success');
-                    updateSyncStatus('RAW san sang');
-                    
-                    setTimeout(() => window.open(data.raw, '_blank'), 500);
-                } else {
-                    throw new Error('That bai');
-                }
-            } catch (err) {
-                console.error('Loi RAW:', err);
-                let errorMsg = 'Loi! ';
-                if (err.name === 'AbortError') errorMsg += 'Timeout.';
-                else if (err.message.includes('Failed to fetch')) errorMsg += 'Khong ket noi duoc server.';
-                else errorMsg += err.message;
-                showNotification(errorMsg, 'error');
-                updateSyncStatus('That bai');
-            } finally {
-                rawBtn.disabled = false;
-                setTimeout(() => {
-                    if (document.getElementById('syncText').innerHTML.includes('Dang')) {
-                        updateSyncStatus('San sang');
-                    }
-                }, 2000);
-            }
-        }
-
-        function showKeyModal(key) {
-            document.getElementById('keyDisplay').textContent = key;
-            document.getElementById('keyModal').classList.add('active');
-        }
-
-        function copyKeyFromModal() {
-            const key = document.getElementById('keyDisplay').textContent;
-            navigator.clipboard.writeText(key).then(() => {
-                showNotification('Key da duoc copy!', 'success');
-            });
-        }
-
-        function resetRaw() {
-            if (confirm('Ban co chac muon tao RAW moi? RAW cu se khong the cap nhat neu khong co key.')) {
-                currentRawId = null;
-                currentRawUrl = null;
-                currentAccessKey = null;
-                if (currentUser) {
-                    localStorage.removeItem('currentRaw_' + currentUser.uid);
-                }
-                
-                const createBtn = document.getElementById('createRawBtn');
-                createBtn.innerHTML = 'Tao RAW';
-                
-                document.getElementById('resetRawBtn').style.display = 'none';
-                showNotification('Da reset! Co the tao RAW moi.', 'info');
-            }
-        }
-
-        function restoreRawState() {
-            if (currentUser) {
-                const savedRaw = localStorage.getItem('currentRaw_' + currentUser.uid);
-                if (savedRaw) {
-                    try {
-                        const rawData = JSON.parse(savedRaw);
-                        if (Date.now() - rawData.timestamp < 7 * 24 * 60 * 60 * 1000) {
-                            currentRawId = rawData.name;
-                            currentRawUrl = rawData.url;
-                            currentAccessKey = rawData.accessKey;
-                            
-                            const createBtn = document.getElementById('createRawBtn');
-                            createBtn.innerHTML = 'Cap nhat RAW';
-                            
-                            document.getElementById('resetRawBtn').style.display = 'inline-flex';
-                        }
-                    } catch(e) {
-                        console.error('Error restoring RAW state:', e);
-                    }
-                }
-            }
-        }
-
+        // ==================== DOWNLOAD ====================
         function downloadProtectedFile() {
             const content = document.getElementById('codeEditor').value;
             const fileName = (document.getElementById('scriptName').value.trim() || 'script') + '.lua';
 
             if (!content.trim()) {
-                showNotification('Chua co code de tai!', 'warning');
+                showNotification('Chưa có code để tải!', 'warning');
                 return;
             }
 
@@ -1454,22 +1564,26 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
             }, 100);
-            showNotification('Dang tai file ve may!', 'success');
+            showNotification('Đang tải file về máy!', 'success');
         }
 
-        // ================== INIT ==================
+        // ==================== INIT ====================
         window.onclick = function(event) {
-            const authModal = document.getElementById('authModal');
-            const keyModal = document.getElementById('keyModal');
-            if (event.target === authModal) closeAuthModal();
-            if (event.target === keyModal) keyModal.classList.remove('active');
+            const modal = document.getElementById('authModal');
+            if (event.target === modal) closeAuthModal();
+            
+            // Close menu dropdowns when clicking outside
+            if (!event.target.closest('.script-menu')) {
+                document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.remove('active'));
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             loadScripts();
             updateEditor();
             resetForms();
-            updateSyncStatus('San sang');
+            updateSyncStatus('Sẵn sàng');
+            updateSaveButtonState();
             if (currentUser) restoreRawState();
         });
     </script>
