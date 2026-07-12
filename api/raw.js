@@ -15,7 +15,7 @@ export default function handler(req, res) {
     // POST - Tạo RAW mới
     if (req.method === 'POST') {
         try {
-            const { code } = req.body;
+            const { code, name } = req.body;
             
             if (!code || !code.trim()) {
                 return res.status(400).json({ 
@@ -26,19 +26,35 @@ export default function handler(req, res) {
 
             const id = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
             
+            // Tạo slug từ tên (nếu có)
+            const scriptName = name && name.trim() ? name.trim() : id;
+            const nameSlug = scriptName
+                .toLowerCase()
+                .replace(/[^a-z0-9\u00C0-\u1EF9\s-]/g, '') // Cho phép tiếng Việt
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '') || 'script';
+            
             // Lưu vào global
             global.scripts[id] = {
                 code: code,
+                name: scriptName,
+                nameSlug: nameSlug,
                 created: Date.now(),
                 lastAccessed: Date.now()
             };
 
-            console.log(`✅ Script created: ${id} | Total scripts: ${Object.keys(global.scripts).length}`);
+            console.log(`✅ Script created: ${id} (${scriptName}) | Total scripts: ${Object.keys(global.scripts).length}`);
 
+            // Trả về URL với cả ID và tên
+            const rawUrl = `https://${req.headers.host}/api/raw?id=${id}&name=${encodeURIComponent(nameSlug)}`;
+            
             return res.status(200).json({
                 success: true,
-                raw: `https://${req.headers.host}/api/raw?id=${id}`,
-                id: id
+                raw: rawUrl,
+                id: id,
+                name: scriptName,
+                nameSlug: nameSlug
             });
         } catch (error) {
             console.error('POST Error:', error);
@@ -52,7 +68,7 @@ export default function handler(req, res) {
     // PUT - Cập nhật RAW đã tồn tại
     if (req.method === 'PUT') {
         try {
-            const { id, code } = req.body;
+            const { id, code, name } = req.body;
             
             if (!id || !global.scripts[id]) {
                 return res.status(404).json({ 
@@ -68,16 +84,35 @@ export default function handler(req, res) {
                 });
             }
             
+            // Cập nhật code
             global.scripts[id].code = code;
             global.scripts[id].updated = Date.now();
             global.scripts[id].lastAccessed = Date.now();
             
-            console.log(`✅ Script updated: ${id}`);
+            // Cập nhật tên nếu có
+            if (name && name.trim()) {
+                const scriptName = name.trim();
+                global.scripts[id].name = scriptName;
+                global.scripts[id].nameSlug = scriptName
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\u00C0-\u1EF9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '') || 'script';
+            }
+            
+            const currentName = global.scripts[id].nameSlug || 'script';
+            const rawUrl = `https://${req.headers.host}/api/raw?id=${id}&name=${encodeURIComponent(currentName)}`;
+            
+            console.log(`✅ Script updated: ${id} (${global.scripts[id].name})`);
 
             return res.status(200).json({
                 success: true,
                 message: 'Script updated successfully!',
-                raw: `https://${req.headers.host}/api/raw?id=${id}`
+                raw: rawUrl,
+                id: id,
+                name: global.scripts[id].name,
+                nameSlug: currentName
             });
         } catch (error) {
             console.error('PUT Error:', error);
@@ -92,8 +127,9 @@ export default function handler(req, res) {
     if (req.method === 'DELETE') {
         const { id } = req.query;
         if (id && global.scripts[id]) {
+            const scriptName = global.scripts[id].name || id;
             delete global.scripts[id];
-            console.log(`🗑️ Script deleted: ${id}`);
+            console.log(`🗑️ Script deleted: ${id} (${scriptName})`);
             return res.status(200).json({ success: true, message: 'Script deleted' });
         }
         return res.status(404).json({ success: false, error: 'Script not found' });
@@ -101,7 +137,7 @@ export default function handler(req, res) {
 
     // GET - Xem RAW
     if (req.method === 'GET') {
-        const { id } = req.query;
+        const { id, name } = req.query;
 
         // Nếu không có id -> trả về trang chủ
         if (!id) {
@@ -136,7 +172,7 @@ export default function handler(req, res) {
         // Nếu là trình duyệt và muốn HTML -> hiển thị trang bảo vệ
         if (isBrowser && wantsHTML) {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
-            return res.send(getProtectionPage());
+            return res.send(getProtectionPage(id, global.scripts[id].name));
         }
 
         // Executor hoặc tool -> trả về code thật
@@ -238,7 +274,7 @@ function getWelcomePage() {
             <div class="endpoint">
                 <span class="method post">POST</span>
                 <span style="color:#ccc">/api/raw</span>
-                <span style="color:#666"> - Create new script</span>
+                <span style="color:#666"> - Create new script (with name)</span>
             </div>
             <div class="endpoint">
                 <span class="method put">PUT</span>
@@ -247,7 +283,7 @@ function getWelcomePage() {
             </div>
             <div class="endpoint">
                 <span class="method get">GET</span>
-                <span style="color:#ccc">/api/raw?id=xxx</span>
+                <span style="color:#ccc">/api/raw?id=xxx&name=xxx</span>
                 <span style="color:#666"> - View script</span>
             </div>
             <div class="endpoint">
@@ -263,13 +299,15 @@ function getWelcomePage() {
 }
 
 // Trang bảo vệ - hiển thị khi truy cập bằng trình duyệt
-function getProtectionPage() {
+function getProtectionPage(id, scriptName) {
+    const displayName = scriptName || id || 'Unknown Script';
+    
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APEX HUB - Protected</title>
+    <title>APEX HUB - Protected: ${escapeHtml(displayName)}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -644,6 +682,11 @@ function getProtectionPage() {
                 <div class="divider"></div>
                 
                 <div class="info-section">
+                    <div class="info-label">Script Name</div>
+                    <div class="info-value">${escapeHtml(displayName)}</div>
+                </div>
+                
+                <div class="info-section">
                     <div class="info-label">Access URL</div>
                     <div class="info-value">https://code-editor-apex-ccmf.vercel.app/</div>
                 </div>
@@ -696,6 +739,17 @@ function getProtectionPage() {
     </script>
 </body>
 </html>`;
+}
+
+// Hàm escape HTML để tránh XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 // Trang lỗi 404
