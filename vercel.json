@@ -13,8 +13,8 @@
             "maxDuration": 10
         },
         "api/raw.js": {
-            "memory": 512,
-            "maxDuration": 15
+            "memory": 1024,
+            "maxDuration": 30
         },
         "api/verify.js": {
             "memory": 256,
