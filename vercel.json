@@ -14,7 +14,7 @@
         },
         "api/raw.js": {
             "memory": 512,
-            "maxDuration": 15
+            "maxDuration": 30
         },
         "api/verify.js": {
             "memory": 256,
@@ -30,10 +30,6 @@
         }
     },
     "rewrites": [
-        {
-            "source": "/about",
-            "destination": "/about.html"
-        },
         {
             "source": "/load",
             "destination": "/api/load"
