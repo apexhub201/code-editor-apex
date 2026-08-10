@@ -3,23 +3,28 @@ import { generateChallenge } from './_lib/crypto.js';
 import { checkRateLimit, isIPBanned, getClientIP } from './_lib/security.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const clientIP = getClientIP(req);
 
     if (await isIPBanned(clientIP)) {
-      return res.status(403).json({ success: false, error: 'Access denied' });
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     if (!await checkRateLimit(clientIP)) {
-      return res.status(429).json({ success: false, error: 'Rate limit exceeded' });
+      return res.status(429).json({ error: 'Too many requests' });
     }
 
     const { token, answer, name, requestChallenge } = req.body;
@@ -30,7 +35,6 @@ export default async function handler(req, res) {
       await createChallenge(newChallenge.token, newChallenge.answer);
 
       return res.status(200).json({
-        success: true,
         challenge: {
           question: newChallenge.question,
           token: newChallenge.token
@@ -38,7 +42,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate challenge and get script
+    // Validate + get script
     if (token && answer && name) {
       const isValid = await validateChallenge(token, answer);
       if (isValid) {
@@ -46,40 +50,24 @@ export default async function handler(req, res) {
         if (scriptData) {
           return res.status(200).json({
             success: true,
-            valid: true,
-            code: scriptData.code,
-            name: name
+            code: scriptData.code
           });
         }
-        return res.status(404).json({
-          success: false,
-          valid: true,
-          error: 'Script not found'
-        });
+        return res.status(404).json({ error: 'Not found' });
       }
-      return res.status(403).json({
-        success: false,
-        valid: false,
-        error: 'Invalid challenge'
-      });
+      return res.status(403).json({ error: 'Invalid' });
     }
 
-    // Just validate challenge
+    // Validate only
     if (token && answer) {
       const isValid = await validateChallenge(token, answer);
-      return res.status(200).json({
-        success: true,
-        valid: isValid
-      });
+      return res.status(200).json({ valid: isValid });
     }
 
-    return res.status(400).json({
-      success: false,
-      error: 'Invalid request. Required: token + answer, or token + answer + name, or requestChallenge'
-    });
+    return res.status(400).json({ error: 'Bad request' });
 
   } catch (error) {
-    console.error('[APEX] Validate error:', error);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    console.error('validate error:', error.message);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
