@@ -10,7 +10,7 @@
       "maxDuration": 30
     },
     "api/raw.js": {
-      "memory": 1024,
+      "memory": 512,
       "maxDuration": 30
     },
     "api/obfuscate.js": {
