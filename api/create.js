@@ -3,33 +3,38 @@ import { phantomObfuscate } from './_lib/obfuscator.js';
 import { checkRateLimit, isIPBanned, getClientIP } from './_lib/security.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const clientIP = getClientIP(req);
 
     if (await isIPBanned(clientIP)) {
-      return res.status(403).json({ success: false, error: 'Access denied' });
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     if (!await checkRateLimit(clientIP)) {
-      return res.status(429).json({ success: false, error: 'Rate limit exceeded' });
+      return res.status(429).json({ error: 'Too many requests' });
     }
 
     const { code, name, uid } = req.body;
 
     if (!code || !code.trim()) {
-      return res.status(400).json({ success: false, error: 'Code is required' });
+      return res.status(400).json({ error: 'Code required' });
     }
 
     if (!name || !name.trim()) {
-      return res.status(400).json({ success: false, error: 'Name is required' });
+      return res.status(400).json({ error: 'Name required' });
     }
 
     const nameSlug = normalizeName(name);
@@ -37,12 +42,12 @@ export default async function handler(req, res) {
     const fullName = `${userId}_${nameSlug}`;
     const target = detectTarget(code);
 
-    // Apply obfuscation
+    // Obfuscate
     const obfuscatedCode = phantomObfuscate(code);
 
-    // Check if exists
-    const existingScript = await getScript(fullName);
-    if (existingScript) {
+    // Check exists
+    const existing = await getScript(fullName);
+    if (existing) {
       const newName = `${fullName}_${Date.now().toString(36)}`;
       await saveScript(newName, {
         code: obfuscatedCode,
@@ -58,8 +63,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         name: newName,
-        existed: true,
-        url: `/raw?name=${newName}`
+        existed: true
       });
     }
 
@@ -76,12 +80,11 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      name: fullName,
-      url: `/raw?name=${fullName}`
+      name: fullName
     });
 
   } catch (error) {
-    console.error('[APEX] Create error:', error);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    console.error('create error:', error.message);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
