@@ -12,19 +12,12 @@ export function getDB() {
     const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
     if (!projectId || !clientEmail || !privateKey) {
-      console.error('Missing Firebase environment variables');
-      throw new Error('Firebase configuration incomplete');
+      throw new Error('Missing Firebase env vars');
     }
 
-    try {
-      initializeApp({
-        credential: cert({ projectId, clientEmail, privateKey })
-      });
-      console.log('[APEX] Firebase initialized successfully');
-    } catch (error) {
-      console.error('[APEX] Firebase init error:', error);
-      throw error;
-    }
+    initializeApp({
+      credential: cert({ projectId, clientEmail, privateKey })
+    });
   }
 
   db = getFirestore();
