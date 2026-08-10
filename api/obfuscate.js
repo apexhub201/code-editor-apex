@@ -1,12 +1,12 @@
 import { phantomObfuscate } from './_lib/obfuscator.js';
 import { generateLoader } from './_lib/crypto.js';
 import { saveScript, normalizeName, detectTarget } from './_lib/firestore.js';
-import { checkRateLimit, isIPBanned, getClientIP } from './_lib/security.js';
+import { getClientIP, checkRateLimit, isIPBanned, requireAuth } from './_lib/security.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Key');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   if (req.method === 'OPTIONS') {
@@ -24,25 +24,31 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    if (!await checkRateLimit(clientIP)) {
+    if (!await checkRateLimit(clientIP, 'obfuscate')) {
       return res.status(429).json({ error: 'Too many requests' });
     }
 
-    const { code, name, uid, save } = req.body;
+    const { code, name, save } = req.body || {};
 
-    if (!code || !code.trim()) {
+    if (!code || typeof code !== 'string' || code.length > 500000) {
       return res.status(400).json({ error: 'Code required' });
     }
 
-    // Obfuscate
     const obfuscatedCode = phantomObfuscate(code);
     const loader = generateLoader(code);
 
-    // Save to Firestore nếu yêu cầu
     if (save && name) {
+      const authUser = requireAuth(req);
+      if (!authUser) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      if (typeof name !== 'string' || name.length > 200) {
+        return res.status(400).json({ error: 'Bad request' });
+      }
+
       const nameSlug = normalizeName(name);
-      const userId = uid || 'public';
-      const fullName = `${userId}_${nameSlug}`;
+      const fullName = `${authUser}_${nameSlug}`;
       const target = detectTarget(code);
 
       await saveScript(fullName, {
@@ -51,7 +57,7 @@ export default async function handler(req, res) {
         name: name.trim(),
         created: Date.now(),
         lastAccessed: Date.now(),
-        owner: userId,
+        owner: authUser,
         target: target,
         obfuscated: true
       });
@@ -62,7 +68,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Return obfuscated
     return res.status(200).json({
       success: true,
       code: obfuscatedCode,
@@ -70,7 +75,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('obfuscate error:', error.message);
+    console.error('obfuscate error');
     return res.status(500).json({ error: 'Server error' });
   }
 }
