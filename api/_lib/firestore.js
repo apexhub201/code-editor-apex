@@ -1,47 +1,29 @@
 import { getDB } from './firebase.js';
 
-const SCRIPTS_COLLECTION = 'scripts';
-const CHALLENGES_COLLECTION = 'challenges';
+const SCRIPTS = 'scripts';
+const CHALLENGES = 'challenges';
 
-// Simple in-memory cache (clears on cold starts, which is fine for serverless)
-const memoryCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const cache = new Map();
+const TTL = 5 * 60 * 1000;
 
-// ============================================================
-// SCRIPT OPERATIONS
-// ============================================================
+// Scripts
 
 export async function getScript(name) {
-  // Check cache first
-  const cached = memoryCache.get(name);
-  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
-    return cached.data;
-  }
+  const c = cache.get(name);
+  if (c && Date.now() - c.ts < TTL) return c.data;
 
   try {
     const db = getDB();
-    const docRef = db.collection(SCRIPTS_COLLECTION).doc(name);
-    const doc = await docRef.get();
-
-    if (!doc.exists) {
-      return null;
-    }
+    const doc = await db.collection(SCRIPTS).doc(name).get();
+    if (!doc.exists) return null;
 
     const data = doc.data();
+    doc.ref.update({ lastAccessed: Date.now() }).catch(() => {});
 
-    // Update last accessed timestamp (non-blocking)
-    docRef.update({ lastAccessed: Date.now() }).catch(() => {});
-
-    // Cache the result
-    memoryCache.set(name, {
-      data: data,
-      timestamp: Date.now()
-    });
-
+    cache.set(name, { data, ts: Date.now() });
     return data;
 
-  } catch (error) {
-    console.error('[APEX] Get script error:', error);
+  } catch (e) {
     return null;
   }
 }
@@ -49,20 +31,15 @@ export async function getScript(name) {
 export async function saveScript(name, data) {
   try {
     const db = getDB();
-    const docRef = db.collection(SCRIPTS_COLLECTION).doc(name);
-
-    await docRef.set({
+    await db.collection(SCRIPTS).doc(name).set({
       ...data,
       updatedAt: Date.now()
     }, { merge: true });
 
-    // Invalidate cache
-    memoryCache.delete(name);
-
+    cache.delete(name);
     return true;
 
-  } catch (error) {
-    console.error('[APEX] Save script error:', error);
+  } catch (e) {
     return false;
   }
 }
@@ -70,62 +47,29 @@ export async function saveScript(name, data) {
 export async function deleteScript(name) {
   try {
     const db = getDB();
-    await db.collection(SCRIPTS_COLLECTION).doc(name).delete();
-
-    // Invalidate cache
-    memoryCache.delete(name);
-
+    await db.collection(SCRIPTS).doc(name).delete();
+    cache.delete(name);
     return true;
 
-  } catch (error) {
-    console.error('[APEX] Delete script error:', error);
+  } catch (e) {
     return false;
   }
 }
 
-export async function listScripts(owner = null, limit = 100) {
-  try {
-    const db = getDB();
-    let query = db.collection(SCRIPTS_COLLECTION);
-
-    if (owner) {
-      query = query.where('owner', '==', owner);
-    }
-
-    const snapshot = await query.orderBy('created', 'desc').limit(limit).get();
-    const scripts = [];
-
-    snapshot.forEach(doc => {
-      scripts.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-
-    return scripts;
-
-  } catch (error) {
-    console.error('[APEX] List scripts error:', error);
-    return [];
-  }
-}
-
-// ============================================================
-// CHALLENGE OPERATIONS
-// ============================================================
+// Challenges
 
 export async function createChallenge(token, answer) {
   try {
     const db = getDB();
-    await db.collection(CHALLENGES_COLLECTION).doc(token).set({
-      answer: answer,
+    await db.collection(CHALLENGES).doc(token).set({
+      answer,
       createdAt: Date.now(),
       used: false,
       attempts: 0
     });
     return true;
-  } catch (error) {
-    console.error('[APEX] Create challenge error:', error);
+
+  } catch (e) {
     return false;
   }
 }
@@ -133,78 +77,35 @@ export async function createChallenge(token, answer) {
 export async function validateChallenge(token, answer) {
   try {
     const db = getDB();
-    const docRef = db.collection(CHALLENGES_COLLECTION).doc(token);
-    const doc = await docRef.get();
+    const ref = db.collection(CHALLENGES).doc(token);
+    const doc = await ref.get();
 
-    if (!doc.exists) {
-      return false;
-    }
+    if (!doc.exists) return false;
 
-    const challenge = doc.data();
+    const c = doc.data();
     const now = Date.now();
 
-    // Check expiry (1 minute)
-    if (now - challenge.createdAt > 60000) {
-      return false;
-    }
+    if (now - c.createdAt > 60000) return false;
+    if (c.used) return false;
 
-    // Check if already used
-    if (challenge.used) {
-      return false;
-    }
+    await ref.update({ attempts: (c.attempts || 0) + 1 });
 
-    // Update attempts
-    await docRef.update({
-      attempts: (challenge.attempts || 0) + 1
-    });
-
-    // Validate answer
-    if (answer === challenge.answer) {
-      await docRef.update({ used: true });
+    if (answer === c.answer) {
+      await ref.update({ used: true });
       return true;
     }
 
     return false;
 
-  } catch (error) {
-    console.error('[APEX] Validate challenge error:', error);
+  } catch (e) {
     return false;
   }
 }
 
-export async function cleanupExpiredChallenges() {
-  try {
-    const db = getDB();
-    const now = Date.now();
-    const expiryTime = now - 300000; // 5 minutes ago
-
-    const snapshot = await db.collection(CHALLENGES_COLLECTION)
-      .where('createdAt', '<', expiryTime)
-      .limit(100)
-      .get();
-
-    const batch = db.batch();
-    snapshot.forEach(doc => {
-      batch.delete(doc.ref);
-    });
-
-    await batch.commit();
-    return snapshot.size;
-
-  } catch (error) {
-    console.error('[APEX] Cleanup challenges error:', error);
-    return 0;
-  }
-}
-
-// ============================================================
-// UTILITIES
-// ============================================================
+// Utils
 
 export function normalizeName(name) {
-  return name
-    .trim()
-    .toLowerCase()
+  return name.trim().toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
