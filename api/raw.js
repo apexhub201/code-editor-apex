@@ -3,14 +3,19 @@ import { checkRateLimit, isIPBanned, getClientIP, getExecutorUA, isBrowser } fro
 import { generateLoader, generateChallenge } from './_lib/crypto.js';
 
 export default async function handler(req, res) {
-  // Handle preflight
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only GET
+  // Chỉ GET
   if (req.method !== 'GET') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
@@ -19,63 +24,36 @@ export default async function handler(req, res) {
     const userAgent = req.headers['user-agent'] || '';
     const authKey = req.headers['x-auth-key'] || '';
 
-    // Security checks
+    // Security
     if (await isIPBanned(clientIP)) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access denied',
-        code: 'IP_BANNED'
-      });
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     if (!await checkRateLimit(clientIP)) {
-      return res.status(429).json({
-        success: false,
-        error: 'Rate limit exceeded',
-        code: 'RATE_LIMITED'
-      });
+      return res.status(429).json({ error: 'Too many requests' });
     }
 
-    // Welcome/health check
+    // Không có name -> response mặc định
     if (!name) {
-      return res.status(200).json({
-        success: true,
-        message: 'APEX HUB API Gateway v9',
-        version: '9.0.0',
-        status: 'operational',
-        endpoints: {
-          get: '/raw?name=<script>',
-          create: 'POST /raw',
-          update: 'PUT /raw',
-          delete: 'DELETE /raw?name=<script>',
-          validate: 'POST /api/validate',
-          obfuscate: 'POST /api/obfuscate'
-        }
-      });
+      return res.status(200).json({ status: 'ok' });
     }
 
-    // Get script
+    // Lấy script
     const scriptData = await getScript(name);
     if (!scriptData) {
-      return res.status(404).json({
-        success: false,
-        error: 'Script not found',
-        code: 'NOT_FOUND'
-      });
+      return res.status(404).json({ error: 'Not found' });
     }
 
-    // Master key check (from environment variable)
+    // Master key check
     const MASTER_KEY = process.env.APEX_MASTER_KEY;
     const hasValidKey = (MASTER_KEY && (key === MASTER_KEY || authKey === MASTER_KEY));
     const wantsRaw = raw === 'true';
 
-    // Return raw code if authenticated or explicitly requested
+    // Raw code
     if (hasValidKey || wantsRaw) {
       return res.status(200).json({
         success: true,
-        code: scriptData.code,
-        obfuscated: scriptData.obfuscated || false,
-        name: name
+        code: scriptData.code
       });
     }
 
@@ -85,32 +63,25 @@ export default async function handler(req, res) {
       if (isValid) {
         return res.status(200).json({
           success: true,
-          code: scriptData.code,
-          name: name
+          code: scriptData.code
         });
       }
-      return res.status(403).json({
-        success: false,
-        error: 'Invalid challenge',
-        code: 'CHALLENGE_FAILED'
-      });
+      return res.status(403).json({ error: 'Challenge failed' });
     }
 
-    // Executor client - return encrypted loader
+    // Executor -> loader
     if (getExecutorUA(userAgent)) {
-      const loader = generateLoader(scriptData.code);
-      return res.status(200).send(loader);
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.status(200).send(generateLoader(scriptData.code));
     }
 
-    // Browser client - return challenge
+    // Browser -> challenge
     if (isBrowser(userAgent)) {
       const newChallenge = generateChallenge();
       await createChallenge(newChallenge.token, newChallenge.answer);
 
       return res.status(401).json({
-        success: false,
         protected: true,
-        message: 'Challenge required',
         challenge: {
           question: newChallenge.question,
           token: newChallenge.token
@@ -118,14 +89,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // Unknown client - return challenge
+    // Unknown -> challenge
     const newChallenge = generateChallenge();
     await createChallenge(newChallenge.token, newChallenge.answer);
 
     return res.status(401).json({
-      success: false,
       protected: true,
-      message: 'Authentication required',
       challenge: {
         question: newChallenge.question,
         token: newChallenge.token
@@ -133,11 +102,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('[APEX] Raw endpoint error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      code: 'SERVER_ERROR'
-    });
+    console.error('raw error:', error.message);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
