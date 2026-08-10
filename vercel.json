@@ -1,93 +1,38 @@
 {
-    "functions": {
-        "api/load.js": {
-            "memory": 1024,
-            "maxDuration": 30
+  "version": 2,
+  "buildCommand": "echo 'APEX HUB V10 Build'",
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/api/raw", "destination": "/api/raw.js" },
+    { "source": "/api/auth", "destination": "/api/auth.js" },
+    { "source": "/api/challenge", "destination": "/api/challenge.js" },
+    { "source": "/api/get-script", "destination": "/api/get-script.js" },
+    { "source": "/api/load", "destination": "/api/load.js" },
+    { "source": "/api/ping", "destination": "/api/ping.js" },
+    { "source": "/api/verify", "destination": "/api/verify.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
-        "api/auth.js": {
-            "memory": 512,
-            "maxDuration": 10
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
-        "api/get-script.js": {
-            "memory": 512,
-            "maxDuration": 10
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
         },
-        "api/raw.js": {
-            "memory": 512,
-            "maxDuration": 15
-        },
-        "api/verify.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/ping.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/challenge.js": {
-            "memory": 256,
-            "maxDuration": 5
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
         }
-    },
-    "rewrites": [
-        {
-            "source": "/load",
-            "destination": "/api/load"
-        },
-        {
-            "source": "/auth",
-            "destination": "/api/auth"
-        },
-        {
-            "source": "/get-script",
-            "destination": "/api/get-script"
-        },
-        {
-            "source": "/raw",
-            "destination": "/api/raw"
-        },
-        {
-            "source": "/verify",
-            "destination": "/api/verify"
-        },
-        {
-            "source": "/ping",
-            "destination": "/api/ping"
-        },
-        {
-            "source": "/challenge",
-            "destination": "/api/challenge"
-        }
-    ],
-    "headers": [
-        {
-            "source": "/api/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                },
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                },
-                {
-                    "key": "Access-Control-Allow-Methods",
-                    "value": "GET, POST, PUT, DELETE, OPTIONS"
-                },
-                {
-                    "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
-                }
-            ]
-        }
-    ]
+      ]
+    }
+  ]
 }
