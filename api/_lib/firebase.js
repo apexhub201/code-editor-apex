@@ -12,7 +12,7 @@ export function getDB() {
     const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
     if (!projectId || !clientEmail || !privateKey) {
-      throw new Error('Missing Firebase env vars');
+      throw new Error('Firebase configuration missing');
     }
 
     initializeApp({
