@@ -1,11 +1,11 @@
 import { saveScript, getScript } from './_lib/firestore.js';
 import { phantomObfuscate } from './_lib/obfuscator.js';
-import { checkRateLimit, isIPBanned, getClientIP } from './_lib/security.js';
+import { getClientIP, checkRateLimit, isIPBanned, requireAuth } from './_lib/security.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'PUT, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Key');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   if (req.method === 'OPTIONS') {
@@ -23,13 +23,18 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    if (!await checkRateLimit(clientIP)) {
+    if (!await checkRateLimit(clientIP, 'update')) {
       return res.status(429).json({ error: 'Too many requests' });
     }
 
-    const { name, code, uid } = req.body;
+    const authUser = requireAuth(req);
+    if (!authUser) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
-    if (!name) {
+    const { name, code } = req.body || {};
+
+    if (!name || typeof name !== 'string' || name.length > 200) {
       return res.status(400).json({ error: 'Name required' });
     }
 
@@ -38,13 +43,12 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Not found' });
     }
 
-    if (!code || !code.trim()) {
-      return res.status(400).json({ error: 'Code required' });
+    if (scriptData.owner !== authUser) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
-    // Check owner
-    if (uid && scriptData.owner && scriptData.owner !== uid) {
-      return res.status(403).json({ error: 'Forbidden' });
+    if (!code || typeof code !== 'string' || code.length > 500000) {
+      return res.status(400).json({ error: 'Code required' });
     }
 
     scriptData.code = phantomObfuscate(code);
@@ -61,7 +65,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('update error:', error.message);
+    console.error('update error');
     return res.status(500).json({ error: 'Server error' });
   }
 }
