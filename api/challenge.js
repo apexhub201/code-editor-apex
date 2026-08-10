@@ -1,94 +1,78 @@
-// api/challenge.js
+// api/challenge.js - Challenge verification endpoint
+import Crypto from '../lib/crypto.js';
 import Security from '../lib/security.js';
+import { RateLimiter } from '../lib/rate-limit.js';
+import { ChallengeManager } from '../lib/challenges.js';
+import { ErrorCodes, createErrorResponse } from '../lib/errors.js';
 
-global.challenges = global.challenges || {};
-
-export default function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+export default async function handler(req, res) {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || 'https://apexhubeditor.vercel.app');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cache-Control', 'no-store');
+    
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
-
-    if (req.method === 'GET') {
-        const challenge = Security.generateChallenge();
-        
-        global.challenges[challenge.token] = {
-            ...challenge,
-            createdAt: Date.now(),
-            used: false,
-            attempts: 0,
-            maxAttempts: 3
-        };
-        
-        return res.json({
-            success: true,
-            challenge: {
-                question: challenge.question,
-                token: challenge.token,
-                type: challenge.type,
-                expiresIn: 60
-            }
-        });
-    }
-
-    if (req.method === 'POST') {
-        return handleVerifyChallenge(req, res);
-    }
-
-    return res.status(405).json({ error: 'Method not allowed' });
-}
-
-function handleVerifyChallenge(req, res) {
+    
+    const requestId = Crypto.randomString(12);
+    const clientIP = Security.getClientIP(req);
+    const ipHash = Crypto.hashIP(clientIP);
+    
     try {
-        const { token, answer } = req.body;
-        
-        if (!token || !answer) {
-            return res.json({ success: false, error: 'Missing token or answer' });
+        // Rate limit
+        const allowed = await RateLimiter.checkLimit('ip', clientIP, 'challenge');
+        if (!allowed) {
+            return res.status(429).json(createErrorResponse(ErrorCodes.RATE_LIMIT_IP, 429, null, requestId));
         }
         
-        const challenge = global.challenges[token];
-        
-        if (!challenge) {
-            return res.json({ success: false, error: 'Challenge not found' });
-        }
-        
-        if (challenge.used) {
-            return res.json({ success: false, error: 'Challenge already used' });
-        }
-        
-        if (Date.now() - challenge.createdAt > 60000) {
-            delete global.challenges[token];
-            return res.json({ success: false, error: 'Challenge expired' });
-        }
-        
-        challenge.attempts++;
-        
-        const userAnswer = answer.toString().trim().toUpperCase();
-        const correctAnswer = challenge.answer.toString().trim().toUpperCase();
-        
-        if (userAnswer !== correctAnswer) {
-            if (challenge.attempts >= challenge.maxAttempts) {
-                challenge.used = true;
-                return res.json({ success: false, error: 'Max attempts reached', locked: true });
-            }
-            return res.json({ 
-                success: false, 
-                error: 'Wrong answer',
-                attemptsLeft: challenge.maxAttempts - challenge.attempts
+        // GET - Get new challenge
+        if (req.method === 'GET') {
+            const challenge = await ChallengeManager.createChallenge(ipHash);
+            
+            return res.status(200).json({
+                success: true,
+                requestId,
+                challenge: {
+                    question: challenge.question,
+                    token: challenge.token,
+                    type: challenge.type,
+                    expiresIn: 60
+                }
             });
         }
         
-        challenge.used = true;
+        // POST - Verify challenge
+        if (req.method === 'POST') {
+            const body = req.body || {};
+            const { token, answer } = body;
+            
+            if (!token || !answer) {
+                return res.status(400).json(createErrorResponse(ErrorCodes.MISSING_FIELDS, 400, null, requestId));
+            }
+            
+            const result = await ChallengeManager.verifyChallenge(token, answer);
+            
+            if (!result.valid) {
+                return res.status(403).json(createErrorResponse(
+                    ErrorCodes.CHALLENGE_FAILED, 403, null, requestId
+                ));
+            }
+            
+            return res.status(200).json({
+                success: true,
+                requestId,
+                verified: true,
+                message: 'Challenge passed'
+            });
+        }
         
-        return res.json({
-            success: true,
-            verified: true,
-            message: 'Challenge passed'
-        });
+        return res.status(405).json(createErrorResponse('METHOD_NOT_ALLOWED', 405, null, requestId));
+        
     } catch (error) {
-        return res.status(500).json({ success: false, error: error.message });
+        console.error('[CHALLENGE] Error:', error.message);
+        return res.status(500).json(createErrorResponse(ErrorCodes.INTERNAL_ERROR, 500, null, requestId));
     }
 }
