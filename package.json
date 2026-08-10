@@ -1,18 +1,8 @@
 {
   "name": "apex-hub",
-  "version": "9.0.0",
+  "version": "1.0.0",
   "type": "module",
-  "private": true,
-  "description": "APEX HUB - Script Delivery Gateway",
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  },
   "dependencies": {
     "firebase-admin": "^13.4.0"
-  },
-  "engines": {
-    "node": ">=18.x"
-  },
-  "license": "UNLICENSED"
+  }
 }
