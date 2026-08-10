@@ -2,50 +2,54 @@ import { deleteScript, getScript } from './_lib/firestore.js';
 import { checkRateLimit, isIPBanned, getClientIP } from './_lib/security.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   if (req.method !== 'DELETE') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const clientIP = getClientIP(req);
 
     if (await isIPBanned(clientIP)) {
-      return res.status(403).json({ success: false, error: 'Access denied' });
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     if (!await checkRateLimit(clientIP)) {
-      return res.status(429).json({ success: false, error: 'Rate limit exceeded' });
+      return res.status(429).json({ error: 'Too many requests' });
     }
 
     const { name, uid } = req.query;
 
     if (!name) {
-      return res.status(400).json({ success: false, error: 'Name is required' });
+      return res.status(400).json({ error: 'Name required' });
     }
 
     const scriptData = await getScript(name);
     if (!scriptData) {
-      return res.status(404).json({ success: false, error: 'Script not found' });
+      return res.status(404).json({ error: 'Not found' });
     }
 
-    // Check ownership
+    // Check owner
     if (uid && scriptData.owner && scriptData.owner !== uid) {
-      return res.status(403).json({ success: false, error: 'Not your script' });
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     await deleteScript(name);
 
     return res.status(200).json({
-      success: true,
-      message: 'Deleted successfully'
+      success: true
     });
 
   } catch (error) {
-    console.error('[APEX] Delete error:', error);
-    return res.status(500).json({ success: false, error: 'Internal server error' });
+    console.error('delete error:', error.message);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
