@@ -57,6 +57,10 @@
         {
             "source": "/challenge",
             "destination": "/api/challenge"
+        },
+        {
+            "source": "/api/raw",
+            "destination": "/api/raw.js"
         }
     ],
     "headers": [
@@ -85,7 +89,7 @@
                 },
                 {
                     "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
+                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key"
                 }
             ]
         }
