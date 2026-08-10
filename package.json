@@ -2,6 +2,9 @@
   "name": "apex-hub",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "firebase-admin": "^13.4.0"
   }
