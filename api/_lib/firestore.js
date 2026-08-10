@@ -6,8 +6,6 @@ const CHALLENGES = 'challenges';
 const cache = new Map();
 const TTL = 5 * 60 * 1000;
 
-// Scripts
-
 export async function getScript(name) {
   const c = cache.get(name);
   if (c && Date.now() - c.ts < TTL) return c.data;
@@ -22,7 +20,6 @@ export async function getScript(name) {
 
     cache.set(name, { data, ts: Date.now() });
     return data;
-
   } catch (e) {
     return null;
   }
@@ -38,7 +35,6 @@ export async function saveScript(name, data) {
 
     cache.delete(name);
     return true;
-
   } catch (e) {
     return false;
   }
@@ -50,13 +46,10 @@ export async function deleteScript(name) {
     await db.collection(SCRIPTS).doc(name).delete();
     cache.delete(name);
     return true;
-
   } catch (e) {
     return false;
   }
 }
-
-// Challenges
 
 export async function createChallenge(token, answer) {
   try {
@@ -68,7 +61,6 @@ export async function createChallenge(token, answer) {
       attempts: 0
     });
     return true;
-
   } catch (e) {
     return false;
   }
@@ -78,31 +70,32 @@ export async function validateChallenge(token, answer) {
   try {
     const db = getDB();
     const ref = db.collection(CHALLENGES).doc(token);
-    const doc = await ref.get();
 
-    if (!doc.exists) return false;
+    return await db.runTransaction(async (transaction) => {
+      const doc = await transaction.get(ref);
+      if (!doc.exists) return false;
 
-    const c = doc.data();
-    const now = Date.now();
+      const c = doc.data();
+      const now = Date.now();
 
-    if (now - c.createdAt > 60000) return false;
-    if (c.used) return false;
+      if (c.used) return false;
+      if (now - c.createdAt > 60000) return false;
+      if (c.attempts >= 5) return false;
 
-    await ref.update({ attempts: (c.attempts || 0) + 1 });
+      transaction.update(ref, { attempts: (c.attempts || 0) + 1 });
 
-    if (answer === c.answer) {
-      await ref.update({ used: true });
-      return true;
-    }
+      if (answer === c.answer) {
+        transaction.update(ref, { used: true });
+        return true;
+      }
 
-    return false;
+      return false;
+    });
 
   } catch (e) {
     return false;
   }
 }
-
-// Utils
 
 export function normalizeName(name) {
   return name.trim().toLowerCase()
