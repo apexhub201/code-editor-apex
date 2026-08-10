@@ -1,11 +1,11 @@
 import { saveScript, getScript, normalizeName, detectTarget } from './_lib/firestore.js';
 import { phantomObfuscate } from './_lib/obfuscator.js';
-import { checkRateLimit, isIPBanned, getClientIP } from './_lib/security.js';
+import { getClientIP, checkRateLimit, isIPBanned, requireAuth } from './_lib/security.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Key');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   if (req.method === 'OPTIONS') {
@@ -23,29 +23,30 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    if (!await checkRateLimit(clientIP)) {
+    if (!await checkRateLimit(clientIP, 'create')) {
       return res.status(429).json({ error: 'Too many requests' });
     }
 
-    const { code, name, uid } = req.body;
+    const authUser = requireAuth(req);
+    if (!authUser) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
-    if (!code || !code.trim()) {
+    const { code, name } = req.body || {};
+
+    if (!code || typeof code !== 'string' || code.length > 500000) {
       return res.status(400).json({ error: 'Code required' });
     }
 
-    if (!name || !name.trim()) {
+    if (!name || typeof name !== 'string' || name.length > 200) {
       return res.status(400).json({ error: 'Name required' });
     }
 
     const nameSlug = normalizeName(name);
-    const userId = uid || 'public';
-    const fullName = `${userId}_${nameSlug}`;
+    const fullName = `${authUser}_${nameSlug}`;
     const target = detectTarget(code);
-
-    // Obfuscate
     const obfuscatedCode = phantomObfuscate(code);
 
-    // Check exists
     const existing = await getScript(fullName);
     if (existing) {
       const newName = `${fullName}_${Date.now().toString(36)}`;
@@ -55,11 +56,10 @@ export default async function handler(req, res) {
         name: name.trim(),
         created: Date.now(),
         lastAccessed: Date.now(),
-        owner: userId,
+        owner: authUser,
         target: target,
         obfuscated: true
       });
-
       return res.status(200).json({
         success: true,
         name: newName,
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
       name: name.trim(),
       created: Date.now(),
       lastAccessed: Date.now(),
-      owner: userId,
+      owner: authUser,
       target: target,
       obfuscated: true
     });
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('create error:', error.message);
+    console.error('create error');
     return res.status(500).json({ error: 'Server error' });
   }
 }
