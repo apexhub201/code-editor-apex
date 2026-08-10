@@ -1,11 +1,16 @@
 {
+  "version": 2,
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "cleanUrls": true,
+  "installCommand": "npm install",
   "functions": {
     "api/load.js": {
       "memory": 1024,
       "maxDuration": 30
     },
     "api/raw.js": {
-      "memory": 512,
+      "memory": 1024,
       "maxDuration": 30
     },
     "api/obfuscate.js": {
@@ -50,6 +55,7 @@
     }
   },
   "rewrites": [
+    { "source": "/", "destination": "/index.html" },
     { "source": "/load", "destination": "/api/load" },
     { "source": "/auth", "destination": "/api/auth" },
     { "source": "/get-script", "destination": "/api/get-script" },
@@ -61,7 +67,12 @@
     { "source": "/obfuscate", "destination": "/api/obfuscate" },
     { "source": "/create", "destination": "/api/create" },
     { "source": "/update", "destination": "/api/update" },
-    { "source": "/delete", "destination": "/api/delete" }
+    { "source": "/delete", "destination": "/api/delete" },
+    { "source": "/sw.js", "destination": "/sw.js" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/google8c9c72c3ee73c2d1.html", "destination": "/google8c9c72c3ee73c2d1.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
@@ -73,6 +84,13 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" }
       ]
     }
   ]
