@@ -1,56 +1,100 @@
-// api/get-script.js
+// api/get-script.js - Secure script delivery endpoint
 import Crypto from '../lib/crypto.js';
+import Security from '../lib/security.js';
+import { RateLimiter } from '../lib/rate-limit.js';
+import { SessionManager } from '../lib/sessions.js';
+import { ScriptManager } from '../lib/scripts.js';
+import { ErrorCodes, createErrorResponse } from '../lib/errors.js';
 
-global.scripts = global.scripts || {};
-global.sessions = global.sessions || {};
-
-export default function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+export default async function handler(req, res) {
+    // CORS - restricted for this endpoint
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Required for Roblox HttpService
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cache-Control', 'no-store');
+    
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
-
+    
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json(createErrorResponse('METHOD_NOT_ALLOWED', 405));
     }
-
+    
+    const requestId = Crypto.randomString(12);
+    const clientIP = Security.getClientIP(req);
+    
     try {
-        const { sessionToken, hwid, scriptName } = req.body;
-
-        if (!sessionToken) {
-            return res.json({ success: false, error: 'No session token' });
+        // Validate body size
+        if (!Security.validateBodySize(req, 4096)) {
+            return res.status(413).json(createErrorResponse(ErrorCodes.INVALID_REQUEST, 413, null, requestId));
         }
-
-        const session = global.sessions[sessionToken];
-        if (!session || !session.active) {
-            return res.json({ success: false, error: 'Invalid session' });
+        
+        const body = req.body || {};
+        const { sessionToken, scriptName, nonce } = body;
+        
+        // Validate required fields
+        const missingFields = Security.validateFields(body, ['sessionToken']);
+        if (missingFields.length > 0) {
+            return res.status(400).json(createErrorResponse(ErrorCodes.MISSING_FIELDS, 400, null, requestId));
         }
-
-        if (Date.now() > session.expiresAt) {
-            delete global.sessions[sessionToken];
-            return res.json({ success: false, error: 'Session expired' });
+        
+        // Validate session
+        const sessionResult = await SessionManager.validateSession(sessionToken);
+        
+        if (!sessionResult.valid) {
+            return res.status(401).json(createErrorResponse(
+                sessionResult.reason, 401, null, requestId
+            ));
         }
-
+        
+        // Rate limit per session
+        const allowed = await RateLimiter.checkLimit(
+            'session',
+            sessionResult.session.tokenHash,
+            'get-script'
+        );
+        
+        if (!allowed) {
+            return res.status(429).json(createErrorResponse(ErrorCodes.RATE_LIMIT_SESSION, 429, null, requestId));
+        }
+        
+        // Get script
         const scriptNameToUse = scriptName || 'main';
-        const script = global.scripts[scriptNameToUse];
-
+        const script = await ScriptManager.getScript(scriptNameToUse);
+        
         if (!script) {
-            return res.json({ success: false, error: 'Script not found' });
+            return res.status(404).json(createErrorResponse(ErrorCodes.SCRIPT_NOT_FOUND, 404, null, requestId));
         }
-
-        const encryptKey = Crypto.generateRandomString(16);
-        const encryptedPayload = Crypto.encrypt(script.code, encryptKey);
-
-        return res.json({
+        
+        // Encrypt payload for delivery
+        const payloadKey = Crypto.generatePayloadKey();
+        const encryptedPayload = Crypto.encrypt(script.code, payloadKey);
+        
+        console.log(`[GET-SCRIPT] Delivered ${scriptNameToUse} to session ${sessionResult.session.tokenHash.substring(0, 8)}...`);
+        
+        return res.status(200).json({
             success: true,
-            payload: JSON.stringify(encryptedPayload.data),
-            decryptKey: encryptKey,
-            timestamp: Date.now()
+            requestId,
+            payload: {
+                version: encryptedPayload.version,
+                algorithm: encryptedPayload.algorithm,
+                nonce: encryptedPayload.nonce,
+                ciphertext: encryptedPayload.ciphertext,
+                tag: encryptedPayload.tag
+            },
+            key: payloadKey.toString('base64'),
+            scriptInfo: {
+                name: scriptNameToUse,
+                target: script.target || 'lua',
+                size: script.size || 0,
+                timestamp: Date.now()
+            }
         });
+        
     } catch (error) {
-        return res.status(500).json({ success: false, error: error.message });
+        console.error('[GET-SCRIPT] Error:', error.message);
+        return res.status(500).json(createErrorResponse(ErrorCodes.INTERNAL_ERROR, 500, null, requestId));
     }
 }
