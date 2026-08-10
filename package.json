@@ -6,8 +6,7 @@
   "description": "APEX HUB - Script Delivery Gateway",
   "scripts": {
     "dev": "vercel dev",
-    "deploy": "vercel --prod",
-    "build": "echo 'No build step'"
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "firebase-admin": "^13.4.0"
