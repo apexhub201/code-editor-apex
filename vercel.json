@@ -1,15 +1,11 @@
 {
   "functions": {
-    "api/*.js": {
-      "memory": 512,
-      "maxDuration": 10
+    "api/load.js": {
+      "memory": 1024,
+      "maxDuration": 30
     },
     "api/raw.js": {
       "memory": 512,
-      "maxDuration": 30
-    },
-    "api/load.js": {
-      "memory": 1024,
       "maxDuration": 30
     },
     "api/obfuscate.js": {
@@ -19,12 +15,45 @@
     "api/create.js": {
       "memory": 512,
       "maxDuration": 15
+    },
+    "api/auth.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/get-script.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/verify.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/ping.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/challenge.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/validate.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/update.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/delete.js": {
+      "memory": 256,
+      "maxDuration": 5
     }
   },
   "rewrites": [
-    { "source": "/raw", "destination": "/api/raw" },
     { "source": "/load", "destination": "/api/load" },
     { "source": "/auth", "destination": "/api/auth" },
+    { "source": "/get-script", "destination": "/api/get-script" },
+    { "source": "/raw", "destination": "/api/raw" },
     { "source": "/verify", "destination": "/api/verify" },
     { "source": "/ping", "destination": "/api/ping" },
     { "source": "/challenge", "destination": "/api/challenge" },
