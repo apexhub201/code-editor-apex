@@ -5,54 +5,46 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    Security.setSecurityHeaders(res);
+    Security.setHeaders(res);
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const clientIP = Security.getClientIP(req);
-
-    // Rate limit
-    const rateCheck = Security.checkRateLimit('challenge:' + clientIP, 5, 60000);
-    if (!rateCheck.allowed) {
+    const ip = Security.getIP(req);
+    if (!Security.rateLimit('challenge:' + ip, 10, 60000)) {
         return res.status(429).json({ error: 'Rate limited' });
     }
 
-    // GET - Generate challenge
+    // GET - Get challenge
     if (req.method === 'GET') {
-        const challenge = Security.generateChallenge();
+        const c = Security.genChallenge();
         return res.json({
             success: true,
             challenge: {
-                question: challenge.question,
-                token: challenge.token,
-                type: challenge.type,
-                expiresIn: challenge.expiresIn
+                question: c.q,
+                token: c.token,
+                type: 'math'
             }
         });
     }
 
-    // POST - Verify challenge
+    // POST - Solve challenge
     if (req.method === 'POST') {
         const { token, answer } = req.body || {};
         if (!token || !answer) {
             return res.status(400).json({ success: false, error: 'Token and answer required' });
         }
 
-        const result = Security.verifyChallenge(token, answer, clientIP);
-        if (!result.success) {
-            return res.status(400).json(result);
+        const ok = Security.verifyChallenge(token, answer);
+        if (!ok) {
+            return res.json({ success: false, error: 'Wrong answer or expired' });
         }
 
-        // Cấp access token
-        const accessData = Security.generateAccessToken();
+        const at = Security.genAccessToken();
         return res.json({
             success: true,
-            verified: true,
-            accessToken: accessData.accessToken,
-            nonce: accessData.nonce,
-            expiresIn: accessData.expiresIn
+            accessToken: at.token,
+            nonce: at.nonce,
+            expiresIn: 90
         });
     }
 
