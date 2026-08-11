@@ -1,1 +1,161 @@
-(function(_0x3fffd5,_0x50202a){const _0x5d4a7b=_0x40f3,_0x276907=_0x3fffd5();while(!![]){try{const _0x19b490=parseInt(_0x5d4a7b(0x1a7))/0x1*(-parseInt(_0x5d4a7b(0x1b9))/0x2)+-parseInt(_0x5d4a7b(0x1b1))/0x3+-parseInt(_0x5d4a7b(0x1a8))/0x4+-parseInt(_0x5d4a7b(0x1aa))/0x5*(parseInt(_0x5d4a7b(0x1af))/0x6)+-parseInt(_0x5d4a7b(0x1b8))/0x7*(-parseInt(_0x5d4a7b(0x1ae))/0x8)+parseInt(_0x5d4a7b(0x1bf))/0x9*(parseInt(_0x5d4a7b(0x1a9))/0xa)+parseInt(_0x5d4a7b(0x1ab))/0xb;if(_0x19b490===_0x50202a)break;else _0x276907['push'](_0x276907['shift']());}catch(_0x2cae77){_0x276907['push'](_0x276907['shift']());}}}(_0x4905,0xdaa82));export default function handler(_0x3bbbfb,_0x1597e2){const _0x381778=_0x40f3;_0x1597e2['setHeader']('Access-Control-Allow-Origin','*'),_0x1597e2[_0x381778(0x1b3)](_0x381778(0x1b4),_0x381778(0x1bb)),_0x1597e2[_0x381778(0x1b3)](_0x381778(0x1a4),_0x381778(0x1a3));if(_0x3bbbfb[_0x381778(0x1a5)]===_0x381778(0x1bc))return _0x1597e2[_0x381778(0x1ba)](0xc8)[_0x381778(0x1a6)]();if(_0x3bbbfb[_0x381778(0x1a5)]===_0x381778(0x1a2))return _0x1597e2[_0x381778(0x1ac)]({'valid':!![],'timestamp':Date[_0x381778(0x1be)]()});if(_0x3bbbfb['method']===_0x381778(0x1b5))return handleVerify(_0x3bbbfb,_0x1597e2);return _0x1597e2[_0x381778(0x1ba)](0x195)[_0x381778(0x1ac)]({'error':_0x381778(0x1b0)});}function _0x40f3(_0x5a755f,_0x206d1d){_0x5a755f=_0x5a755f-0x1a2;const _0x49051a=_0x4905();let _0x40f3e5=_0x49051a[_0x5a755f];return _0x40f3e5;}function handleVerify(_0x47e048,_0x9a6ee3){const _0x365357=_0x40f3;try{const {sessionToken:_0x5cf66e}=_0x47e048['body'];if(!_0x5cf66e)return _0x9a6ee3[_0x365357(0x1ac)]({'success':![],'error':'No\x20session\x20token'});global[_0x365357(0x1bd)]=global['sessions']||{};const _0x1f9683=global['sessions'][_0x5cf66e];if(!_0x1f9683)return _0x9a6ee3[_0x365357(0x1ac)]({'success':![],'error':_0x365357(0x1ad)});if(!_0x1f9683['active'])return _0x9a6ee3[_0x365357(0x1ac)]({'success':![],'error':'Session\x20inactive'});if(Date['now']()>_0x1f9683['expiresAt'])return delete global[_0x365357(0x1bd)][_0x5cf66e],_0x9a6ee3[_0x365357(0x1ac)]({'success':![],'error':'Session\x20expired'});return _0x9a6ee3['json']({'success':!![],'tier':_0x1f9683[_0x365357(0x1b7)],'expiresAt':_0x1f9683['expiresAt'],'remaining':Math[_0x365357(0x1b2)]((_0x1f9683['expiresAt']-Date['now']())/0x3e8)});}catch(_0x3e0496){return _0x9a6ee3[_0x365357(0x1ba)](0x1f4)['json']({'success':![],'error':_0x3e0496[_0x365357(0x1b6)]});}}function _0x4905(){const _0x383bb6=['POST,\x20GET,\x20OPTIONS','OPTIONS','sessions','now','96804tRHZCo','GET','Content-Type','Access-Control-Allow-Headers','method','end','946jGIYSr','4200376tljLQL','1300djqntI','1264895PNjgMp','21848002MrScYc','json','Session\x20not\x20found','3416ZhbcWb','12tHebNQ','Method\x20not\x20allowed','4311795GbvPJW','floor','setHeader','Access-Control-Allow-Methods','POST','message','tier','20475LAdVaD','1574YEQUmU','status'];_0x4905=function(){return _0x383bb6;};return _0x4905();}
+// api/verify.js - Challenge Verification (Persistent)
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getApps, cert, initializeApp } from 'firebase-admin/app';
+import crypto from 'crypto';
+import guard from './guard.js';
+
+if (!getApps().length) {
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && privateKey) {
+        initializeApp({
+            credential: cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: privateKey
+            })
+        });
+    }
+}
+
+const db = getFirestore();
+const CHALLENGES_COLLECTION = 'security_challenges';
+const SESSIONS_COLLECTION = 'security_sessions';
+
+function generateSessionToken() {
+    return crypto.randomBytes(48).toString('hex');
+}
+
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Challenge-Token, X-Challenge-Answer');
+    
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+    }
+    
+    // Apply guard with rate limiting
+    const guardResult = await guard(req, res, {
+        rateLimit: true,
+        rateLimitMax: 10,
+        rateLimitWindow: 60000,
+        botDetection: true,
+        endpoint: 'verify'
+    });
+    
+    if (guardResult.blocked) {
+        return res.status(guardResult.status).json(guardResult.body);
+    }
+    
+    try {
+        const challengeToken = req.headers['x-challenge-token'] || req.body.token;
+        const challengeAnswer = req.headers['x-challenge-answer'] || req.body.answer;
+        
+        if (!challengeToken || !challengeAnswer) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'CHALLENGE_TOKEN_AND_ANSWER_REQUIRED' 
+            });
+        }
+        
+        // Get challenge from Firestore
+        const challengeRef = db.collection(CHALLENGES_COLLECTION).doc(challengeToken);
+        const challengeDoc = await challengeRef.get();
+        
+        if (!challengeDoc.exists) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'CHALLENGE_NOT_FOUND' 
+            });
+        }
+        
+        const challenge = challengeDoc.data();
+        
+        // Check if already used
+        if (challenge.used) {
+            return res.status(403).json({ 
+                success: false, 
+                error: 'CHALLENGE_ALREADY_USED' 
+            });
+        }
+        
+        // Check expiration
+        if (challenge.expiresAt && challenge.expiresAt.toDate() < new Date()) {
+            await challengeRef.delete();
+            return res.status(403).json({ 
+                success: false, 
+                error: 'CHALLENGE_EXPIRED' 
+            });
+        }
+        
+        // Check max attempts
+        const attempts = (challenge.attempts || 0) + 1;
+        const maxAttempts = challenge.maxAttempts || 3;
+        
+        if (attempts > maxAttempts) {
+            await challengeRef.update({ used: true });
+            return res.status(403).json({ 
+                success: false, 
+                error: 'MAX_ATTEMPTS_EXCEEDED', 
+                locked: true 
+            });
+        }
+        
+        // Verify answer
+        const userAnswer = challengeAnswer.toString().trim().toUpperCase();
+        const correctAnswer = challenge.answer.toString().trim().toUpperCase();
+        
+        if (userAnswer !== correctAnswer) {
+            await challengeRef.update({ attempts });
+            return res.json({ 
+                success: false, 
+                error: 'WRONG_ANSWER',
+                attemptsLeft: maxAttempts - attempts
+            });
+        }
+        
+        // Mark challenge as used
+        await challengeRef.update({ 
+            used: true, 
+            consumedAt: FieldValue.serverTimestamp(),
+            attempts
+        });
+        
+        // Create session
+        const sessionToken = generateSessionToken();
+        const sessionDuration = 1800000; // 30 minutes
+        
+        await db.collection(SESSIONS_COLLECTION).doc(sessionToken).set({
+            token: sessionToken,
+            tier: 'standard',
+            active: true,
+            requestCount: 0,
+            maxRequests: 100,
+            createdAt: FieldValue.serverTimestamp(),
+            expiresAt: new Date(Date.now() + sessionDuration),
+            lastActivity: FieldValue.serverTimestamp(),
+            metadata: {
+                ip: guardResult.ip,
+                createdVia: 'challenge_verification',
+                challengeToken
+            }
+        });
+        
+        return res.json({
+            success: true,
+            verified: true,
+            sessionToken,
+            expiresIn: Math.floor(sessionDuration / 1000),
+            maxRequests: 100
+        });
+        
+    } catch (error) {
+        console.error('[VERIFY] Error:', error.message);
+        return res.status(500).json({ 
+            success: false, 
+            error: 'VERIFICATION_FAILED' 
+        });
+    }
+}
