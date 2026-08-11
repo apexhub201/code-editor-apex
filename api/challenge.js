@@ -1,1 +1,171 @@
-const _0x5472af=_0x2d79;(function(_0x22e8a6,_0x29a275){const _0xaee4f9=_0x2d79,_0x1623b5=_0x22e8a6();while(!![]){try{const _0x3e2f66=-parseInt(_0xaee4f9(0x8f))/0x1+-parseInt(_0xaee4f9(0x8e))/0x2*(parseInt(_0xaee4f9(0xa5))/0x3)+parseInt(_0xaee4f9(0x8a))/0x4+-parseInt(_0xaee4f9(0x97))/0x5*(parseInt(_0xaee4f9(0x9a))/0x6)+-parseInt(_0xaee4f9(0x94))/0x7*(parseInt(_0xaee4f9(0x8d))/0x8)+parseInt(_0xaee4f9(0xa3))/0x9*(parseInt(_0xaee4f9(0x80))/0xa)+parseInt(_0xaee4f9(0xa4))/0xb;if(_0x3e2f66===_0x29a275)break;else _0x1623b5['push'](_0x1623b5['shift']());}catch(_0x2457af){_0x1623b5['push'](_0x1623b5['shift']());}}}(_0x2da3,0x80595));import _0x1edd7d from'../lib/security.js';function _0x2d79(_0x234830,_0x30cf29){_0x234830=_0x234830-0x80;const _0x2da3f9=_0x2da3();let _0x2d79f0=_0x2da3f9[_0x234830];return _0x2d79f0;}global[_0x5472af(0xa2)]=global[_0x5472af(0xa2)]||{};export default function handler(_0x3a0ebb,_0x4d6b56){const _0x14052a=_0x5472af;_0x4d6b56['setHeader'](_0x14052a(0xa8),'*'),_0x4d6b56[_0x14052a(0xa7)](_0x14052a(0x86),'GET,\x20POST,\x20OPTIONS'),_0x4d6b56[_0x14052a(0xa7)](_0x14052a(0x89),'Content-Type');if(_0x3a0ebb[_0x14052a(0xa0)]==='OPTIONS')return _0x4d6b56[_0x14052a(0x9c)](0xc8)[_0x14052a(0x85)]();if(_0x3a0ebb['method']==='GET'){const _0x4f6062=_0x1edd7d[_0x14052a(0xa6)]();return global[_0x14052a(0xa2)][_0x4f6062[_0x14052a(0x91)]]={..._0x4f6062,'createdAt':Date[_0x14052a(0x82)](),'used':![],'attempts':0x0,'maxAttempts':0x3},_0x4d6b56[_0x14052a(0x81)]({'success':!![],'challenge':{'question':_0x4f6062[_0x14052a(0x9e)],'token':_0x4f6062['token'],'type':_0x4f6062[_0x14052a(0x9f)],'expiresIn':0x3c}});}if(_0x3a0ebb[_0x14052a(0xa0)]===_0x14052a(0xaa))return handleVerifyChallenge(_0x3a0ebb,_0x4d6b56);return _0x4d6b56['status'](0x195)[_0x14052a(0x81)]({'error':_0x14052a(0x9b)});}function handleVerifyChallenge(_0x3e7bb7,_0x86d203){const _0xed1bad=_0x5472af;try{const {token:_0x248b26,answer:_0x1b6ce8}=_0x3e7bb7[_0xed1bad(0x84)];if(!_0x248b26||!_0x1b6ce8)return _0x86d203[_0xed1bad(0x81)]({'success':![],'error':_0xed1bad(0x96)});const _0x3091fa=global[_0xed1bad(0xa2)][_0x248b26];if(!_0x3091fa)return _0x86d203[_0xed1bad(0x81)]({'success':![],'error':_0xed1bad(0xa9)});if(_0x3091fa[_0xed1bad(0xa1)])return _0x86d203[_0xed1bad(0x81)]({'success':![],'error':_0xed1bad(0x9d)});if(Date[_0xed1bad(0x82)]()-_0x3091fa['createdAt']>0xea60)return delete global[_0xed1bad(0xa2)][_0x248b26],_0x86d203['json']({'success':![],'error':_0xed1bad(0x90)});_0x3091fa['attempts']++;const _0x31c1d0=_0x1b6ce8[_0xed1bad(0x8c)]()[_0xed1bad(0x88)]()[_0xed1bad(0x8b)](),_0x422ec0=_0x3091fa[_0xed1bad(0x98)]['toString']()[_0xed1bad(0x88)]()[_0xed1bad(0x8b)]();if(_0x31c1d0!==_0x422ec0){if(_0x3091fa[_0xed1bad(0x87)]>=_0x3091fa[_0xed1bad(0x95)])return _0x3091fa['used']=!![],_0x86d203[_0xed1bad(0x81)]({'success':![],'error':_0xed1bad(0x92),'locked':!![]});return _0x86d203[_0xed1bad(0x81)]({'success':![],'error':_0xed1bad(0x99),'attemptsLeft':_0x3091fa[_0xed1bad(0x95)]-_0x3091fa[_0xed1bad(0x87)]});}return _0x3091fa[_0xed1bad(0xa1)]=!![],_0x86d203[_0xed1bad(0x81)]({'success':!![],'verified':!![],'message':_0xed1bad(0x93)});}catch(_0x4ce093){return _0x86d203['status'](0x1f4)[_0xed1bad(0x81)]({'success':![],'error':_0x4ce093[_0xed1bad(0x83)]});}}function _0x2da3(){const _0x4cc14f=['3574880DQTRzk','toUpperCase','toString','176DVzqpv','64276yDoehz','846031whxCaS','Challenge\x20expired','token','Max\x20attempts\x20reached','Challenge\x20passed','316106SJuUid','maxAttempts','Missing\x20token\x20or\x20answer','15erSsTs','answer','Wrong\x20answer','1590132dhjrgM','Method\x20not\x20allowed','status','Challenge\x20already\x20used','question','type','method','used','challenges','45YKbIFG','17686977VirbZs','12vcmstc','generateChallenge','setHeader','Access-Control-Allow-Origin','Challenge\x20not\x20found','POST','1574430GNCUmP','json','now','message','body','end','Access-Control-Allow-Methods','attempts','trim','Access-Control-Allow-Headers'];_0x2da3=function(){return _0x4cc14f;};return _0x2da3();}
+// api/challenge.js — Challenge System V10
+// ============================================================
+// GET: Tạo challenge mới
+// POST: Xác thực challenge và cấp access token
+// ============================================================
+
+import Security from '../lib/security.js';
+
+export default async function handler(req, res) {
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Nonce, X-Signature');
+    
+    // Security headers
+    Security.setSecurityHeaders(res);
+
+    // Handle OPTIONS preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    // Lấy IP client
+    const clientIP = Security.getClientIP(req);
+
+    // Kiểm tra IP ban
+    if (Security.isIPBanned(clientIP)) {
+        return res.status(403).json({
+            success: false,
+            error: 'IP banned',
+            message: 'Your IP has been temporarily banned due to suspicious activity.'
+        });
+    }
+
+    // Rate limit cho challenge (nghiêm ngặt hơn - 5 requests/phút)
+    const rateCheck = Security.checkRateLimit(`challenge:${clientIP}`, 5, 60000);
+    if (!rateCheck.allowed) {
+        Security.addStrike(clientIP, 'Challenge rate limit exceeded');
+        return res.status(429).json({
+            success: false,
+            error: 'Rate limited',
+            retryAfter: rateCheck.retryAfter || 60,
+            message: 'Too many challenge requests. Please wait.'
+        });
+    }
+
+    // Risk scoring
+    const risk = Security.calculateRiskScore(req);
+    if (risk.score >= 60) {
+        Security.addStrike(clientIP, `High risk challenge request: ${risk.reasons.join(', ')}`);
+        return res.status(403).json({
+            success: false,
+            error: 'Access denied',
+            risk: risk.level
+        });
+    }
+
+    // ============================================================
+    // GET: Tạo challenge mới
+    // ============================================================
+    if (req.method === 'GET') {
+        try {
+            const challenge = Security.generateChallenge();
+            
+            return res.json({
+                success: true,
+                challenge: {
+                    question: challenge.question,
+                    token: challenge.token,
+                    type: challenge.type,
+                    expiresIn: challenge.expiresIn
+                },
+                message: 'Solve the challenge to get an access token.'
+            });
+        } catch (error) {
+            console.error('[CHALLENGE] Generate error:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to generate challenge'
+            });
+        }
+    }
+
+    // ============================================================
+    // POST: Xác thực challenge
+    // ============================================================
+    if (req.method === 'POST') {
+        try {
+            const { token, answer } = req.body;
+
+            // Validate input
+            if (!token) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Token is required',
+                    message: 'Challenge token is missing.'
+                });
+            }
+
+            if (!answer) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Answer is required',
+                    message: 'Challenge answer is missing.'
+                });
+            }
+
+            // Kiểm tra độ dài answer (tránh spam)
+            if (answer.length > 100) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Answer too long',
+                    message: 'Invalid answer format.'
+                });
+            }
+
+            // Verify challenge
+            const result = Security.verifyChallenge(token, answer, clientIP);
+
+            if (!result.success) {
+                // Trả về lỗi phù hợp
+                const statusCode = result.locked ? 403 : 400;
+                return res.status(statusCode).json({
+                    success: false,
+                    error: result.error,
+                    locked: result.locked || false,
+                    attemptsLeft: result.attemptsLeft,
+                    message: result.locked 
+                        ? 'Too many failed attempts. Your IP has been flagged.' 
+                        : 'Incorrect answer. Please try again.'
+                });
+            }
+
+            // Challenge passed - Tạo access token
+            const accessTokenData = Security.generateAccessToken({
+                tier: 'challenge',
+                hwid: null,
+                fingerprint: Security.getFingerprint(req),
+                purpose: 'script_access'
+            });
+
+            // Log thành công
+            console.log(`[CHALLENGE] Challenge passed by IP: ${clientIP}`);
+
+            return res.json({
+                success: true,
+                verified: true,
+                accessToken: accessTokenData.accessToken,
+                nonce: accessTokenData.nonce,
+                expiresIn: accessTokenData.expiresIn,
+                expiresAt: accessTokenData.expiresAt,
+                message: 'Challenge passed. Use this access token for API requests.'
+            });
+        } catch (error) {
+            console.error('[CHALLENGE] Verify error:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Method not allowed
+    return res.status(405).json({
+        success: false,
+        error: 'Method not allowed',
+        message: 'Only GET and POST methods are supported.'
+    });
+}
+
+export { handler as default };
