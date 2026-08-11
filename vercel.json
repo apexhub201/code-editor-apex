@@ -27,6 +27,18 @@
         "api/challenge.js": {
             "memory": 256,
             "maxDuration": 5
+        },
+        "api/guard.js": {
+            "memory": 256,
+            "maxDuration": 5
+        },
+        "api/session.js": {
+            "memory": 256,
+            "maxDuration": 5
+        },
+        "api/heartbeat.js": {
+            "memory": 256,
+            "maxDuration": 5
         }
     },
     "rewrites": [
@@ -59,6 +71,18 @@
             "destination": "/api/challenge"
         },
         {
+            "source": "/session",
+            "destination": "/api/session"
+        },
+        {
+            "source": "/heartbeat",
+            "destination": "/api/heartbeat"
+        },
+        {
+            "source": "/api/guard",
+            "destination": "/api/guard"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
@@ -80,6 +104,10 @@
                     "value": "1; mode=block"
                 },
                 {
+                    "key": "Referrer-Policy",
+                    "value": "strict-origin-when-cross-origin"
+                },
+                {
                     "key": "Access-Control-Allow-Origin",
                     "value": "*"
                 },
@@ -89,7 +117,45 @@
                 },
                 {
                     "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
+                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key, X-Request-Signature, X-Request-Timestamp"
+                },
+                {
+                    "key": "Cache-Control",
+                    "value": "no-store, no-cache, must-revalidate"
+                }
+            ]
+        },
+        {
+            "source": "/api/(raw|load|get-script)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
+                },
+                {
+                    "key": "Pragma",
+                    "value": "no-cache"
+                },
+                {
+                    "key": "Expires",
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "source": "/(.*\\.html)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
                 }
             ]
         }
