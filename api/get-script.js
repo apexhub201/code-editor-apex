@@ -1,1 +1,202 @@
-function _0x36ac(){const _0x4f14dc=['556603kAelty','json','393792MIKnTG','Script\x20not\x20found','Access-Control-Allow-Methods','message','POST,\x20OPTIONS','main','code','746760XGlnLI','Method\x20not\x20allowed','active','encrypt','end','data','sessions','status','method','Session\x20expired','scripts','1564852lmOvOs','POST','OPTIONS','setHeader','38856UAtBfN','Invalid\x20session','Content-Type','295UxlMJo','6mNlYaw','expiresAt','416792bwoWij','8162802UdsGVg','now'];_0x36ac=function(){return _0x4f14dc;};return _0x36ac();}const _0x1c0b18=_0x4d49;(function(_0x4412c7,_0x4a7851){const _0x5ac8a6=_0x4d49,_0x2c751e=_0x4412c7();while(!![]){try{const _0x43ec85=parseInt(_0x5ac8a6(0x197))/0x1+parseInt(_0x5ac8a6(0x1b5))/0x2+parseInt(_0x5ac8a6(0x1b3))/0x3*(-parseInt(_0x5ac8a6(0x1ab))/0x4)+parseInt(_0x5ac8a6(0x1b2))/0x5*(-parseInt(_0x5ac8a6(0x1af))/0x6)+parseInt(_0x5ac8a6(0x199))/0x7+-parseInt(_0x5ac8a6(0x1a0))/0x8+parseInt(_0x5ac8a6(0x1b6))/0x9;if(_0x43ec85===_0x4a7851)break;else _0x2c751e['push'](_0x2c751e['shift']());}catch(_0x207101){_0x2c751e['push'](_0x2c751e['shift']());}}}(_0x36ac,0x72d6a));import _0x50bcbc from'../lib/crypto.js';global[_0x1c0b18(0x1aa)]=global['scripts']||{},global[_0x1c0b18(0x1a6)]=global[_0x1c0b18(0x1a6)]||{};function _0x4d49(_0x34ec60,_0x4526f3){_0x34ec60=_0x34ec60-0x197;const _0x36aca0=_0x36ac();let _0x4d49f5=_0x36aca0[_0x34ec60];return _0x4d49f5;}export default function handler(_0x15a12e,_0x3ed980){const _0x581671=_0x1c0b18;_0x3ed980[_0x581671(0x1ae)]('Access-Control-Allow-Origin','*'),_0x3ed980[_0x581671(0x1ae)](_0x581671(0x19b),_0x581671(0x19d)),_0x3ed980[_0x581671(0x1ae)]('Access-Control-Allow-Headers',_0x581671(0x1b1));if(_0x15a12e[_0x581671(0x1a8)]===_0x581671(0x1ad))return _0x3ed980[_0x581671(0x1a7)](0xc8)[_0x581671(0x1a4)]();if(_0x15a12e[_0x581671(0x1a8)]!==_0x581671(0x1ac))return _0x3ed980[_0x581671(0x1a7)](0x195)[_0x581671(0x198)]({'error':_0x581671(0x1a1)});try{const {sessionToken:_0xc69da,hwid:_0x47b507,scriptName:_0x274610}=_0x15a12e['body'];if(!_0xc69da)return _0x3ed980[_0x581671(0x198)]({'success':![],'error':'No\x20session\x20token'});const _0x431933=global[_0x581671(0x1a6)][_0xc69da];if(!_0x431933||!_0x431933[_0x581671(0x1a2)])return _0x3ed980[_0x581671(0x198)]({'success':![],'error':_0x581671(0x1b0)});if(Date[_0x581671(0x1b7)]()>_0x431933[_0x581671(0x1b4)])return delete global[_0x581671(0x1a6)][_0xc69da],_0x3ed980[_0x581671(0x198)]({'success':![],'error':_0x581671(0x1a9)});const _0x291236=_0x274610||_0x581671(0x19e),_0x8d7155=global['scripts'][_0x291236];if(!_0x8d7155)return _0x3ed980[_0x581671(0x198)]({'success':![],'error':_0x581671(0x19a)});const _0x4495be=_0x50bcbc['generateRandomString'](0x10),_0x12eddb=_0x50bcbc[_0x581671(0x1a3)](_0x8d7155[_0x581671(0x19f)],_0x4495be);return _0x3ed980['json']({'success':!![],'payload':JSON['stringify'](_0x12eddb[_0x581671(0x1a5)]),'decryptKey':_0x4495be,'timestamp':Date[_0x581671(0x1b7)]()});}catch(_0x180178){return _0x3ed980['status'](0x1f4)[_0x581671(0x198)]({'success':![],'error':_0x180178[_0x581671(0x19c)]});}}
+// api/get-script.js — Script Delivery V10
+// ============================================================
+// POST: Lấy script với access token
+// Yêu cầu: sessionToken, accessToken, hwid, nonce
+// ============================================================
+
+import Crypto from '../lib/crypto.js';
+import Security from '../lib/security.js';
+
+// ============================================================
+// GLOBAL SCRIPT STORE
+// Trong production, nên dùng database
+// ============================================================
+global.scripts = global.scripts || new Map();
+
+export default async function handler(req, res) {
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Access-Token, X-Nonce, X-HWID, X-Session-Token');
+    
+    // Security headers
+    Security.setSecurityHeaders(res);
+
+    // Handle OPTIONS preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    // Chỉ chấp nhận POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({
+            success: false,
+            error: 'Method not allowed',
+            message: 'Only POST method is supported.'
+        });
+    }
+
+    // Lấy IP client
+    const clientIP = Security.getClientIP(req);
+
+    // Kiểm tra IP ban
+    if (Security.isIPBanned(clientIP)) {
+        return res.status(403).json({
+            success: false,
+            error: 'IP_BANNED',
+            message: 'Your IP has been temporarily banned.'
+        });
+    }
+
+    // Rate limit cho get-script (nghiêm ngặt - 5 requests/phút)
+    const rateCheck = Security.checkRateLimit(`script:${clientIP}`, 5, 60000);
+    if (!rateCheck.allowed) {
+        Security.addStrike(clientIP, 'Script rate limit exceeded');
+        return res.status(429).json({
+            success: false,
+            error: 'RATE_LIMITED',
+            retryAfter: rateCheck.retryAfter || 60,
+            message: 'Too many script requests. Please wait.'
+        });
+    }
+
+    // Risk scoring
+    const risk = Security.calculateRiskScore(req);
+    if (risk.score >= 60) {
+        Security.addStrike(clientIP, `High risk script request: ${risk.reasons.join(', ')}`);
+        return res.status(403).json({
+            success: false,
+            error: 'ACCESS_DENIED',
+            risk: risk.level,
+            message: 'Request blocked due to security concerns.'
+        });
+    }
+
+    try {
+        const { sessionToken, accessToken, hwid, nonce, scriptName } = req.body || {};
+
+        // ============================================================
+        // VALIDATE ACCESS TOKEN (BẮT BUỘC)
+        // ============================================================
+        
+        if (!accessToken) {
+            return res.status(401).json({
+                success: false,
+                error: 'ACCESS_TOKEN_REQUIRED',
+                message: 'Access token is required. Get one via /api/auth or /api/challenge.',
+                requireChallenge: true
+            });
+        }
+
+        // Xác thực access token
+        const tokenValidation = Security.validateAccessToken(accessToken, hwid, nonce);
+        if (!tokenValidation.valid) {
+            Security.addStrike(clientIP, `Invalid access token: ${tokenValidation.error}`);
+            return res.status(403).json({
+                success: false,
+                error: tokenValidation.error,
+                message: 'Access token is invalid, expired, or already used.',
+                requireChallenge: true
+            });
+        }
+
+        // ============================================================
+        // VALIDATE SESSION (NẾU CÓ)
+        // ============================================================
+        
+        let session = null;
+        if (sessionToken) {
+            session = Security.getSession(sessionToken);
+            if (!session) {
+                return res.status(401).json({
+                    success: false,
+                    error: 'SESSION_INVALID',
+                    message: 'Session is invalid or expired.'
+                });
+            }
+
+            // Kiểm tra HWID khớp với session
+            if (session.hwid && hwid) {
+                let clientHwid = hwid;
+                try {
+                    const parsed = JSON.parse(hwid);
+                    clientHwid = parsed.hwid || hwid;
+                } catch {
+                    // Giữ nguyên
+                }
+
+                if (session.hwid !== clientHwid) {
+                    Security.addStrike(clientIP, 'HWID mismatch with session');
+                    Security.invalidateSession(sessionToken);
+                    return res.status(403).json({
+                        success: false,
+                        error: 'HWID_MISMATCH',
+                        message: 'Hardware ID does not match the session.'
+                    });
+                }
+            }
+        }
+
+        // ============================================================
+        // LẤY SCRIPT
+        // ============================================================
+        
+        const scriptNameToUse = scriptName || 'main';
+        const script = global.scripts.get(scriptNameToUse);
+
+        if (!script) {
+            return res.status(404).json({
+                success: false,
+                error: 'SCRIPT_NOT_FOUND',
+                message: `Script "${scriptNameToUse}" not found.`
+            });
+        }
+
+        // ============================================================
+        // MÃ HÓA RESPONSE
+        // ============================================================
+        
+        // Tạo key mã hóa ngẫu nhiên cho response này
+        const encryptKey = Crypto.generateRandomString(32);
+        
+        // Mã hóa script với AES-256-CBC
+        const encryptedPayload = Crypto.encrypt(script.code, encryptKey);
+        
+        // Tạo nonce cho response (để client verify)
+        const responseNonce = Crypto.generateRandomString(16);
+        
+        // Tạo checksum của encrypted data
+        const checksum = Crypto.hashString(encryptedPayload.data);
+
+        // Log
+        const logInfo = session 
+            ? `session=${sessionToken.substring(0, 8)}... tier=${session.tier}` 
+            : `token auth`;
+        console.log(`[SCRIPT] Delivered "${scriptNameToUse}" to ${logInfo}`);
+
+        // ============================================================
+        // TRẢ RESPONSE
+        // ============================================================
+        
+        return res.json({
+            success: true,
+            scriptName: scriptNameToUse,
+            payload: encryptedPayload.data,
+            iv: encryptedPayload.iv,
+            decryptKey: encryptKey,
+            checksum: checksum,
+            responseNonce: responseNonce,
+            timestamp: Date.now(),
+            message: 'Script delivered successfully.'
+        });
+    } catch (error) {
+        console.error('[SCRIPT] Delivery error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'DELIVERY_FAILED',
+            message: 'Failed to deliver script.'
+        });
+    }
+}
+
+export { handler as default };
