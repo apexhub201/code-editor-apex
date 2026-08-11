@@ -1,1 +1,411 @@
-function _0x4ada(){const _0x51ea78=['Key\x20not\x20found','Access-Control-Allow-Origin','\x20thiết\x20bị','sessions','expiresAt','json','devices','154079FMjQES','validate-key','Key\x20revoked','match','Key\x20đã\x20bị\x20thu\x20hồi','standard','tier','1205529dbJlfz','APEX-','push','POST,\x20OPTIONS','authenticate','5jGisSn','Key\x20expired','633164LQdDlD','Access-Control-Allow-Methods','body','hwid','message','keys','Content-Type','method','Access-Control-Allow-Headers','1383584BlEtFX','active','INVALID_KEY','HWID\x20is\x20required','status','length','514636kqZtdi','string','parse','end','30d','setHeader','4692498oftRrX','KEY_EXPIRED','unknown','generateSessionToken','5212480aTFtwU','now','maxSessions','Key\x20đã\x20hết\x20hạn'];_0x4ada=function(){return _0x51ea78;};return _0x4ada();}function _0x3cef(_0x3b5bb2,_0x1a7a52){_0x3b5bb2=_0x3b5bb2-0x155;const _0x4adaa2=_0x4ada();let _0x3cef8e=_0x4adaa2[_0x3b5bb2];return _0x3cef8e;}const _0x6e46da=_0x3cef;(function(_0x35866f,_0x2650c9){const _0x42c095=_0x3cef,_0x2d3852=_0x35866f();while(!![]){try{const _0x432b76=-parseInt(_0x42c095(0x16b))/0x1+-parseInt(_0x42c095(0x182))/0x2+-parseInt(_0x42c095(0x172))/0x3+parseInt(_0x42c095(0x156))/0x4+parseInt(_0x42c095(0x177))/0x5*(parseInt(_0x42c095(0x15c))/0x6)+parseInt(_0x42c095(0x179))/0x7+parseInt(_0x42c095(0x160))/0x8;if(_0x432b76===_0x2650c9)break;else _0x2d3852['push'](_0x2d3852['shift']());}catch(_0xbe795b){_0x2d3852['push'](_0x2d3852['shift']());}}}(_0x4ada,0x62e30));import _0x51a9bf from'../lib/crypto.js';import _0x41ef2e from'../lib/security.js';global[_0x6e46da(0x167)]=global[_0x6e46da(0x167)]||{},global['keys']=global[_0x6e46da(0x17e)]||{};export default function handler(_0x4c41ce,_0x1f7112){const _0x189f4b=_0x6e46da;_0x1f7112[_0x189f4b(0x15b)](_0x189f4b(0x165),'*'),_0x1f7112[_0x189f4b(0x15b)](_0x189f4b(0x17a),_0x189f4b(0x175)),_0x1f7112['setHeader'](_0x189f4b(0x181),_0x189f4b(0x17f));if(_0x4c41ce['method']==='OPTIONS')return _0x1f7112[_0x189f4b(0x186)](0xc8)[_0x189f4b(0x159)]();if(_0x4c41ce[_0x189f4b(0x180)]!=='POST')return _0x1f7112[_0x189f4b(0x186)](0x195)['json']({'error':'Method\x20not\x20allowed'});const {action:_0x1f330f}=_0x4c41ce[_0x189f4b(0x17b)];switch(_0x1f330f){case'generate-key':return handleGenerateKey(_0x4c41ce,_0x1f7112);case _0x189f4b(0x176):return handleAuthenticate(_0x4c41ce,_0x1f7112);case _0x189f4b(0x16c):return handleValidateKey(_0x4c41ce,_0x1f7112);default:return handleAuthenticate(_0x4c41ce,_0x1f7112);}}function handleGenerateKey(_0x50dbfe,_0x3c3d28){const _0x4347d8=_0x6e46da;try{const {tier:tier=_0x4347d8(0x170),duration:duration=_0x4347d8(0x15a),maxDevices:maxDevices=0x3}=_0x50dbfe[_0x4347d8(0x17b)],_0x589650=parseDuration(duration),_0x4db412=0x4,_0x288bcc=[];for(let _0x852436=0x0;_0x852436<_0x4db412;_0x852436++){_0x288bcc[_0x4347d8(0x174)](_0x51a9bf['generateRandomString'](0x4)['toUpperCase']());}const _0x45c37e=_0x4347d8(0x173)+_0x288bcc['join']('-');return global[_0x4347d8(0x17e)][_0x45c37e]={'key':_0x45c37e,'tier':tier,'maxSessions':maxDevices,'createdAt':Date['now'](),'expiresAt':Date[_0x4347d8(0x161)]()+_0x589650,'devices':[],'active':!![]},_0x3c3d28['json']({'success':!![],'key':_0x45c37e,'tier':tier,'expiresAt':Date[_0x4347d8(0x161)]()+_0x589650,'expiresIn':Math['floor'](_0x589650/0x3e8),'maxDevices':maxDevices});}catch(_0x3d9fa8){return _0x3c3d28[_0x4347d8(0x186)](0x1f4)['json']({'success':![],'error':_0x3d9fa8[_0x4347d8(0x17d)]});}}function handleAuthenticate(_0x178abe,_0x5aa8ec){const _0x284429=_0x6e46da;try{const {key:_0x27abd7,hwid:_0x24e8ff,version:_0x473b55}=_0x178abe['body'];if(!_0x27abd7)return _0x5aa8ec['json']({'success':![],'error':'Key\x20is\x20required'});if(!_0x24e8ff)return _0x5aa8ec[_0x284429(0x169)]({'success':![],'error':_0x284429(0x185)});let _0x31dca6;try{_0x31dca6=typeof _0x24e8ff===_0x284429(0x157)?JSON[_0x284429(0x158)](_0x24e8ff):_0x24e8ff;}catch{_0x31dca6={'hwid':_0x24e8ff};}const _0x44b271=_0x31dca6[_0x284429(0x17c)]||_0x24e8ff,_0x32c690=global[_0x284429(0x17e)][_0x27abd7];if(!_0x32c690)return _0x5aa8ec['json']({'success':![],'error':_0x284429(0x184),'message':'Key\x20không\x20tồn\x20tại'});if(!_0x32c690[_0x284429(0x183)])return _0x5aa8ec[_0x284429(0x169)]({'success':![],'error':'KEY_REVOKED','message':_0x284429(0x16f)});if(Date['now']()>_0x32c690['expiresAt'])return _0x5aa8ec['json']({'success':![],'error':_0x284429(0x15d),'message':_0x284429(0x163)});if(!_0x32c690[_0x284429(0x16a)]['includes'](_0x44b271)){if(_0x32c690[_0x284429(0x16a)][_0x284429(0x155)]>=_0x32c690['maxSessions'])return _0x5aa8ec['json']({'success':![],'error':'MAX_DEVICES','message':'Đã\x20đạt\x20giới\x20hạn\x20'+_0x32c690[_0x284429(0x162)]+_0x284429(0x166)});_0x32c690['devices'][_0x284429(0x174)](_0x44b271);}const _0x5ab50b=_0x41ef2e[_0x284429(0x15f)](),_0x5de82d=0x18*0x3c*0x3c*0x3e8;return global['sessions'][_0x5ab50b]={'token':_0x5ab50b,'key':_0x27abd7,'hwid':_0x44b271,'tier':_0x32c690[_0x284429(0x171)],'createdAt':Date[_0x284429(0x161)](),'expiresAt':Date[_0x284429(0x161)]()+_0x5de82d,'active':!![],'version':_0x473b55||_0x284429(0x15e)},_0x5aa8ec[_0x284429(0x169)]({'success':!![],'sessionToken':_0x5ab50b,'tier':_0x32c690['tier'],'expiresIn':Math['floor'](_0x5de82d/0x3e8),'expiresAt':Date[_0x284429(0x161)]()+_0x5de82d});}catch(_0x21742b){return _0x5aa8ec[_0x284429(0x186)](0x1f4)[_0x284429(0x169)]({'success':![],'error':_0x21742b[_0x284429(0x17d)]});}}function handleValidateKey(_0x42f135,_0x350d35){const _0x27f2c5=_0x6e46da;try{const {key:_0x37bfe}=_0x42f135[_0x27f2c5(0x17b)];if(!_0x37bfe)return _0x350d35[_0x27f2c5(0x169)]({'valid':![],'error':'Key\x20is\x20required'});const _0x3fc43e=global[_0x27f2c5(0x17e)][_0x37bfe];if(!_0x3fc43e)return _0x350d35[_0x27f2c5(0x169)]({'valid':![],'error':_0x27f2c5(0x164)});if(!_0x3fc43e[_0x27f2c5(0x183)])return _0x350d35['json']({'valid':![],'error':_0x27f2c5(0x16d)});if(Date['now']()>_0x3fc43e[_0x27f2c5(0x168)])return _0x350d35[_0x27f2c5(0x169)]({'valid':![],'error':_0x27f2c5(0x178)});return _0x350d35[_0x27f2c5(0x169)]({'valid':!![],'tier':_0x3fc43e[_0x27f2c5(0x171)],'devices':_0x3fc43e[_0x27f2c5(0x16a)][_0x27f2c5(0x155)],'maxDevices':_0x3fc43e[_0x27f2c5(0x162)],'expiresAt':_0x3fc43e[_0x27f2c5(0x168)],'remaining':Math['floor']((_0x3fc43e[_0x27f2c5(0x168)]-Date[_0x27f2c5(0x161)]())/0x3e8)});}catch(_0x3aac29){return _0x350d35[_0x27f2c5(0x186)](0x1f4)[_0x27f2c5(0x169)]({'valid':![],'error':_0x3aac29[_0x27f2c5(0x17d)]});}}function parseDuration(_0x1a41c0){const _0x182a3a=_0x6e46da,_0x212c39=_0x1a41c0[_0x182a3a(0x16e)](/^(\d+)([dhms])$/);if(!_0x212c39)return 0x1e*0x18*0x3c*0x3c*0x3e8;const _0x5bd8ad=parseInt(_0x212c39[0x1]),_0x613b4e=_0x212c39[0x2];switch(_0x613b4e){case'd':return _0x5bd8ad*0x18*0x3c*0x3c*0x3e8;case'h':return _0x5bd8ad*0x3c*0x3c*0x3e8;case'm':return _0x5bd8ad*0x3c*0x3e8;case's':return _0x5bd8ad*0x3e8;default:return 0x1e*0x18*0x3c*0x3c*0x3e8;}}
+// api/auth.js — Authentication System V10
+// ============================================================
+// POST: Xác thực key và cấp session + access token
+// ============================================================
+
+import Crypto from '../lib/crypto.js';
+import Security from '../lib/security.js';
+
+// ============================================================
+// GLOBAL KEY STORE
+// Trong production, nên dùng database thay vì memory
+// ============================================================
+global.keys = global.keys || new Map();
+
+export default async function handler(req, res) {
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Nonce, X-Signature, X-HWID');
+    
+    // Security headers
+    Security.setSecurityHeaders(res);
+
+    // Handle OPTIONS preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    // Chỉ chấp nhận POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({
+            success: false,
+            error: 'Method not allowed',
+            message: 'Only POST method is supported.'
+        });
+    }
+
+    // Lấy IP client
+    const clientIP = Security.getClientIP(req);
+
+    // Kiểm tra IP ban
+    if (Security.isIPBanned(clientIP)) {
+        return res.status(403).json({
+            success: false,
+            error: 'IP_BANNED',
+            message: 'Your IP has been temporarily banned.'
+        });
+    }
+
+    // Rate limit cho auth (nghiêm ngặt - 10 requests/phút)
+    const rateCheck = Security.checkRateLimit(`auth:${clientIP}`, 10, 60000);
+    if (!rateCheck.allowed) {
+        Security.addStrike(clientIP, 'Auth rate limit exceeded');
+        return res.status(429).json({
+            success: false,
+            error: 'RATE_LIMITED',
+            retryAfter: rateCheck.retryAfter || 60,
+            message: 'Too many authentication attempts. Please wait.'
+        });
+    }
+
+    // Risk scoring
+    const risk = Security.calculateRiskScore(req);
+    if (risk.score >= 50) {
+        Security.addStrike(clientIP, `High risk auth: ${risk.reasons.join(', ')}`);
+        return res.status(403).json({
+            success: false,
+            error: 'ACCESS_DENIED',
+            risk: risk.level,
+            message: 'Request blocked due to security concerns.'
+        });
+    }
+
+    // Parse body
+    const { action, key, hwid, version, nonce } = req.body || {};
+
+    // Validate nonce (anti-replay)
+    if (!Security.validateNonce(nonce)) {
+        Security.addStrike(clientIP, 'Nonce reuse in auth');
+        return res.status(403).json({
+            success: false,
+            error: 'INVALID_NONCE',
+            message: 'Invalid or reused nonce.'
+        });
+    }
+
+    // Route theo action
+    try {
+        switch (action) {
+            case 'generate-key':
+                return handleGenerateKey(req, res, clientIP);
+            case 'authenticate':
+                return handleAuthenticate(req, res, clientIP);
+            case 'validate-key':
+                return handleValidateKey(req, res);
+            default:
+                // Mặc định là authenticate
+                return handleAuthenticate(req, res, clientIP);
+        }
+    } catch (error) {
+        console.error('[AUTH] Handler error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'INTERNAL_ERROR',
+            message: 'An internal error occurred.'
+        });
+    }
+}
+
+/**
+ * Tạo key mới
+ * POST /api/auth
+ * Body: { action: "generate-key", tier, duration, maxDevices, nonce }
+ */
+function handleGenerateKey(req, res, clientIP) {
+    try {
+        const { tier = 'standard', duration = '30d', maxDevices = 3 } = req.body || {};
+
+        // Validate tier
+        const validTiers = ['standard', 'premium', 'enterprise', 'admin'];
+        if (!validTiers.includes(tier)) {
+            return res.status(400).json({
+                success: false,
+                error: 'INVALID_TIER',
+                message: `Tier must be one of: ${validTiers.join(', ')}`
+            });
+        }
+
+        // Validate maxDevices
+        const maxDev = Math.min(Math.max(1, parseInt(maxDevices) || 3), 25);
+        
+        // Parse duration
+        const durationMs = parseDuration(duration);
+
+        // Tạo key với format APEX-XXXX-XXXX-XXXX-XXXX
+        const segments = 4;
+        const keyParts = [];
+        for (let i = 0; i < segments; i++) {
+            keyParts.push(Crypto.generateRandomString(4).toUpperCase());
+        }
+        const keyString = 'APEX-' + keyParts.join('-');
+        
+        // Tạo key data
+        const keyData = {
+            key: keyString,
+            keyId: Crypto.generateRandomString(16),
+            tier: tier,
+            maxSessions: maxDev,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + durationMs,
+            devices: [],
+            active: true,
+            createdFrom: clientIP
+        };
+        
+        // Lưu key
+        global.keys.set(keyString, keyData);
+
+        // Log
+        console.log(`[AUTH] Key generated: ${keyString} (tier: ${tier}, devices: ${maxDev}, duration: ${duration})`);
+
+        return res.json({
+            success: true,
+            key: keyString,
+            keyId: keyData.keyId,
+            tier: tier,
+            expiresAt: keyData.expiresAt,
+            expiresIn: Math.floor(durationMs / 1000),
+            maxDevices: maxDev,
+            message: 'Key generated successfully.'
+        });
+    } catch (error) {
+        console.error('[AUTH] Generate key error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'GENERATE_FAILED',
+            message: error.message
+        });
+    }
+}
+
+/**
+ * Xác thực với key
+ * POST /api/auth
+ * Body: { action: "authenticate", key, hwid, version, nonce }
+ */
+function handleAuthenticate(req, res, clientIP) {
+    try {
+        const { key, hwid, version } = req.body || {};
+
+        // Validate key
+        if (!key || typeof key !== 'string' || key.trim().length === 0) {
+            Security.addStrike(clientIP, 'Auth with empty key');
+            return res.status(400).json({
+                success: false,
+                error: 'KEY_REQUIRED',
+                message: 'License key is required.'
+            });
+        }
+
+        // Validate HWID
+        if (!hwid) {
+            Security.addStrike(clientIP, 'Auth without HWID');
+            return res.status(400).json({
+                success: false,
+                error: 'HWID_REQUIRED',
+                message: 'Hardware ID is required.'
+            });
+        }
+
+        // Parse HWID (có thể là JSON hoặc string)
+        let deviceId;
+        try {
+            const hwidData = typeof hwid === 'string' ? JSON.parse(hwid) : hwid;
+            deviceId = hwidData.hwid || hwidData.synapse_hwid || hwidData.krnl_hwid || hwid;
+            if (typeof deviceId === 'object') {
+                deviceId = JSON.stringify(deviceId);
+            }
+        } catch {
+            deviceId = String(hwid);
+        }
+
+        // Chuẩn hóa key
+        const normalizedKey = key.trim().toUpperCase();
+
+        // Tìm key trong store
+        const keyData = global.keys.get(normalizedKey);
+        
+        if (!keyData) {
+            Security.addStrike(clientIP, `Invalid key attempt: ${normalizedKey.substring(0, 10)}...`);
+            return res.status(401).json({
+                success: false,
+                error: 'INVALID_KEY',
+                message: 'License key does not exist.'
+            });
+        }
+
+        // Kiểm tra key active
+        if (!keyData.active) {
+            return res.status(403).json({
+                success: false,
+                error: 'KEY_REVOKED',
+                message: 'This license key has been revoked.'
+            });
+        }
+
+        // Kiểm tra hết hạn
+        if (Date.now() > keyData.expiresAt) {
+            return res.status(403).json({
+                success: false,
+                error: 'KEY_EXPIRED',
+                message: 'This license key has expired.',
+                expiredAt: keyData.expiresAt
+            });
+        }
+
+        // Kiểm tra và đăng ký thiết bị
+        if (!keyData.devices.includes(deviceId)) {
+            if (keyData.devices.length >= keyData.maxSessions) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'MAX_DEVICES',
+                    message: `Maximum devices reached (${keyData.maxSessions}).`,
+                    currentDevices: keyData.devices.length,
+                    maxDevices: keyData.maxSessions
+                });
+            }
+            // Đăng ký thiết bị mới
+            keyData.devices.push(deviceId);
+            keyData.lastDeviceAdded = Date.now();
+            global.keys.set(normalizedKey, keyData);
+        }
+
+        // Tạo session
+        const session = Security.createSession({
+            keyId: keyData.keyId,
+            hwid: deviceId,
+            tier: keyData.tier,
+            fingerprint: Security.getFingerprint(req),
+            metadata: {
+                version: version || 'unknown',
+                authTime: Date.now()
+            }
+        });
+
+        // Tạo access token ngắn hạn
+        const accessTokenData = Security.generateAccessToken({
+            sessionId: session.sessionId,
+            keyId: keyData.keyId,
+            tier: keyData.tier,
+            hwid: deviceId,
+            fingerprint: session.fingerprint,
+            purpose: 'script_access'
+        });
+
+        // Log
+        console.log(`[AUTH] Authenticated: key=${normalizedKey.substring(0, 10)}... device=${deviceId.substring(0, 8)}... tier=${keyData.tier}`);
+
+        return res.json({
+            success: true,
+            sessionToken: session.sessionId,
+            accessToken: accessTokenData.accessToken,
+            nonce: accessTokenData.nonce,
+            tier: keyData.tier,
+            expiresIn: accessTokenData.expiresIn,
+            expiresAt: accessTokenData.expiresAt,
+            message: 'Authentication successful.'
+        });
+    } catch (error) {
+        console.error('[AUTH] Authenticate error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'AUTH_FAILED',
+            message: error.message
+        });
+    }
+}
+
+/**
+ * Kiểm tra key có hợp lệ không
+ * POST /api/auth
+ * Body: { action: "validate-key", key }
+ */
+function handleValidateKey(req, res) {
+    try {
+        const { key } = req.body || {};
+
+        if (!key) {
+            return res.status(400).json({
+                valid: false,
+                error: 'Key is required'
+            });
+        }
+
+        const normalizedKey = key.trim().toUpperCase();
+        const keyData = global.keys.get(normalizedKey);
+
+        if (!keyData) {
+            return res.json({
+                valid: false,
+                error: 'Key not found'
+            });
+        }
+
+        if (!keyData.active) {
+            return res.json({
+                valid: false,
+                error: 'Key revoked',
+                reason: 'revoked'
+            });
+        }
+
+        if (Date.now() > keyData.expiresAt) {
+            return res.json({
+                valid: false,
+                error: 'Key expired',
+                reason: 'expired',
+                expiredAt: keyData.expiresAt
+            });
+        }
+
+        return res.json({
+            valid: true,
+            tier: keyData.tier,
+            devices: keyData.devices.length,
+            maxDevices: keyData.maxSessions,
+            expiresAt: keyData.expiresAt,
+            remaining: Math.floor((keyData.expiresAt - Date.now()) / 1000),
+            createdAt: keyData.createdAt
+        });
+    } catch (error) {
+        console.error('[AUTH] Validate error:', error);
+        return res.status(500).json({
+            valid: false,
+            error: error.message
+        });
+    }
+}
+
+/**
+ * Parse duration string sang milliseconds
+ * Hỗ trợ: 30d, 24h, 60m, 3600s
+ */
+function parseDuration(duration) {
+    if (!duration || typeof duration !== 'string') {
+        return 30 * 24 * 60 * 60 * 1000; // Mặc định 30 ngày
+    }
+
+    const match = duration.match(/^(\d+)([dhms])$/i);
+    if (!match) {
+        return 30 * 24 * 60 * 60 * 1000;
+    }
+
+    const value = parseInt(match[1]);
+    const unit = match[2].toLowerCase();
+
+    switch (unit) {
+        case 'd':
+            return value * 24 * 60 * 60 * 1000;
+        case 'h':
+            return value * 60 * 60 * 1000;
+        case 'm':
+            return value * 60 * 1000;
+        case 's':
+            return value * 1000;
+        default:
+            return 30 * 24 * 60 * 60 * 1000;
+    }
+}
+
+export { handler as default };
