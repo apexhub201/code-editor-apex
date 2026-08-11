@@ -1,5 +1,5 @@
 // ============================================================
-// api/raw.js - APEX HUB V9 (Security Refactored - Complete)
+// api/raw.js - APEX HUB V9 (Hercules Obfuscator + Security)
 // ============================================================
 
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
@@ -45,7 +45,10 @@ const COLLECTIONS = {
     EVENTS: 'security_events'
 };
 
-const VALID_KEYS = (process.env.VALID_AUTH_KEYS || 'd0egkw6en9eusrjje5vn70p2tvkngkkn,apex-master-key-2024').split(',').map(k => k.trim()).filter(Boolean);
+const VALID_KEYS = (process.env.VALID_AUTH_KEYS || 'd0egkw6en9eusrjje5vn70p2tvkngkkn,apex-master-key-2024')
+    .split(',')
+    .map(k => k.trim())
+    .filter(Boolean);
 
 const scriptCache = new Map();
 const CACHE_TTL = 5 * 60 * 1000;
@@ -56,6 +59,404 @@ const executorPatterns = [
     'hydrogen', 'codex', 'vega', 'trigon', 'nexus',
     'solara', 'jjsploit', 'celestial', 'evon', 'aris'
 ];
+
+// ============================================================
+// HERCULES OBFUSCATOR (JS Port)
+// ============================================================
+
+class HerculesObfuscator {
+    constructor(options = {}) {
+        this.config = {
+            stringEncryption: options.stringEncryption ?? true,
+            numberEncryption: options.numberEncryption ?? true,
+            controlFlowFlattening: options.controlFlowFlattening ?? true,
+            deadCodeInjection: options.deadCodeInjection ?? true,
+            antiDebug: options.antiDebug ?? true,
+            virtualizeGlobals: options.virtualizeGlobals ?? false,
+            mutationPasses: options.mutationPasses ?? 3,
+            seed: options.seed || crypto.randomBytes(8).toString('hex')
+        };
+        
+        this.seed = this.hashSeed(this.config.seed);
+    }
+    
+    hashSeed(seed) {
+        let hash = 0;
+        for (let i = 0; i < seed.length; i++) {
+            hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    }
+    
+    random() {
+        this.seed = (this.seed * 1103515245 + 12345) & 0x7fffffff;
+        return this.seed / 0x7fffffff;
+    }
+    
+    randomInt(min, max) {
+        return Math.floor(this.random() * (max - min + 1)) + min;
+    }
+    
+    randomId() {
+        return '_h' + this.randomInt(1000, 9999).toString(36);
+    }
+    
+    /**
+     * Main obfuscation pipeline
+     */
+    obfuscate(code) {
+        console.log('[HERCULES] Starting obfuscation pipeline...');
+        console.log(`[HERCULES] Seed: ${this.config.seed}`);
+        
+        let result = code;
+        
+        // Stage 1: String Encryption
+        if (this.config.stringEncryption) {
+            console.log('[HERCULES] Stage 1: String Encryption');
+            result = this.encryptStrings(result);
+        }
+        
+        // Stage 2: Number Encryption
+        if (this.config.numberEncryption) {
+            console.log('[HERCULES] Stage 2: Number Encryption');
+            result = this.encryptNumbers(result);
+        }
+        
+        // Stage 3: Control Flow Flattening
+        if (this.config.controlFlowFlattening) {
+            console.log('[HERCULES] Stage 3: Control Flow Flattening');
+            result = this.flattenControlFlow(result);
+        }
+        
+        // Stage 4: Dead Code Injection
+        if (this.config.deadCodeInjection) {
+            console.log('[HERCULES] Stage 4: Dead Code Injection');
+            result = this.injectDeadCode(result);
+        }
+        
+        // Stage 5: Anti-Debug
+        if (this.config.antiDebug) {
+            console.log('[HERCULES] Stage 5: Anti-Debug Injection');
+            result = this.injectAntiDebug(result);
+        }
+        
+        // Stage 6: Global Virtualization
+        if (this.config.virtualizeGlobals) {
+            console.log('[HERCULES] Stage 6: Global Virtualization');
+            result = this.virtualizeGlobals(result);
+        }
+        
+        // Stage 7: Mutation Passes
+        console.log(`[HERCULES] Stage 7: Mutation Passes (${this.config.mutationPasses}x)`);
+        for (let i = 0; i < this.config.mutationPasses; i++) {
+            result = this.mutateCode(result);
+        }
+        
+        // Stage 8: Add Manifest
+        result = this.addManifest(result);
+        
+        console.log('[HERCULES] Obfuscation complete');
+        return result;
+    }
+    
+    /**
+     * Stage 1: String Encryption
+     */
+    encryptStrings(code) {
+        return code.replace(/"([^"]{3,})"/g, (match, str) => {
+            if (this.random() > 0.7) return match;
+            
+            const key = this.randomInt(1, 255);
+            const encrypted = str.split('').map(c => {
+                return String.fromCharCode(c.charCodeAt(0) ^ key);
+            }).join('');
+            
+            const escaped = encrypted
+                .replace(/\\/g, '\\\\')
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r');
+            
+            const funcName = this.randomId();
+            const keyName = this.randomId();
+            
+            return `(function()local ${funcName}="${escaped}"local ${keyName}=${key}local _r=""for _i=1,#${funcName}do _r=_r..string.char(string.byte(${funcName},_i)~${keyName})end return _r end)()`;
+        });
+    }
+    
+    /**
+     * Stage 2: Number Encryption
+     */
+    encryptNumbers(code) {
+        return code.replace(/\b(\d+)\b/g, (match, num) => {
+            const n = parseInt(num);
+            if (n < 2 || n > 9999 || this.random() > 0.5) return match;
+            
+            const patterns = [
+                () => {
+                    const a = this.randomInt(1, n - 1);
+                    return `(${a}+${n - a})`;
+                },
+                () => {
+                    const a = this.randomInt(n + 1, n + 100);
+                    return `(${a}-${a - n})`;
+                },
+                () => {
+                    for (let i = 2; i <= Math.sqrt(n); i++) {
+                        if (n % i === 0 && this.random() > 0.5) {
+                            return `(${i}*${n / i})`;
+                        }
+                    }
+                    return `(${n - 1}+1)`;
+                },
+                () => {
+                    const x = this.randomInt(2, 20);
+                    return `(${n + x}-${x})`;
+                },
+                () => `math.floor(${n + this.random() * 0.5})`,
+            ];
+            
+            return patterns[this.randomInt(0, patterns.length - 1)]();
+        });
+    }
+    
+    /**
+     * Stage 3: Control Flow Flattening
+     */
+    flattenControlFlow(code) {
+        const lines = code.split('\n');
+        const result = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+            result.push(lines[i]);
+            
+            if (lines[i].trim() && this.random() < 0.15) {
+                const labelName = '_lbl' + this.randomInt(1000, 9999);
+                result.push(`::${labelName}::`);
+                if (this.random() > 0.5) {
+                    result.push(`if false then goto ${labelName} end`);
+                }
+            }
+        }
+        
+        return result.join('\n');
+    }
+    
+    /**
+     * Stage 4: Dead Code Injection
+     */
+    injectDeadCode(code) {
+        const deadCodeTemplates = [
+            () => {
+                const fn = this.randomId();
+                return `local ${fn}=function(...)local _a=table.pack(...)local _r=0 for _i=1,_a.n do _r=_r+(_a[_i]or 0)*_i end return _r end`;
+            },
+            () => {
+                const t = this.randomId();
+                return `local ${t}={}for _i=1,${this.randomInt(3, 10)}do ${t}[_i]=_i*${this.randomInt(2, 7)}end`;
+            },
+            () => {
+                const v = this.randomId();
+                return `local ${v}=${this.randomInt(1, 100)}${v}=${v}*${this.randomInt(2, 10)}${v}=nil`;
+            },
+            () => {
+                const v1 = this.randomId();
+                const v2 = this.randomId();
+                return `local ${v1},${v2}=pcall(function()return math.random(1,100)*0 end)`;
+            },
+            () => `do local _=${this.randomInt(1000, 9999)}while _>0 do _=_-1 break end end`,
+        ];
+        
+        const lines = code.split('\n');
+        const result = [];
+        
+        for (const line of lines) {
+            result.push(line);
+            if (line.trim() && this.random() < 0.12) {
+                const deadCode = deadCodeTemplates[this.randomInt(0, deadCodeTemplates.length - 1)]();
+                result.push(deadCode);
+            }
+        }
+        
+        return result.join('\n');
+    }
+    
+    /**
+     * Stage 5: Anti-Debug Injection
+     */
+    injectAntiDebug(code) {
+        const traps = [
+            `if debug and debug.getinfo and debug.getinfo(1)and debug.getinfo(1).short_src:match("hook")then return end`,
+            `if rawget and rawget(_G,"hooked")then return end`,
+            `pcall(function()if getfenv and getfenv(0)["_HOOKED"]then error("Debug detected")end end)`,
+            `local _dbg=pcall(function()return debug.getregistry()end)if _dbg and debug.getregistry()._HOOKED then return end`,
+            `if hookfunction and iswindowactive then return end`,
+        ];
+        
+        const trap = traps[this.randomInt(0, traps.length - 1)];
+        const chunks = [];
+        
+        for (let i = 0; i < trap.length; i += 40) {
+            chunks.push(trap.substring(i, i + 40));
+        }
+        
+        const varName = this.randomId();
+        const obfuscatedTrap = `local ${varName}=${JSON.stringify(chunks)}local _t=""for _i=1,#${varName}do _t=_t..${varName}[_i]end loadstring(_t)()`;
+        
+        return `--[[ Hercules Protected v2.0 | APEX HUB ]]--\n${obfuscatedTrap}\n${code}`;
+    }
+    
+    /**
+     * Stage 6: Global Virtualization
+     */
+    virtualizeGlobals(code) {
+        const globals = {
+            'game': this.randomId(),
+            'workspace': this.randomId(),
+            'print': this.randomId(),
+            'wait': this.randomId(),
+            'spawn': this.randomId(),
+            'delay': this.randomId(),
+            'tick': this.randomId(),
+            'time': this.randomId(),
+        };
+        
+        const virtualizedLines = [];
+        for (const [original, virtual] of Object.entries(globals)) {
+            if (code.includes(original)) {
+                virtualizedLines.push(`local ${virtual}=${original}`);
+            }
+        }
+        
+        if (virtualizedLines.length === 0) return code;
+        
+        let result = code;
+        for (const [original, virtual] of Object.entries(globals)) {
+            const regex = new RegExp(`\\b${original}\\b(?=\\s*[\\(\\[\\:\\.\\s])`, 'g');
+            result = result.replace(regex, virtual);
+        }
+        
+        return virtualizedLines.join(';') + ';' + result;
+    }
+    
+    /**
+     * Stage 7: Code Mutation
+     */
+    mutateCode(code) {
+        const mutations = [
+            // Đổi tên biến local
+            (c) => c.replace(/\blocal\s+([a-zA-Z_]\w*)\s*=/g, (match, varName) => {
+                if (varName.startsWith('_h') || varName.startsWith('_')) return match;
+                return `local ${this.randomId()}=`;
+            }),
+            // Thêm khoảng trắng ngẫu nhiên
+            (c) => c.split('\n').map(line => {
+                if (this.random() < 0.08) {
+                    return line.replace(/([=+\-*\/,])/g, ' $1 ');
+                }
+                return line;
+            }).join('\n'),
+            // Đảo thứ tự dòng
+            (c) => {
+                const lines = c.split('\n');
+                if (lines.length < 10) return c;
+                const idx1 = this.randomInt(1, Math.floor(lines.length / 3));
+                const idx2 = this.randomInt(Math.floor(lines.length * 2 / 3), lines.length - 2);
+                [lines[idx1], lines[idx2]] = [lines[idx2], lines[idx1]];
+                return lines.join('\n');
+            },
+            // Thêm biểu thức dư thừa
+            (c) => c.replace(/(\b\w+\s*=\s*[^;\n]+;)/g, (match) => {
+                if (this.random() < 0.1) {
+                    return `do local _${this.randomInt(100, 999)}=${this.randomInt(1, 100)}end;${match}`;
+                }
+                return match;
+            }),
+        ];
+        
+        const numMutations = this.randomInt(1, 2);
+        let result = code;
+        
+        for (let i = 0; i < numMutations; i++) {
+            const mutation = mutations[this.randomInt(0, mutations.length - 1)];
+            result = mutation(result);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Stage 8: Add Manifest Header
+     */
+    addManifest(code) {
+        const timestamp = new Date().toISOString();
+        return [
+            `--[[`,
+            `    ⚡ Hercules Obfuscator v2.0`,
+            `    🛡️ Protected by APEX HUB`,
+            `    🔐 Seed: ${this.config.seed.substring(0, 8)}`,
+            `    📅 ${timestamp}`,
+            `    ⚠️ UNAUTHORIZED DECOMPILATION PROHIBITED`,
+            `--]]`,
+            '',
+            code
+        ].join('\n');
+    }
+    
+    /**
+     * Generate Loader for Executors
+     */
+    generateLoader(code) {
+        const key = crypto.randomBytes(16);
+        const iv = crypto.randomBytes(8);
+        
+        // XOR encrypt
+        const encrypted = Buffer.alloc(code.length);
+        for (let i = 0; i < code.length; i++) {
+            encrypted[i] = code.charCodeAt(i) ^ key[i % key.length] ^ iv[i % iv.length];
+        }
+        
+        const b64 = encrypted.toString('base64');
+        const keyHex = key.toString('hex');
+        const ivHex = iv.toString('hex');
+        const funcName = this.randomId();
+        
+        return [
+            `-- APEX HUB Loader (Hercules v2.0)`,
+            `local ${funcName}="${keyHex}"`,
+            `local _iv="${ivHex}"`,
+            `local _d="${b64}"`,
+            `local function _b64d(d)`,
+            `    local b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"`,
+            `    d=string.gsub(d,'[^'..b..'=]','')`,
+            `    return(d:gsub('.',function(x)`,
+            `        if(x=='=')then return''end`,
+            `        local _,f=string.find(b,x)`,
+            `        local r=''`,
+            `        f=f-1`,
+            `        for _=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and'1'or'0')end`,
+            `        return r`,
+            `    end):gsub('%d%d%d?%d?%d?%d?%d?%d?',function(x)`,
+            `        if(#x~=8)then return''end`,
+            `        return string.char(tonumber(x,2))`,
+            `    end))`,
+            `end`,
+            `local _dec=_b64d(_d)`,
+            `local _r={}`,
+            `local _k=${funcName}`,
+            `for _i=1,#_dec do`,
+            `    local _kb=tonumber(string.sub(_k,((_i-1)%32)*2+1,((_i-1)%32)*2+2),16)`,
+            `    local _ib=tonumber(string.sub(_iv,((_i-1)%8)*2+1,((_i-1)%8)*2+2),16)`,
+            `    _r[_i]=string.char(string.byte(_dec,_i)~_kb~_ib)`,
+            `end`,
+            `local _c=table.concat(_r)`,
+            `_d,_dec,_r,_k,_iv=nil,nil,nil,nil,nil`,
+            `local _f=loadstring(_c)`,
+            `if _f then _f()end`,
+        ].join('\n');
+    }
+}
 
 // ============================================================
 // SECURITY FUNCTIONS
@@ -250,188 +651,22 @@ async function securityGuard(req, res, options = {}) {
 }
 
 // ============================================================
-// APEX CUSTOM OBFUSCATOR - PHANTOM LAYER
+// HERCULES OBFUSCATION WRAPPER
 // ============================================================
 
-function phantomObfuscate(code) {
-    code = fragmentStrings(code);
-    code = injectPhantomFunctions(code);
-    code = encryptNumbers(code);
-    code = wrapWithTimeBomb(code);
-    code = injectAntiDebug(code);
-    return code;
-}
-
-function fragmentStrings(code) {
-    return code.replace(/"([^"]+)"/g, (match, str) => {
-        if (str.length < 6) return match;
-        const fragments = [];
-        let remaining = str;
-        while (remaining.length > 0) {
-            const len = Math.floor(Math.random() * 5) + 2;
-            fragments.push(remaining.substring(0, len));
-            remaining = remaining.substring(len);
-        }
-        const varName = '_s' + Math.random().toString(36).substring(2, 8);
-        const parts = fragments.map(f => `"${f}"`).join(',');
-        return `(function() local ${varName}="" local _p={${parts}} for _i=1,#_p do ${varName}=${varName}.._p[_i] end return ${varName} end)()`;
+function obfuscateWithHercules(code) {
+    const hercules = new HerculesObfuscator({
+        stringEncryption: true,
+        numberEncryption: true,
+        controlFlowFlattening: true,
+        deadCodeInjection: true,
+        antiDebug: true,
+        virtualizeGlobals: true,
+        mutationPasses: 3,
+        seed: crypto.randomBytes(8).toString('hex')
     });
-}
-
-function injectPhantomFunctions(code) {
-    const phantomTemplates = [
-        `local _p${randomId()}=function(...) local _a=table.pack(...) local _r=0 for _i=1,_a.n do _r=_r+(_a[_i]or 0)*_i end return _r end`,
-        `local _q${randomId()}=function(_x) local _t={} for _i=1,math.abs(_x%20)+1 do _t[_i]=_i*_x%7 end return _t end`,
-        `local _v${randomId()}=function(_s) local _h=0 for _i=1,#_s do _h=_h+string.byte(_s,_i)*_i%256 end return _h end`,
-        `local _m${randomId()}=function(_a,_b) local _r={} for _i=1,math.max(#_a,#_b) do _r[_i]=(_a[_i]or 0)^(_b[_i]or 1)%100 end return _r end`,
-    ];
-    const lines = code.split('\n');
-    const result = [];
-    for (const line of lines) {
-        result.push(line);
-        if (line.trim() && Math.random() < 0.15) {
-            const phantom = phantomTemplates[Math.floor(Math.random() * phantomTemplates.length)];
-            result.push(phantom);
-        }
-    }
-    return result.join('\n');
-}
-
-function encryptNumbers(code) {
-    return code.replace(/\b(\d+)\b/g, (match, num) => {
-        const n = parseInt(num);
-        if (n < 2 || n > 9999) return match;
-        if (Math.random() > 0.5) return match;
-        const templates = [
-            () => { const a = Math.floor(Math.random() * n); const b = n - a; const op = Math.random() > 0.5 ? '+' : '-'; return op === '+' ? `(${a}+${b})` : `(${a + n}-${a})`; },
-            () => { const factors = []; for (let i = 2; i <= Math.sqrt(n); i++) { if (n % i === 0) factors.push({ a: i, b: n / i }); } if (factors.length > 0) { const f = factors[Math.floor(Math.random() * factors.length)]; return `(${f.a}*${f.b})`; } return `(${n - 1}+1)`; },
-            () => { const x = Math.floor(Math.random() * 20) + 2; return `(${n + x}-${x})`; },
-            () => `math.floor(${n + Math.random() * 0.5})`,
-        ];
-        return templates[Math.floor(Math.random() * templates.length)]();
-    });
-}
-
-function wrapWithTimeBomb(code) {
-    const seed = Date.now() % 100000;
-    const checkVar = '_t' + randomId();
-    return `\nlocal ${checkVar} = ${seed}\nlocal function _validate()\n    local _seed = ${seed}\n    local _now = os and os.time and os.time() or 0\n    local _check = (_now % 100000) - _seed\n    if math.abs(_check) > 86400 then\n        return false\n    end\n    return true\nend\nif not _validate() then return end\ndo\n${code}\nend\n${checkVar} = nil _validate = nil`;
-}
-
-function injectAntiDebug(code) {
-    const traps = [
-        `if debug and debug.getinfo and debug.getinfo(1) and debug.getinfo(1).short_src:match("hook") then return end`,
-        `if rawget and rawget(_G, "hooked") then return end`,
-        `local _dbg = nil if debug then _dbg = debug.getregistry and debug.getregistry() end if _dbg and _dbg._HOOKED then return end`,
-    ];
-    const trap = traps[Math.floor(Math.random() * traps.length)];
-    return `--[[ APEX HUB Protected ]]--\n${trap}\n${code}`;
-}
-
-function randomId() {
-    return Math.random().toString(36).substring(2, 8);
-}
-
-// ============================================================
-// ENCRYPTED LOADER GENERATOR
-// ============================================================
-
-function generateLoader(code) {
-    const timestamp = Date.now().toString(36);
-    const seed = generateSeed(code);
-    const key = deriveKey(seed, timestamp);
-    const nonce = generateNonce(12);
-    const encrypted = encryptWithKey(code, key, nonce);
-    const hexData = encrypted.toString('hex');
-    return buildObfuscatedLoader(hexData, seed, timestamp, nonce);
-}
-
-function generateSeed(code) {
-    let hash = 0;
-    for (let i = 0; i < Math.min(code.length, 100); i++) {
-        hash = ((hash << 5) - hash) + code.charCodeAt(i);
-        hash |= 0;
-    }
-    return Math.abs(hash).toString(36);
-}
-
-function deriveKey(seed, salt) {
-    let key = '';
-    const combined = seed + salt;
-    for (let i = 0; i < 16; i++) {
-        let charCode = 0;
-        for (let j = 0; j < combined.length; j++) {
-            charCode = (charCode * 31 + combined.charCodeAt(j) * (i + 1)) % 256;
-        }
-        key += String.fromCharCode(charCode);
-    }
-    return key;
-}
-
-function encryptWithKey(code, key, nonce) {
-    const bytes = Buffer.from(code, 'utf8');
-    const encrypted = Buffer.alloc(bytes.length);
-    for (let i = 0; i < bytes.length; i++) {
-        const k = key.charCodeAt(i % key.length);
-        const n = nonce.charCodeAt(i % nonce.length);
-        encrypted[i] = (bytes[i] + k + n) % 256;
-    }
-    return encrypted;
-}
-
-function generateNonce(length) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
-
-function buildObfuscatedLoader(hexData, seed, timestamp, nonce) {
-    const out = [];
-    out.push(`-- APEX HUB Loader v9 (Phantom Edition)`);
-    out.push(`-- Multi-layer protection active`);
-    out.push(``);
-    out.push(`local _seed = "${seed}"`);
-    out.push(`local _ts = "${timestamp}"`);
-    out.push(`local _nc = "${nonce}"`);
-    out.push(`local _hex = "${hexData}"`);
-    out.push(``);
-    out.push(`local function _dk(s,t)`);
-    out.push(`    local k=""`);
-    out.push(`    local c=s..t`);
-    out.push(`    for i=1,16 do`);
-    out.push(`        local v=0`);
-    out.push(`        for j=1,#c do`);
-    out.push(`            v=(v*31+string.byte(c,j)*i)%256`);
-    out.push(`        end`);
-    out.push(`        k=k..string.char(v)`);
-    out.push(`    end`);
-    out.push(`    return k`);
-    out.push(`end`);
-    out.push(``);
-    out.push(`local _key = _dk(_seed, _ts)`);
-    out.push(`local _bytes = {}`);
-    out.push(`local _idx = 1`);
-    out.push(`for _c in _hex:gmatch("..") do`);
-    out.push(`    local _b = tonumber(_c, 16)`);
-    out.push(`    local _kb = string.byte(_key, (_idx - 1) % #_key + 1)`);
-    out.push(`    local _nb = string.byte(_nc, (_idx - 1) % #_nc + 1)`);
-    out.push(`    _bytes[_idx] = string.char((_b - _kb - _nb) % 256)`);
-    out.push(`    _idx = _idx + 1`);
-    out.push(`end`);
-    out.push(``);
-    out.push(`local _code = table.concat(_bytes)`);
-    out.push(`_hex = nil _key = nil _nc = nil _bytes = nil _seed = nil _ts = nil _dk = nil`);
-    out.push(``);
-    out.push(`local _f, _e = loadstring(_code)`);
-    out.push(`if not _f then error("APEX Error: " .. tostring(_e)) end`);
-    out.push(`_code = nil`);
-    out.push(`_f()`);
-    out.push(`_f = nil`);
-    out.push(`collectgarbage("collect")`);
-    return out.join('\n');
+    
+    return hercules.obfuscate(code);
 }
 
 // ============================================================
@@ -558,7 +793,7 @@ async function handleGet(req, res) {
     }
     
     // ==========================================
-    // 2. EXECUTOR BYPASS (rate limit only)
+    // 2. EXECUTOR BYPASS (rate limit only + Hercules loader)
     // ==========================================
     const isExecutor = executorPatterns.some(p => ua.includes(p));
     
@@ -579,9 +814,13 @@ async function handleGet(req, res) {
         const scriptData = await getScript(name);
         if (!scriptData) return res.status(404).json({ error: 'SCRIPT_NOT_FOUND' });
         
+        // Dùng Hercules để tạo loader cho executor
+        const hercules = new HerculesObfuscator({ seed: crypto.randomBytes(8).toString('hex') });
+        const loader = hercules.generateLoader(scriptData.code);
+        
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-        return res.send(generateLoader(scriptData.code));
+        return res.send(loader);
     }
     
     // ==========================================
@@ -683,26 +922,39 @@ async function handleCreate(req, res) {
         const userId = uid || 'public';
         const fullName = `${userId}_${nameSlug}`;
         const target = detectTarget(code);
-        const obfuscatedCode = phantomObfuscate(code);
+        
+        // Dùng Hercules Obfuscator
+        console.log(`[APEX] Applying Hercules obfuscation for: ${fullName}`);
+        const obfuscatedCode = obfuscateWithHercules(code);
         
         const existingScript = await getScript(fullName);
         if (existingScript) {
             const newName = `${fullName}_${Date.now().toString(36)}`;
             await saveScript(newName, {
-                code: obfuscatedCode, originalCode: code,
-                name: name.trim(), created: Date.now(),
-                lastAccessed: Date.now(), owner: userId,
-                target: target, obfuscated: true
+                code: obfuscatedCode,
+                originalCode: code,
+                name: name.trim(),
+                created: Date.now(),
+                lastAccessed: Date.now(),
+                owner: userId,
+                target: target,
+                obfuscated: true,
+                obfuscator: 'hercules'
             });
             const rawUrl = `https://${req.headers.host}/api/raw?name=${newName}`;
             return res.status(200).json({ success: true, raw: rawUrl, name: newName, existed: true });
         }
         
         await saveScript(fullName, {
-            code: obfuscatedCode, originalCode: code,
-            name: name.trim(), created: Date.now(),
-            lastAccessed: Date.now(), owner: userId,
-            target: target, obfuscated: true
+            code: obfuscatedCode,
+            originalCode: code,
+            name: name.trim(),
+            created: Date.now(),
+            lastAccessed: Date.now(),
+            owner: userId,
+            target: target,
+            obfuscated: true,
+            obfuscator: 'hercules'
         });
         
         const rawUrl = `https://${req.headers.host}/api/raw?name=${fullName}`;
@@ -725,10 +977,12 @@ async function handleUpdate(req, res) {
         if (!scriptData) return res.status(404).json({ success: false, error: 'Script not found' });
         if (uid && scriptData.owner && scriptData.owner !== uid) return res.status(403).json({ success: false, error: 'Not your script' });
         
-        scriptData.code = phantomObfuscate(code);
+        // Dùng Hercules Obfuscator
+        scriptData.code = obfuscateWithHercules(code);
         scriptData.originalCode = code;
         scriptData.updated = Date.now();
         scriptData.lastAccessed = Date.now();
+        scriptData.obfuscator = 'hercules';
         
         await saveScript(name, scriptData);
         return res.status(200).json({ success: true, message: 'Updated successfully', name: name });
@@ -787,10 +1041,13 @@ function getRateLimitPage() {
 // ============================================================
 
 export default async function handler(req, res) {
+    // Security headers
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    
+    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key');
