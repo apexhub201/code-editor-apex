@@ -1,93 +1,38 @@
 {
-    "functions": {
-        "api/load.js": {
-            "memory": 1024,
-            "maxDuration": 30
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
-        "api/auth.js": {
-            "memory": 512,
-            "maxDuration": 10
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
-        "api/get-script.js": {
-            "memory": 512,
-            "maxDuration": 10
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
         },
-        "api/raw.js": {
-            "memory": 512,
-            "maxDuration": 15
-        },
-        "api/verify.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/ping.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/challenge.js": {
-            "memory": 256,
-            "maxDuration": 5
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         }
-    },
-    "rewrites": [
-        {
-            "source": "/load",
-            "destination": "/api/load"
-        },
-        {
-            "source": "/auth",
-            "destination": "/api/auth"
-        },
-        {
-            "source": "/get-script",
-            "destination": "/api/get-script"
-        },
-        {
-            "source": "/raw",
-            "destination": "/api/raw"
-        },
-        {
-            "source": "/verify",
-            "destination": "/api/verify"
-        },
-        {
-            "source": "/ping",
-            "destination": "/api/ping"
-        },
-        {
-            "source": "/challenge",
-            "destination": "/api/challenge"
-        }
-    ],
-    "headers": [
-        {
-            "source": "/api/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                },
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                },
-                {
-                    "key": "Access-Control-Allow-Methods",
-                    "value": "GET, POST, PUT, DELETE, OPTIONS"
-                },
-                {
-                    "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
-                }
-            ]
-        }
-    ]
+      ]
+    }
+  ]
 }
