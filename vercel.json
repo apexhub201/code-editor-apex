@@ -1,93 +1,125 @@
 {
-    "functions": {
-        "api/load.js": {
-            "memory": 1024,
-            "maxDuration": 30
-        },
-        "api/auth.js": {
-            "memory": 512,
-            "maxDuration": 10
-        },
-        "api/get-script.js": {
-            "memory": 512,
-            "maxDuration": 10
-        },
-        "api/raw.js": {
-            "memory": 512,
-            "maxDuration": 15
-        },
-        "api/verify.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/ping.js": {
-            "memory": 256,
-            "maxDuration": 5
-        },
-        "api/challenge.js": {
-            "memory": 256,
-            "maxDuration": 5
-        }
+  "functions": {
+    "api/load.js": {
+      "memory": 1024,
+      "maxDuration": 30
     },
-    "rewrites": [
+    "api/auth.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/get-script.js": {
+      "memory": 512,
+      "maxDuration": 10
+    },
+    "api/raw.js": {
+      "memory": 512,
+      "maxDuration": 15
+    },
+    "api/analytics.js": {
+      "memory": 512,
+      "maxDuration": 15
+    },
+    "api/verify.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/ping.js": {
+      "memory": 256,
+      "maxDuration": 5
+    },
+    "api/challenge.js": {
+      "memory": 256,
+      "maxDuration": 5
+    }
+  },
+
+  "rewrites": [
+    {
+      "source": "/load",
+      "destination": "/api/load"
+    },
+    {
+      "source": "/auth",
+      "destination": "/api/auth"
+    },
+    {
+      "source": "/get-script",
+      "destination": "/api/get-script"
+    },
+    {
+      "source": "/raw",
+      "destination": "/api/raw"
+    },
+    {
+      "source": "/analytics",
+      "destination": "/api/analytics"
+    },
+    {
+      "source": "/verify",
+      "destination": "/api/verify"
+    },
+    {
+      "source": "/ping",
+      "destination": "/api/ping"
+    },
+    {
+      "source": "/challenge",
+      "destination": "/api/challenge"
+    }
+  ],
+
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
         {
-            "source": "/load",
-            "destination": "/api/load"
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
         {
-            "source": "/auth",
-            "destination": "/api/auth"
+          "key": "X-Frame-Options",
+          "value": "DENY"
         },
         {
-            "source": "/get-script",
-            "destination": "/api/get-script"
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         },
         {
-            "source": "/raw",
-            "destination": "/api/raw"
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         },
         {
-            "source": "/verify",
-            "destination": "/api/verify"
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
         },
         {
-            "source": "/ping",
-            "destination": "/api/ping"
+          "key": "Pragma",
+          "value": "no-cache"
         },
         {
-            "source": "/challenge",
-            "destination": "/api/challenge"
+          "key": "Expires",
+          "value": "0"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://apexhubeditor.vercel.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key"
         }
-    ],
-    "headers": [
-        {
-            "source": "/api/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "X-XSS-Protection",
-                    "value": "1; mode=block"
-                },
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                },
-                {
-                    "key": "Access-Control-Allow-Methods",
-                    "value": "GET, POST, PUT, DELETE, OPTIONS"
-                },
-                {
-                    "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
-                }
-            ]
-        }
-    ]
+      ]
+    }
+  ],
+
+  "env": {
+    "FIREBASE_PROJECT_ID": "@firebase-project-id",
+    "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
+    "FIREBASE_PRIVATE_KEY": "@firebase-private-key"
+  }
 }
