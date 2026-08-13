@@ -1,1 +1,953 @@
-function _0x3367(_0x4bd84b,_0x4c5557){_0x4bd84b=_0x4bd84b-0x144;const _0x306fd7=_0x306f();let _0x33676b=_0x306fd7[_0x4bd84b];return _0x33676b;}(function(_0x50e05d,_0x4764f6){const _0x3b66df=_0x3367,_0x5edd5f=_0x50e05d();while(!![]){try{const _0x53cc4b=-parseInt(_0x3b66df(0x195))/0x1*(-parseInt(_0x3b66df(0x14c))/0x2)+parseInt(_0x3b66df(0x152))/0x3+parseInt(_0x3b66df(0x1bb))/0x4+parseInt(_0x3b66df(0x1a2))/0x5+-parseInt(_0x3b66df(0x147))/0x6+parseInt(_0x3b66df(0x170))/0x7*(-parseInt(_0x3b66df(0x1f2))/0x8)+-parseInt(_0x3b66df(0x18a))/0x9*(parseInt(_0x3b66df(0x1c4))/0xa);if(_0x53cc4b===_0x4764f6)break;else _0x5edd5f['push'](_0x5edd5f['shift']());}catch(_0x27f23f){_0x5edd5f['push'](_0x5edd5f['shift']());}}}(_0x306f,0xc5d94));import{initializeApp,getApps,cert}from'firebase-admin/app';function _0x306f(){const _0x3ef2d6=['charCodeAt','split','Name\x20is\x20required','/api/raw?name=','\x20\x20\x20\x20_idx\x20=\x20_idx\x20+\x201','text/html;\x20charset=utf-8','local\x20_seed\x20=\x20\x22','exists','Internal\x20server\x20error','roblox','trigon','resetTime','from','push','\x0alocal\x20','_f()','true','Rate\x20limit\x20exceeded','chrome','Deleted\x20successfully','if\x20debug\x20and\x20debug.getinfo\x20and\x20debug.getinfo(1)\x20and\x20debug.getinfo(1).short_src:match(\x22hook\x22)\x20then\x20return\x20end','d0egkw6en9eusrjje5vn70p2tvkngkkn','host','code','text/plain;\x20charset=utf-8','15256VFbjcV','log','local\x20_nc\x20=\x20\x22','\x20\x20\x20\x20end','update','2477316tvYEZh','jjsploit','nexus','scripts','\x20\x20\x20\x20for\x20i=1,16\x20do','342250upIGcw','Updated\x20successfully','DELETE','+1)','hydrogen','comet','3454758TGOpnq','random','\x20\x20\x20\x20return\x20k','now','doc','vega','originalCode','=function(...)\x20local\x20_a=table.pack(...)\x20local\x20_r=0\x20for\x20_i=1,_a.n\x20do\x20_r=_r+(_a[_i]or\x200)*_i\x20end\x20return\x20_r\x20end','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>Rate\x20Limited\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px\x20solid\x20rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0\x20auto\x2024px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.bar{width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:24px}.fill{width:100%;height:100%;background:rgba(255,255,255,0.15);animation:progress\x2060s\x20linear}@keyframes\x20progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}.panel{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:10px;padding:16px\x2020px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px\x200;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22icon\x22>—</div><div\x20class=\x22title\x22>Request\x20Throttled</div><p\x20class=\x22msg\x22>Too\x20many\x20requests\x20from\x20this\x20client.</p><div\x20class=\x22bar\x22><div\x20class=\x22fill\x22></div></div><div\x20class=\x22panel\x22><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Policy</span><span\x20class=\x22val\x22>RATE\x20LIMIT</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Status</span><span\x20class=\x22val\x22>THROTTLED</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Retry</span><span\x20class=\x22val\x22>AUTOMATIC</span></div></div><div\x20class=\x22ft\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div></div></body></html>','ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789','query','question','electron','toLowerCase','\x20\x20\x20\x20local\x20k=\x22\x22','sentinel','floor','get','Access-Control-Allow-Methods','local\x20_bytes\x20=\x20{}','Script\x20not\x20found','math.floor(','sqrt','=function(_x)\x20local\x20_t={}\x20for\x20_i=1,math.abs(_x%20)+1\x20do\x20_t[_i]=_i*_x%7\x20end\x20return\x20_t\x20end','\x20\x20\x20\x20local\x20_nb\x20=\x20string.byte(_nc,\x20(_idx\x20-\x201)\x20%\x20#_nc\x20+\x201)','local\x20_m','lua','script-ware','rate_limits','solara','1015UeFPaM','\x20=\x20','Method\x20not\x20allowed','if\x20not\x20_f\x20then\x20error(\x22APEX\x20Error:\x20\x22\x20..\x20tostring(_e))\x20end','join','=function(_s)\x20local\x20_h=0\x20for\x20_i=1,#_s\x20do\x20_h=_h+string.byte(_s,_i)*_i%256\x20end\x20return\x20_h\x20end','local\x20_key\x20=\x20_dk(_seed,\x20_ts)','(function()\x20local\x20','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>Access\x20Denied\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px\x20solid\x20rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0\x20auto\x2024px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:24px}.panel{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:10px;padding:16px\x2020px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px\x200;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22icon\x22>—</div><div\x20class=\x22title\x22>Access\x20Denied</div><p\x20class=\x22msg\x22>This\x20request\x20has\x20been\x20temporarily\x20blocked\x20by\x20the\x20APEX\x20security\x20gateway.</p><div\x20class=\x22panel\x22><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Event</span><span\x20class=\x22val\x22>ACCESS\x20POLICY\x20VIOLATION</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Status</span><span\x20class=\x22val\x22>TEMPORARILY\x20BLOCKED</span></div></div><div\x20class=\x22ft\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div></div></body></html>','user-agent','[APEX]\x20Applying\x20Phantom\x20obfuscation...','collectgarbage(\x22collect\x22)','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>APEX\x20HUB\x20|\x20API\x20Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5)}.brand{font-size:28px;font-weight:600;letter-spacing:-0.03em}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin:6px\x200\x2032px}.desc{font-size:14px;color:var(--t2);margin-bottom:32px}.sep{height:1px;background:var(--border);margin-bottom:28px}.ep{display:flex;align-items:center;gap:14px;padding:12px\x2016px;font-size:13px;font-family:monospace;border-radius:8px;transition:0.2s}.ep:hover{background:rgba(255,255,255,0.02)}.method{font-size:10px;text-transform:uppercase;padding:4px\x2010px;border-radius:6px;min-width:50px;text-align:center;background:rgba(255,255,255,0.03);border:1px\x20solid\x20rgba(255,255,255,0.05);color:var(--t2)}.footer{margin-top:32px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><h1\x20class=\x22brand\x22>APEX\x20HUB</h1><div\x20class=\x22sub\x22>API\x20Gateway</div><p\x20class=\x22desc\x22>Production\x20infrastructure\x20for\x20secure\x20script\x20delivery\x20and\x20API\x20access.</p><div\x20class=\x22sep\x22></div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>POST</span>/api/raw</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>PUT</span>/api/raw</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>GET</span>/api/raw?name=script</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>DEL</span>/api/raw?name=script</div><div\x20class=\x22footer\x22>APEX\x20HUB\x20·\x20API\x20Infrastructure\x20·\x20V9</div></div></body></html>','\x20end)()','setHeader','\x20\x20\x20\x20local\x20c=s..t','X-Frame-Options','\x20=\x20?','local\x20_hex\x20=\x20\x22','synapse','includes','\x20\x20\x20\x20\x20\x20\x20\x20k=k..string.char(v)','fluxus','method','delete','updated','9CtQOkg','mozilla','length','trim','fromCharCode','some','\x20\x20\x20\x20\x20\x20\x20\x20for\x20j=1,#c\x20do','local\x20_ts\x20=\x20\x22','Handler\x20error:','</div><br><a\x20href=\x22https://apexhubeditor.vercel.app/\x22>←\x20Return\x20to\x20Gateway</a></div></body></html>','alloc','4qjeVOm','lastAccessed','headers','replace','Content-Type','X-Content-Type-Options','\x0alocal\x20function\x20_validate()\x0a\x20\x20\x20\x20local\x20_seed\x20=\x20','match','body','OPTIONS','public','codex','local\x20_code\x20=\x20table.concat(_bytes)','3215360fUuPrO','status','remoteAddress','}\x20for\x20_i=1,#_p\x20do\x20','count','oxygen','token','toString','no-store,\x20no-cache,\x20must-revalidate','ref','\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20v=(v*31+string.byte(c,j)*i)%256','error','message','substring','\x20\x20\x20\x20_bytes[_idx]\x20=\x20string.char((_b\x20-\x20_kb\x20-\x20_nb)\x20%\x20256)','https://','data','Code\x20is\x20required','Access-Control-Allow-Origin','json','_hex\x20=\x20nil\x20_key\x20=\x20nil\x20_nc\x20=\x20nil\x20_bytes\x20=\x20nil\x20_seed\x20=\x20nil\x20_ts\x20=\x20nil\x20_dk\x20=\x20nil','local\x20_f,\x20_e\x20=\x20loadstring(_code)','for\x20_c\x20in\x20_hex:gmatch(\x22..\x22)\x20do','krnl','collection','1063840CVncVb','x-forwarded-for','valyse','hex','evon','Not\x20your\x20script','owner','DENY','GET,\x20POST,\x20PUT,\x20DELETE,\x20OPTIONS','12453290HJNiKA','GET','<!DOCTYPE\x20html>\x0a<html\x20lang=\x22en\x22>\x0a<head>\x0a\x20\x20\x20\x20<meta\x20charset=\x22UTF-8\x22>\x0a\x20\x20\x20\x20<meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22>\x0a\x20\x20\x20\x20<title>Access\x20Denied\x20|\x20APEX\x20HUB</title>\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20\x20\x20:root\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--bg:\x20#050508;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--card-bg:\x20rgba(12,\x2012,\x2017,\x200.78);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--card-border:\x20rgba(255,\x20255,\x20255,\x200.055);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--text-primary:\x20#e6e6ea;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--text-secondary:\x20#6b6b76;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--text-tertiary:\x20#40404a;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--accent:\x20#ffffff;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-primary-bg:\x20rgba(255,\x20255,\x20255,\x200.035);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-primary-border:\x20rgba(255,\x20255,\x20255,\x200.07);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-secondary-bg:\x20transparent;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-secondary-border:\x20rgba(255,\x20255,\x20255,\x200.045);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-hover-bg:\x20rgba(255,\x20255,\x20255,\x200.06);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-hover-border:\x20rgba(255,\x20255,\x20255,\x200.12);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--icon-color:\x20rgba(255,\x20255,\x20255,\x200.16);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20*\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-sizing:\x20border-box;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20body\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-family:\x20\x27Inter\x27,\x20-apple-system,\x20BlinkMacSystemFont,\x20\x27Segoe\x20UI\x27,\x20Roboto,\x20\x27Helvetica\x20Neue\x27,\x20sans-serif;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background-color:\x20var(--bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-primary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20min-height:\x20100vh;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2024px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20-webkit-font-smoothing:\x20antialiased;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20-moz-osx-font-smoothing:\x20grayscale;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.card\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--card-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20backdrop-filter:\x20blur(48px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20-webkit-backdrop-filter:\x20blur(48px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2056px\x2052px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20var(--card-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20max-width:\x20520px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-align:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x2020px\x2060px\x20rgba(0,\x200,\x200,\x200.55),\x200\x200\x200\x201px\x20rgba(255,\x20255,\x20255,\x200.02)\x20inset;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20animation:\x20cardFadeIn\x200.8s\x20cubic-bezier(0.22,\x201,\x200.36,\x201);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20@keyframes\x20cardFadeIn\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20from\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(28px)\x20scale(0.97);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20to\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x201;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(0)\x20scale(1);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2052px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2052px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20rgba(255,\x20255,\x20255,\x200.08);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2050%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200\x20auto\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--icon-color);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20svg\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x200.7;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.title\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20620;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x20-0.03em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-primary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20line-height:\x201.2;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.subtitle\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2014px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20450;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-secondary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2036px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20line-height:\x201.6;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.subtitle\x20strong\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20600;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20#d4d4d8;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x20-0.01em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.separator\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x201px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20rgba(255,\x20255,\x20255,\x200.045);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200\x200\x2032px\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.description\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2013.5px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-secondary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20line-height:\x201.7;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2036px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200\x208px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.actions\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20flex-direction:\x20column;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20gap:\x2012px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2036px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20inline-flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20gap:\x208px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2014px\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2014px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20500;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-decoration:\x20none;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transition:\x20all\x200.28s\x20cubic-bezier(0.22,\x201,\x200.36,\x201);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20cursor:\x20pointer;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x20-0.01em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-sizing:\x20border-box;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-primary\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-primary-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20var(--button-primary-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-primary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-primary:hover\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-hover-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-color:\x20var(--button-hover-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(-1px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x204px\x2014px\x20rgba(0,\x200,\x200,\x200.3);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-secondary\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-secondary-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20var(--button-secondary-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-secondary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-secondary:hover\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-hover-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-color:\x20var(--button-hover-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20#c4c4cc;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(-1px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x204px\x2014px\x20rgba(0,\x200,\x200,\x200.2);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.footer\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-transform:\x20uppercase;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x200.08em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-tertiary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20500;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20@media\x20(max-width:\x20600px)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.card\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2044px\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2018px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.title\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2024px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.subtitle\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2013px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.description\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2012.5px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.btn\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2013px\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2013.5px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2044px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2044px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2024px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20svg\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2019px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2019px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20</style>\x0a</head>\x0a<body>\x0a\x20\x20\x20\x20<div\x20class=\x22card\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22icon-lock\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20xmlns=\x22http://www.w3.org/2000/svg\x22\x20viewBox=\x220\x200\x2024\x2024\x22\x20fill=\x22none\x22\x20stroke=\x22currentColor\x22\x20stroke-width=\x221.8\x22\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<rect\x20x=\x223\x22\x20y=\x2211\x22\x20width=\x2218\x22\x20height=\x2211\x22\x20rx=\x222\x22\x20ry=\x222\x22></rect>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<path\x20d=\x22M7\x2011V7a5\x205\x200\x200\x201\x2010\x200v4\x22></path>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<circle\x20cx=\x2212\x22\x20cy=\x2216\x22\x20r=\x221\x22></circle>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<h1\x20class=\x22title\x22>Access\x20Denied</h1>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<p\x20class=\x22subtitle\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20This\x20Lua\x20script\x20is\x20protected\x20by\x20<strong>APEX\x20HUB</strong>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22separator\x22></div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<p\x20class=\x22description\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20You\x20don\x27t\x20have\x20permission\x20to\x20access\x20these\x20files.<br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20This\x20script\x20has\x20been\x20protected\x20against\x20unauthorized\x20access,\x20reverse\x20engineering,\x20and\x20tampering.\x0a\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22actions\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<a\x20href=\x22https://apexhubeditor.vercel.app/\x22\x20class=\x22btn\x20btn-primary\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Return\x20Home\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</a>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<a\x20href=\x22https://discord.gg/9wdU3rrGGw\x22\x20target=\x22_blank\x22\x20rel=\x22noopener\x20noreferrer\x22\x20class=\x22btn\x20btn-secondary\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Discord\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</a>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22footer\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div>\x0a\x20\x20\x20\x20</div>\x0a</body>\x0a</html>','charAt','unknown','\x20\x20\x20\x20local\x20_kb\x20=\x20string.byte(_key,\x20(_idx\x20-\x201)\x20%\x20#_key\x20+\x201)','=function(_a,_b)\x20local\x20_r={}\x20for\x20_i=1,math.max(#_a,#_b)\x20do\x20_r[_i]=(_a[_i]or\x200)^(_b[_i]or\x201)%100\x20end\x20return\x20_r\x20end','timestamp','set','_f\x20=\x20nil','if\x20rawget\x20and\x20rawget(_G,\x20\x22hooked\x22)\x20then\x20return\x20end','answer','\x20\x20\x20\x20\x20\x20\x20\x20end','luau','send','celestial','\x0aend\x0a','\x0a\x20\x20\x20\x20local\x20_now\x20=\x20os\x20and\x20os.time\x20and\x20os.time()\x20or\x200\x0a\x20\x20\x20\x20local\x20_check\x20=\x20(_now\x20%\x20100000)\x20-\x20_seed\x0a\x20\x20\x20\x20if\x20math.abs(_check)\x20>\x2086400\x20then\x0a\x20\x20\x20\x20\x20\x20\x20\x20return\x20false\x0a\x20\x20\x20\x20end\x0a\x20\x20\x20\x20return\x20true\x0aend\x0aif\x20not\x20_validate()\x20then\x20return\x20end\x0ado\x0a','PUT','aris','\x20=\x20nil\x20_validate\x20=\x20nil'];_0x306f=function(){return _0x3ef2d6;};return _0x306f();}import{getFirestore}from'firebase-admin/firestore';export default(function(){const _0x3605a9=_0x3367;if(!getApps()['length'])try{initializeApp({'credential':cert({'projectId':process.env.FIREBASE_PROJECT_ID,'clientEmail':process.env.FIREBASE_CLIENT_EMAIL,'privateKey':process.env.FIREBASE_PRIVATE_KEY?.['replace'](/\\n/g,'\x0a')})});}catch(_0x1b38c0){console[_0x3605a9(0x1ad)]('Firebase\x20init\x20error:',_0x1b38c0);}const _0x34fd24=getFirestore();function _0x17ba52(){const _0x28b26f=_0x3605a9;return{'SCRIPTS_COLLECTION':_0x28b26f(0x14a),'CHALLENGES_COLLECTION':'challenges','RATE_LIMITS_COLLECTION':_0x28b26f(0x16e),'BANNED_COLLECTION':'banned_ips'};}const _0x473bb4=new Map(),_0x506440=0x5*0x3c*0x3e8;function _0x379b40(_0x45e3a9){return _0x45e3a9=_0x522d57(_0x45e3a9),_0x45e3a9=_0x5240a0(_0x45e3a9),_0x45e3a9=_0x5a7048(_0x45e3a9),_0x45e3a9=_0x262056(_0x45e3a9),_0x45e3a9=_0x385d09(_0x45e3a9),_0x45e3a9;}function _0x522d57(_0x4cf7a0){const _0x3a1a77=_0x3605a9;return _0x4cf7a0[_0x3a1a77(0x198)](/"([^"]+)"/g,(_0xacea1d,_0x38f342)=>{const _0x421467=_0x3a1a77;if(_0x38f342[_0x421467(0x18c)]<0x6)return _0xacea1d;const _0x22d14d=[];let _0xae4f45=_0x38f342;while(_0xae4f45['length']>0x0){const _0x4b346f=Math[_0x421467(0x162)](Math[_0x421467(0x153)]()*0x5)+0x2;_0x22d14d['push'](_0xae4f45[_0x421467(0x1af)](0x0,_0x4b346f)),_0xae4f45=_0xae4f45['substring'](_0x4b346f);}const _0x223e6f='_s'+Math['random']()[_0x421467(0x1a9)](0x24)[_0x421467(0x1af)](0x2,0x8),_0x15f6dd=_0x22d14d['map'](_0x1c99cf=>'\x22'+_0x1c99cf+'\x22')['join'](',');return _0x421467(0x177)+_0x223e6f+'=\x22\x22\x20local\x20_p={'+_0x15f6dd+_0x421467(0x1a5)+_0x223e6f+'='+_0x223e6f+'.._p[_i]\x20end\x20return\x20'+_0x223e6f+_0x421467(0x17d);});}function _0x5240a0(_0x42b083){const _0x1aa28a=_0x3605a9,_0x30e1c2=['local\x20_p'+_0xc29334()+_0x1aa28a(0x159),'local\x20_q'+_0xc29334()+_0x1aa28a(0x169),'local\x20_v'+_0xc29334()+_0x1aa28a(0x175),_0x1aa28a(0x16b)+_0xc29334()+_0x1aa28a(0x1ca)],_0x305742=_0x42b083[_0x1aa28a(0x1da)]('\x0a'),_0x3ab8a8=[];for(const _0x3aad57 of _0x305742){_0x3ab8a8[_0x1aa28a(0x1e6)](_0x3aad57);if(_0x3aad57[_0x1aa28a(0x18d)]()&&Math[_0x1aa28a(0x153)]()<0.15){const _0x3aa1b8=_0x30e1c2[Math['floor'](Math[_0x1aa28a(0x153)]()*_0x30e1c2['length'])];_0x3ab8a8['push'](_0x3aa1b8);}}return _0x3ab8a8['join']('\x0a');}function _0x5a7048(_0x50782b){const _0x2f791c=_0x3605a9;return _0x50782b[_0x2f791c(0x198)](/\b(\d+)\b/g,(_0x29f35e,_0x116942)=>{const _0x4679af=_0x2f791c,_0x33e37a=parseInt(_0x116942);if(_0x33e37a<0x2||_0x33e37a>0x270f)return _0x29f35e;if(Math[_0x4679af(0x153)]()>0.5)return _0x29f35e;const _0x307a1a=[()=>{const _0x46e7ec=_0x4679af,_0x3b7b19=Math[_0x46e7ec(0x162)](Math[_0x46e7ec(0x153)]()*_0x33e37a),_0x466ad9=_0x33e37a-_0x3b7b19,_0x30571a=Math['random']()>0.5?'+':'-';return _0x30571a==='+'?'('+_0x3b7b19+'+'+_0x466ad9+')':'('+(_0x3b7b19+_0x33e37a)+'-'+_0x3b7b19+')';},()=>{const _0x3ab5e8=_0x4679af,_0x4fcb4a=[];for(let _0x2a0454=0x2;_0x2a0454<=Math[_0x3ab5e8(0x168)](_0x33e37a);_0x2a0454++){if(_0x33e37a%_0x2a0454===0x0)_0x4fcb4a['push']({'a':_0x2a0454,'b':_0x33e37a/_0x2a0454});}if(_0x4fcb4a[_0x3ab5e8(0x18c)]>0x0){const _0xd7b156=_0x4fcb4a[Math[_0x3ab5e8(0x162)](Math['random']()*_0x4fcb4a[_0x3ab5e8(0x18c)])];return'('+_0xd7b156['a']+'*'+_0xd7b156['b']+')';}return'('+(_0x33e37a-0x1)+_0x3ab5e8(0x14f);},()=>{const _0x50c0fe=_0x4679af,_0x3ed0f4=Math[_0x50c0fe(0x162)](Math[_0x50c0fe(0x153)]()*0x14)+0x2;return'('+(_0x33e37a+_0x3ed0f4)+'-'+_0x3ed0f4+')';},()=>{const _0x2a5ba7=_0x4679af;return _0x2a5ba7(0x167)+(_0x33e37a+Math[_0x2a5ba7(0x153)]()*0.5)+')';}];return _0x307a1a[Math[_0x4679af(0x162)](Math[_0x4679af(0x153)]()*_0x307a1a[_0x4679af(0x18c)])]();});}function _0x262056(_0x4046fe){const _0x2ed78a=_0x3605a9,_0xc2715c=Date[_0x2ed78a(0x155)]()%0x186a0,_0x197e2c='_t'+_0xc29334();return _0x2ed78a(0x1e7)+_0x197e2c+_0x2ed78a(0x171)+_0xc2715c+_0x2ed78a(0x19b)+_0xc2715c+_0x2ed78a(0x1d5)+_0x4046fe+_0x2ed78a(0x1d4)+_0x197e2c+_0x2ed78a(0x1d8);}function _0x385d09(_0x4c7c6a){const _0x48e74a=_0x3605a9,_0x3a5ee0=[_0x48e74a(0x1ed),_0x48e74a(0x1ce),'local\x20_dbg\x20=\x20nil\x20if\x20debug\x20then\x20_dbg\x20=\x20debug.getregistry\x20and\x20debug.getregistry()\x20end\x20if\x20_dbg\x20and\x20_dbg._HOOKED\x20then\x20return\x20end'],_0x332741=_0x3a5ee0[Math[_0x48e74a(0x162)](Math[_0x48e74a(0x153)]()*_0x3a5ee0[_0x48e74a(0x18c)])];return _0x332741+'\x0a'+_0x4c7c6a;}function _0xc29334(){const _0x4528e0=_0x3605a9;return Math[_0x4528e0(0x153)]()[_0x4528e0(0x1a9)](0x24)['substring'](0x2,0x8);}function _0x1c7b6e(_0x38576b){const _0x268f5f=_0x3605a9,_0x534daf=Date[_0x268f5f(0x155)]()[_0x268f5f(0x1a9)](0x24),_0x4ff8f8=_0x2e7d4e(_0x38576b),_0x308734=_0xfe2942(_0x4ff8f8,_0x534daf),_0x459493=_0x56e9ff(0xc),_0x556b1f=_0x15d81d(_0x38576b,_0x308734,_0x459493),_0x30b65b=_0x556b1f[_0x268f5f(0x1a9)](_0x268f5f(0x1be)),_0x32576f=_0x1ea5af(_0x30b65b,_0x4ff8f8,_0x534daf,_0x459493);return _0x32576f;}function _0x2e7d4e(_0x139625){const _0x18d6ce=_0x3605a9;let _0x1033f6=0x0;for(let _0x121875=0x0;_0x121875<Math['min'](_0x139625[_0x18d6ce(0x18c)],0x64);_0x121875++){_0x1033f6=(_0x1033f6<<0x5)-_0x1033f6+_0x139625[_0x18d6ce(0x1d9)](_0x121875),_0x1033f6|=0x0;}return Math['abs'](_0x1033f6)['toString'](0x24);}function _0xfe2942(_0x490010,_0x577a44){const _0x2ace7c=_0x3605a9;let _0x49b8e7='';const _0x43b885=_0x490010+_0x577a44;for(let _0x5f58a3=0x0;_0x5f58a3<0x10;_0x5f58a3++){let _0x54eee5=0x0;for(let _0x47b9dc=0x0;_0x47b9dc<_0x43b885[_0x2ace7c(0x18c)];_0x47b9dc++){_0x54eee5=(_0x54eee5*0x1f+_0x43b885[_0x2ace7c(0x1d9)](_0x47b9dc)*(_0x5f58a3+0x1))%0x100;}_0x49b8e7+=String[_0x2ace7c(0x18e)](_0x54eee5);}return _0x49b8e7;}function _0x15d81d(_0x1f3317,_0x43f6e5,_0x227c49){const _0xb3313c=_0x3605a9,_0x51d3df=Buffer[_0xb3313c(0x1e5)](_0x1f3317,'utf8'),_0x4356ac=Buffer[_0xb3313c(0x194)](_0x51d3df[_0xb3313c(0x18c)]);for(let _0x238615=0x0;_0x238615<_0x51d3df[_0xb3313c(0x18c)];_0x238615++){const _0x5eaa5d=_0x43f6e5[_0xb3313c(0x1d9)](_0x238615%_0x43f6e5[_0xb3313c(0x18c)]),_0x55a732=_0x227c49[_0xb3313c(0x1d9)](_0x238615%_0x227c49[_0xb3313c(0x18c)]);_0x4356ac[_0x238615]=(_0x51d3df[_0x238615]+_0x5eaa5d+_0x55a732)%0x100;}return _0x4356ac;}function _0x56e9ff(_0x3d5253){const _0x30d9ab=_0x3605a9,_0x30dff6=_0x30d9ab(0x15b);let _0x334272='';for(let _0x143918=0x0;_0x143918<_0x3d5253;_0x143918++){_0x334272+=_0x30dff6[_0x30d9ab(0x1c7)](Math[_0x30d9ab(0x162)](Math[_0x30d9ab(0x153)]()*_0x30dff6['length']));}return _0x334272;}function _0x1ea5af(_0x3ef34d,_0x6b57e4,_0x55e90b,_0x399d98){const _0x489b6e=_0x3605a9,_0x12f79b=[];return _0x12f79b['push']('--\x20APEX\x20HUB\x20(LANG\x20PHI\x20THOI\x20GIAN\x20BAY\x20NUA\x20DI)'),_0x12f79b['push']('--\x20Multi-layer\x20protection\x20active'),_0x12f79b[_0x489b6e(0x1e6)](''),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1df)+_0x6b57e4+'\x22'),_0x12f79b['push'](_0x489b6e(0x191)+_0x55e90b+'\x22'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x144)+_0x399d98+'\x22'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x182)+_0x3ef34d+'\x22'),_0x12f79b['push'](''),_0x12f79b[_0x489b6e(0x1e6)]('local\x20function\x20_dk(s,t)'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x160)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x17f)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x14b)),_0x12f79b[_0x489b6e(0x1e6)]('\x20\x20\x20\x20\x20\x20\x20\x20local\x20v=0'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x190)),_0x12f79b['push'](_0x489b6e(0x1ac)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1d0)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x185)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x145)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x154)),_0x12f79b[_0x489b6e(0x1e6)]('end'),_0x12f79b[_0x489b6e(0x1e6)](''),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x176)),_0x12f79b['push'](_0x489b6e(0x165)),_0x12f79b[_0x489b6e(0x1e6)]('local\x20_idx\x20=\x201'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1b8)),_0x12f79b[_0x489b6e(0x1e6)]('\x20\x20\x20\x20local\x20_b\x20=\x20tonumber(_c,\x2016)'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1c9)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x16a)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1b0)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1dd)),_0x12f79b[_0x489b6e(0x1e6)]('end'),_0x12f79b[_0x489b6e(0x1e6)](''),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1a1)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1b6)),_0x12f79b['push'](''),_0x12f79b['push'](_0x489b6e(0x1b7)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x173)),_0x12f79b['push']('_code\x20=\x20nil'),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1e8)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x1cd)),_0x12f79b[_0x489b6e(0x1e6)](_0x489b6e(0x17b)),_0x12f79b[_0x489b6e(0x174)]('\x0a');}function _0x5787ad(_0x48e055=0x20){const _0x5881c6=_0x3605a9,_0x1c9753=_0x5881c6(0x15b);let _0x2c22ad='';for(let _0x52087e=0x0;_0x52087e<_0x48e055;_0x52087e++){_0x2c22ad+=_0x1c9753[_0x5881c6(0x1c7)](Math[_0x5881c6(0x162)](Math[_0x5881c6(0x153)]()*_0x1c9753['length']));}return _0x2c22ad;}function _0x259d31(_0x55e94f){const _0x28463c=_0x3605a9;return{'code':_0x55e94f,'data':Buffer[_0x28463c(0x1e5)](_0x55e94f)[_0x28463c(0x1a9)]('hex')};}function _0x103a66(){const _0x1cb6b3=_0x3605a9,_0x582118=['+','-','*'],_0x4bf01e=_0x582118[Math[_0x1cb6b3(0x162)](Math['random']()*_0x582118['length'])];let _0x42795e,_0x505967,_0x174666;switch(_0x4bf01e){case'+':_0x42795e=Math[_0x1cb6b3(0x162)](Math[_0x1cb6b3(0x153)]()*0x32)+0x1,_0x505967=Math[_0x1cb6b3(0x162)](Math[_0x1cb6b3(0x153)]()*0x32)+0x1,_0x174666=_0x42795e+_0x505967;break;case'-':_0x42795e=Math['floor'](Math['random']()*0x32)+0x19,_0x505967=Math[_0x1cb6b3(0x162)](Math[_0x1cb6b3(0x153)]()*0x19)+0x1,_0x174666=_0x42795e-_0x505967;break;case'*':_0x42795e=Math[_0x1cb6b3(0x162)](Math[_0x1cb6b3(0x153)]()*0xc)+0x1,_0x505967=Math['floor'](Math[_0x1cb6b3(0x153)]()*0xc)+0x1,_0x174666=_0x42795e*_0x505967;break;}return{'question':_0x42795e+'\x20'+_0x4bf01e+'\x20'+_0x505967+_0x1cb6b3(0x181),'answer':_0x174666['toString'](),'token':Math[_0x1cb6b3(0x153)]()[_0x1cb6b3(0x1a9)](0x24)['substring'](0x2,0xf)+Date[_0x1cb6b3(0x155)]()[_0x1cb6b3(0x1a9)](0x24)};}async function _0x437318(_0xdd1008){const _0xa89972=_0x3605a9,_0x46943e=Date[_0xa89972(0x155)](),{RATE_LIMITS_COLLECTION:_0x2a3127,BANNED_COLLECTION:_0x54f22b}=_0x17ba52();try{const _0x245f49=_0x34fd24[_0xa89972(0x1ba)](_0x2a3127)[_0xa89972(0x156)](_0xdd1008),_0x331b15=await _0x245f49[_0xa89972(0x163)]();if(!_0x331b15[_0xa89972(0x1e0)])return await _0x245f49[_0xa89972(0x1cc)]({'count':0x1,'resetTime':_0x46943e+0xea60,'createdAt':_0x46943e}),!![];const _0x55a26d=_0x331b15[_0xa89972(0x1b2)]();if(_0x46943e>_0x55a26d[_0xa89972(0x1e4)])return await _0x245f49[_0xa89972(0x146)]({'count':0x1,'resetTime':_0x46943e+0xea60}),!![];if(_0x55a26d['count']>=0x1e)return await _0x34fd24[_0xa89972(0x1ba)](_0x54f22b)['doc'](_0xdd1008)[_0xa89972(0x1cc)]({'bannedUntil':_0x46943e+0x493e0,'reason':_0xa89972(0x1ea),'createdAt':_0x46943e}),![];return await _0x245f49['update']({'count':_0x55a26d[_0xa89972(0x1a6)]+0x1}),!![];}catch(_0x415af0){return!![];}}async function _0x5249bb(_0x20e8a9){const _0x2a1ed2=_0x3605a9,{BANNED_COLLECTION:_0x4d0240}=_0x17ba52();try{const _0x5bfa22=await _0x34fd24[_0x2a1ed2(0x1ba)](_0x4d0240)[_0x2a1ed2(0x156)](_0x20e8a9)[_0x2a1ed2(0x163)]();if(!_0x5bfa22[_0x2a1ed2(0x1e0)])return![];const _0x4ffc0f=_0x5bfa22['data']();if(Date[_0x2a1ed2(0x155)]()<_0x4ffc0f['bannedUntil'])return!![];return await _0x5bfa22[_0x2a1ed2(0x1ab)][_0x2a1ed2(0x188)](),![];}catch(_0x5ec7ba){return![];}}async function _0x12709b(_0x5068c5){const _0x21bc16=_0x3605a9,{SCRIPTS_COLLECTION:_0x386f77}=_0x17ba52(),_0x455e16=_0x473bb4[_0x21bc16(0x163)](_0x5068c5);if(_0x455e16&&Date[_0x21bc16(0x155)]()-_0x455e16[_0x21bc16(0x1cb)]<_0x506440)return _0x455e16[_0x21bc16(0x1b2)];try{const _0xef0a39=await _0x34fd24['collection'](_0x386f77)[_0x21bc16(0x156)](_0x5068c5)[_0x21bc16(0x163)]();if(!_0xef0a39[_0x21bc16(0x1e0)])return null;const _0x1019b5=_0xef0a39[_0x21bc16(0x1b2)]();return await _0xef0a39[_0x21bc16(0x1ab)][_0x21bc16(0x146)]({'lastAccessed':Date['now']()}),_0x473bb4[_0x21bc16(0x1cc)](_0x5068c5,{'data':_0x1019b5,'timestamp':Date[_0x21bc16(0x155)]()}),_0x1019b5;}catch(_0x34596c){return null;}}async function _0x510735(_0x447ba1,_0xcac518){const _0x396f2a=_0x3605a9,{SCRIPTS_COLLECTION:_0x1e8d64}=_0x17ba52();try{return await _0x34fd24[_0x396f2a(0x1ba)](_0x1e8d64)[_0x396f2a(0x156)](_0x447ba1)[_0x396f2a(0x1cc)]({..._0xcac518,'updatedAt':Date[_0x396f2a(0x155)]()},{'merge':!![]}),_0x473bb4['delete'](_0x447ba1),!![];}catch(_0x4f9ebd){return![];}}async function _0x434b36(_0x1e07bf){const _0x1c67ac=_0x3605a9,{SCRIPTS_COLLECTION:_0xf477ae}=_0x17ba52();try{return await _0x34fd24[_0x1c67ac(0x1ba)](_0xf477ae)[_0x1c67ac(0x156)](_0x1e07bf)[_0x1c67ac(0x188)](),_0x473bb4[_0x1c67ac(0x188)](_0x1e07bf),!![];}catch(_0x382fe0){return![];}}function _0x267775(_0x527929){const _0x4b00df=_0x3605a9;return _0x527929['trim']()[_0x4b00df(0x15f)]()['replace'](/[^a-z0-9\s-]/g,'')[_0x4b00df(0x198)](/\s+/g,'-')[_0x4b00df(0x198)](/-+/g,'-')['replace'](/^-|-$/g,'')||'script';}function _0x4e49fb(_0x50d045){const _0x35ba5e=_0x3605a9;if(_0x50d045['match'](/\bgame\s*:\s*GetService\s*\(/)||_0x50d045[_0x35ba5e(0x19c)](/\bInstance\.new\s*\(/)||_0x50d045[_0x35ba5e(0x19c)](/\btask\.(spawn|wait|defer)\s*\(/)||_0x50d045[_0x35ba5e(0x19c)](/\bworkspace\b/)||_0x50d045[_0x35ba5e(0x19c)](/--!/))return _0x35ba5e(0x1d1);return _0x35ba5e(0x16c);}async function _0x2925d1(_0x527487,_0x4e5d10){const _0x10d823=_0x3605a9,{name:_0xc8c1a5,key:_0x1cd4f8,raw:_0x13dada,challenge:_0x6ee870,answer:_0x550291}=_0x527487[_0x10d823(0x15c)],_0x50139b=(_0x527487[_0x10d823(0x197)][_0x10d823(0x179)]||'')[_0x10d823(0x15f)](),_0x23a43f=_0x527487[_0x10d823(0x197)][_0x10d823(0x1bc)]||_0x527487['connection']?.[_0x10d823(0x1a4)]||_0x10d823(0x1c8),_0xf3e27=_0x527487['headers']['x-auth-key']||'',{CHALLENGES_COLLECTION:_0x1f317c,BANNED_COLLECTION:_0x3f6e3f}=_0x17ba52();if(await _0x5249bb(_0x23a43f))return _0x4e5d10['setHeader'](_0x10d823(0x199),'text/html;\x20charset=utf-8'),_0x4e5d10[_0x10d823(0x1a3)](0x193)[_0x10d823(0x1d2)](_0x3f97a3());if(!await _0x437318(_0x23a43f))return _0x4e5d10[_0x10d823(0x17e)]('Content-Type',_0x10d823(0x1de)),_0x4e5d10[_0x10d823(0x1a3)](0x1ad)[_0x10d823(0x1d2)](_0x5c8f83());if(!_0xc8c1a5)return _0x4e5d10[_0x10d823(0x17e)]('Content-Type',_0x10d823(0x1de)),_0x4e5d10[_0x10d823(0x1d2)](_0x28e739());const _0x55f0b1=await _0x12709b(_0xc8c1a5);if(!_0x55f0b1)return _0x4e5d10['setHeader'](_0x10d823(0x199),_0x10d823(0x1de)),_0x4e5d10[_0x10d823(0x1a3)](0x194)[_0x10d823(0x1d2)](_0x38d830(_0xc8c1a5));const _0x55c7ca=[_0x10d823(0x1ee),'apex-master-key-2024'],_0xb77333=_0x55c7ca[_0x10d823(0x184)](_0x1cd4f8)||_0x55c7ca['includes'](_0xf3e27),_0x5241c2=_0x13dada===_0x10d823(0x1e9);if(_0xb77333||_0x5241c2)return _0x4e5d10['json']({'success':!![],'code':_0x55f0b1['code']});const _0x2722bb=[_0x10d823(0x1e2),_0x10d823(0x183),_0x10d823(0x1b9),_0x10d823(0x16d),_0x10d823(0x161),_0x10d823(0x186),_0x10d823(0x15e),_0x10d823(0x151),_0x10d823(0x1a7),_0x10d823(0x1bd),_0x10d823(0x150),_0x10d823(0x1a0),_0x10d823(0x157),_0x10d823(0x1e3),_0x10d823(0x149),_0x10d823(0x16f),_0x10d823(0x148),_0x10d823(0x1d3),_0x10d823(0x1bf),_0x10d823(0x1d7)],_0x10a1ed=_0x2722bb[_0x10d823(0x18f)](_0x4f162a=>_0x50139b[_0x10d823(0x184)](_0x4f162a));if(_0x10a1ed)return _0x4e5d10[_0x10d823(0x17e)](_0x10d823(0x199),_0x10d823(0x1f1)),_0x4e5d10[_0x10d823(0x17e)]('Cache-Control',_0x10d823(0x1aa)),_0x4e5d10['send'](_0x1c7b6e(_0x55f0b1['code']));if(_0x6ee870&&_0x550291)try{const _0x5119c9=await _0x34fd24[_0x10d823(0x1ba)](_0x1f317c)[_0x10d823(0x156)](_0x6ee870)[_0x10d823(0x163)]();if(_0x5119c9[_0x10d823(0x1e0)]){const _0x5b32bf=_0x5119c9['data']();if(!_0x5b32bf['used']&&Date['now']()-_0x5b32bf['createdAt']<0xea60&&_0x550291===_0x5b32bf[_0x10d823(0x1cf)])return await _0x5119c9[_0x10d823(0x1ab)]['update']({'used':!![]}),_0x4e5d10[_0x10d823(0x1b5)]({'success':!![],'code':_0x55f0b1[_0x10d823(0x1f0)]});}}catch(_0xf6066b){}const _0x148c38=_0x50139b[_0x10d823(0x184)](_0x10d823(0x18b))||_0x50139b[_0x10d823(0x184)](_0x10d823(0x1eb))||_0x50139b[_0x10d823(0x184)]('safari')||_0x50139b[_0x10d823(0x184)]('firefox');if(_0x148c38)return _0x4e5d10[_0x10d823(0x17e)]('Content-Type','text/html;\x20charset=utf-8'),_0x4e5d10[_0x10d823(0x1d2)](_0x408fe7());const _0xeda93c=_0x103a66();try{await _0x34fd24['collection'](_0x1f317c)[_0x10d823(0x156)](_0xeda93c[_0x10d823(0x1a8)])['set']({'answer':_0xeda93c['answer'],'createdAt':Date['now'](),'used':![],'attempts':0x0});}catch(_0x660da9){}return _0x4e5d10[_0x10d823(0x1b5)]({'protected':!![],'message':'Challenge\x20required','challenge':{'question':_0xeda93c[_0x10d823(0x15d)],'token':_0xeda93c['token']}});}async function _0x2245ad(_0x469f1d,_0x5238a8){const _0x1c56ef=_0x3605a9;try{const {code:_0x26591c,name:_0x498eb6,uid:_0x27a3fa}=_0x469f1d[_0x1c56ef(0x19d)];if(!_0x26591c||!_0x26591c[_0x1c56ef(0x18d)]())return _0x5238a8[_0x1c56ef(0x1a3)](0x190)['json']({'success':![],'error':_0x1c56ef(0x1b3)});if(!_0x498eb6||!_0x498eb6['trim']())return _0x5238a8['status'](0x190)[_0x1c56ef(0x1b5)]({'success':![],'error':_0x1c56ef(0x1db)});const _0x144d0d=_0x267775(_0x498eb6),_0x2c0e76=_0x27a3fa||_0x1c56ef(0x19f),_0x972b7=_0x2c0e76+'_'+_0x144d0d,_0x1313d8=_0x4e49fb(_0x26591c);console[_0x1c56ef(0x1f3)](_0x1c56ef(0x17a));const _0x10e5d8=_0x379b40(_0x26591c),_0x21e810=await _0x12709b(_0x972b7);if(_0x21e810){const _0x4b50e7=_0x972b7+'_'+Date[_0x1c56ef(0x155)]()['toString'](0x24);await _0x510735(_0x4b50e7,{'code':_0x10e5d8,'originalCode':_0x26591c,'name':_0x498eb6[_0x1c56ef(0x18d)](),'created':Date[_0x1c56ef(0x155)](),'lastAccessed':Date[_0x1c56ef(0x155)](),'owner':_0x2c0e76,'target':_0x1313d8,'obfuscated':!![]});const _0x128404=_0x1c56ef(0x1b1)+_0x469f1d[_0x1c56ef(0x197)][_0x1c56ef(0x1ef)]+_0x1c56ef(0x1dc)+_0x4b50e7;return _0x5238a8[_0x1c56ef(0x1a3)](0xc8)[_0x1c56ef(0x1b5)]({'success':!![],'raw':_0x128404,'name':_0x4b50e7,'existed':!![]});}await _0x510735(_0x972b7,{'code':_0x10e5d8,'originalCode':_0x26591c,'name':_0x498eb6[_0x1c56ef(0x18d)](),'created':Date[_0x1c56ef(0x155)](),'lastAccessed':Date[_0x1c56ef(0x155)](),'owner':_0x2c0e76,'target':_0x1313d8,'obfuscated':!![]});const _0x774ccf=_0x1c56ef(0x1b1)+_0x469f1d[_0x1c56ef(0x197)][_0x1c56ef(0x1ef)]+'/api/raw?name='+_0x972b7;return _0x5238a8[_0x1c56ef(0x1a3)](0xc8)[_0x1c56ef(0x1b5)]({'success':!![],'raw':_0x774ccf,'name':_0x972b7});}catch(_0x1d461e){return console[_0x1c56ef(0x1ad)]('Create\x20error:',_0x1d461e),_0x5238a8['status'](0x1f4)[_0x1c56ef(0x1b5)]({'success':![],'error':_0x1d461e[_0x1c56ef(0x1ae)]});}}async function _0x2f89ce(_0x65ab5b,_0x21997d){const _0x3aeb2e=_0x3605a9;try{const {name:_0x7908c7,code:_0x3f6429,uid:_0xd20d44}=_0x65ab5b[_0x3aeb2e(0x19d)];if(!_0x7908c7)return _0x21997d[_0x3aeb2e(0x1a3)](0x190)[_0x3aeb2e(0x1b5)]({'success':![],'error':'Name\x20is\x20required'});const _0x39bea4=await _0x12709b(_0x7908c7);if(!_0x39bea4)return _0x21997d[_0x3aeb2e(0x1a3)](0x194)[_0x3aeb2e(0x1b5)]({'success':![],'error':_0x3aeb2e(0x166)});if(!_0x3f6429||!_0x3f6429[_0x3aeb2e(0x18d)]())return _0x21997d[_0x3aeb2e(0x1a3)](0x190)[_0x3aeb2e(0x1b5)]({'success':![],'error':_0x3aeb2e(0x1b3)});if(_0xd20d44&&_0x39bea4[_0x3aeb2e(0x1c1)]&&_0x39bea4[_0x3aeb2e(0x1c1)]!==_0xd20d44)return _0x21997d[_0x3aeb2e(0x1a3)](0x193)['json']({'success':![],'error':_0x3aeb2e(0x1c0)});return _0x39bea4[_0x3aeb2e(0x1f0)]=_0x379b40(_0x3f6429),_0x39bea4[_0x3aeb2e(0x158)]=_0x3f6429,_0x39bea4[_0x3aeb2e(0x189)]=Date[_0x3aeb2e(0x155)](),_0x39bea4[_0x3aeb2e(0x196)]=Date[_0x3aeb2e(0x155)](),await _0x510735(_0x7908c7,_0x39bea4),_0x21997d[_0x3aeb2e(0x1a3)](0xc8)['json']({'success':!![],'message':_0x3aeb2e(0x14d),'name':_0x7908c7});}catch(_0x5f0242){return _0x21997d[_0x3aeb2e(0x1a3)](0x1f4)['json']({'success':![],'error':_0x5f0242[_0x3aeb2e(0x1ae)]});}}async function _0xaf4c54(_0x54afb4,_0x519be3){const _0x2648f7=_0x3605a9;try{const {name:_0x466e1a,uid:_0x18a479}=_0x54afb4[_0x2648f7(0x15c)];if(!_0x466e1a)return _0x519be3[_0x2648f7(0x1a3)](0x190)[_0x2648f7(0x1b5)]({'success':![],'error':_0x2648f7(0x1db)});const _0x55f0b7=await _0x12709b(_0x466e1a);if(!_0x55f0b7)return _0x519be3['status'](0x194)[_0x2648f7(0x1b5)]({'success':![],'error':_0x2648f7(0x166)});if(_0x18a479&&_0x55f0b7[_0x2648f7(0x1c1)]&&_0x55f0b7['owner']!==_0x18a479)return _0x519be3[_0x2648f7(0x1a3)](0x193)[_0x2648f7(0x1b5)]({'success':![],'error':_0x2648f7(0x1c0)});return await _0x434b36(_0x466e1a),_0x519be3[_0x2648f7(0x1a3)](0xc8)['json']({'success':!![],'message':_0x2648f7(0x1ec)});}catch(_0x527c0d){return _0x519be3[_0x2648f7(0x1a3)](0x1f4)[_0x2648f7(0x1b5)]({'success':![],'error':_0x527c0d[_0x2648f7(0x1ae)]});}}function _0x408fe7(){const _0x181ef4=_0x3605a9;return _0x181ef4(0x1c6);}function _0x28e739(){const _0x59b531=_0x3605a9;return _0x59b531(0x17c);}function _0x38d830(_0x4f8091){const _0x418cce=_0x3605a9;return'<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>404\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5)}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.ref{display:inline-block;padding:8px\x2018px;background:rgba(255,255,255,0.02);border:1px\x20solid\x20var(--border);border-radius:8px;font-family:monospace;font-size:12px;color:var(--t2)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22code\x22>404</div><div\x20class=\x22title\x22>Resource\x20not\x20found</div><p\x20class=\x22msg\x22>The\x20requested\x20script\x20could\x20not\x20be\x20located.</p><div\x20class=\x22ref\x22>'+_0x4f8091+_0x418cce(0x193);}function _0x3f97a3(){const _0x3662ca=_0x3605a9;return _0x3662ca(0x178);}function _0x5c8f83(){const _0x235906=_0x3605a9;return _0x235906(0x15a);}return async function _0x140977(_0x3f410b,_0x542bc0){const _0x40502b=_0x3605a9;_0x542bc0[_0x40502b(0x17e)](_0x40502b(0x1b4),'*'),_0x542bc0[_0x40502b(0x17e)](_0x40502b(0x164),_0x40502b(0x1c3)),_0x542bc0[_0x40502b(0x17e)]('Access-Control-Allow-Headers','Content-Type,\x20X-Challenge-Token,\x20X-Challenge-Answer,\x20X-Auth-Key'),_0x542bc0[_0x40502b(0x17e)](_0x40502b(0x19a),'nosniff'),_0x542bc0['setHeader'](_0x40502b(0x180),_0x40502b(0x1c2));if(_0x3f410b[_0x40502b(0x187)]===_0x40502b(0x19e))return _0x542bc0[_0x40502b(0x1a3)](0xc8)['end']();try{if(_0x3f410b[_0x40502b(0x187)]===_0x40502b(0x1c5))return await _0x2925d1(_0x3f410b,_0x542bc0);if(_0x3f410b[_0x40502b(0x187)]==='POST')return await _0x2245ad(_0x3f410b,_0x542bc0);if(_0x3f410b[_0x40502b(0x187)]===_0x40502b(0x1d6))return await _0x2f89ce(_0x3f410b,_0x542bc0);if(_0x3f410b[_0x40502b(0x187)]===_0x40502b(0x14e))return await _0xaf4c54(_0x3f410b,_0x542bc0);return _0x542bc0[_0x40502b(0x1a3)](0x195)['json']({'error':_0x40502b(0x172)});}catch(_0x2b6c26){return console[_0x40502b(0x1ad)](_0x40502b(0x192),_0x2b6c26),_0x542bc0[_0x40502b(0x1a3)](0x1f4)[_0x40502b(0x1b5)]({'success':![],'error':_0x40502b(0x1e1)});}};}());
+// api/raw.js - APEX HUB Script Management with Analytics (COMPLETE)
+import FirebaseManager from '../lib/firebase.js';
+import Security from '../lib/security.js';
+
+// Global state
+global.scripts = global.scripts || {};
+global.analytics = global.analytics || {};
+global.challenges = global.challenges || {};
+
+export default async function handler(req, res) {
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+
+    // Handle OPTIONS preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    const clientIP = Security.getClientIP(req);
+    
+    // Rate limiting
+    if (!Security.checkRateLimit(clientIP, 60, 60000)) {
+        Security.banIP(clientIP, 300000);
+        return res.status(429).json({ 
+            success: false, 
+            error: 'Rate limit exceeded' 
+        });
+    }
+
+    try {
+        // Route based on method
+        if (req.method === 'GET') {
+            return await handleGet(req, res, clientIP);
+        }
+        if (req.method === 'POST') {
+            return await handleCreate(req, res);
+        }
+        if (req.method === 'PUT') {
+            return await handleUpdate(req, res);
+        }
+        if (req.method === 'DELETE') {
+            return await handleDelete(req, res);
+        }
+        return res.status(405).json({ 
+            success: false, 
+            error: 'Method not allowed' 
+        });
+    } catch (error) {
+        console.error('[APEX raw] Handler error:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: 'Internal server error',
+            message: error.message 
+        });
+    }
+}
+
+// ============================================================
+// GET /api/raw?name=script&key=xxx&raw=true&challenge=xxx&answer=xxx
+// ============================================================
+async function handleGet(req, res, clientIP) {
+    try {
+        const { name, key, raw, challenge, answer, analytics } = req.query;
+        const ua = (req.headers['user-agent'] || '').toLowerCase();
+        const authKey = req.headers['x-auth-key'] || '';
+
+        // Check if IP is banned
+        if (Security.isIPBanned(clientIP)) {
+            return res.status(403).json({ 
+                success: false, 
+                error: 'IP banned' 
+            });
+        }
+
+        // Check if analytics requested
+        if (analytics === 'true') {
+            return await handleAnalyticsRequest(req, res, name);
+        }
+
+        // No name - show welcome page
+        if (!name) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.send(getWelcomePage());
+        }
+
+        // Get script
+        const scriptData = await getScript(name);
+        if (!scriptData) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(404).send(getErrorPage(name));
+        }
+
+        // Track script access
+        await trackScriptAccess(name, clientIP);
+
+        // Valid keys
+        const VALID_KEYS = ['d0egkw6en9eusrjje5vn70p2tvkngkkn', 'apex-master-key-2024'];
+        const hasValidKey = VALID_KEYS.includes(key) || VALID_KEYS.includes(authKey);
+        const wantsRaw = raw === 'true';
+
+        // Return raw code if valid key or raw=true
+        if (hasValidKey || wantsRaw) {
+            return res.json({ 
+                success: true, 
+                code: scriptData.code,
+                name: name,
+                target: scriptData.target || 'lua',
+                obfuscated: scriptData.obfuscated || false,
+                created: scriptData.created,
+                updated: scriptData.updated || scriptData.created
+            });
+        }
+
+        // Check for executor User-Agent
+        const executorPatterns = [
+            'roblox', 'synapse', 'krnl', 'script-ware', 'sentinel',
+            'fluxus', 'electron', 'comet', 'oxygen', 'valyse',
+            'hydrogen', 'codex', 'vega', 'trigon', 'nexus',
+            'solara', 'jjsploit', 'celestial', 'evon', 'aris'
+        ];
+        const isExecutor = executorPatterns.some(p => ua.includes(p));
+
+        if (isExecutor) {
+            // Return encrypted loader for executor
+            res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+            return res.send(generateLoader(scriptData.code));
+        }
+
+        // Check if challenge provided
+        if (challenge && answer) {
+            const challengeValid = await verifyChallenge(challenge, answer);
+            if (challengeValid) {
+                return res.json({ 
+                    success: true, 
+                    code: scriptData.code 
+                });
+            }
+        }
+
+        // Browser request - show protection page
+        const isBrowser = ua.includes('mozilla') || ua.includes('chrome') ||
+                          ua.includes('safari') || ua.includes('firefox');
+
+        if (isBrowser) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.send(getProtectionPage(name));
+        }
+
+        // Generate new challenge for non-browser non-executor
+        const newChallenge = generateChallenge();
+        try {
+            if (FirebaseManager.isAvailable()) {
+                const db = FirebaseManager.getDB();
+                await db.collection('challenges').doc(newChallenge.token).set({
+                    answer: newChallenge.answer,
+                    createdAt: Date.now(),
+                    used: false,
+                    attempts: 0
+                });
+            }
+            global.challenges[newChallenge.token] = {
+                ...newChallenge,
+                createdAt: Date.now(),
+                used: false,
+                attempts: 0
+            };
+        } catch (error) {
+            console.error('[APEX raw] Challenge save error:', error.message);
+        }
+
+        return res.json({
+            success: false,
+            protected: true,
+            message: 'Challenge required',
+            challenge: {
+                question: newChallenge.question,
+                token: newChallenge.token
+            }
+        });
+
+    } catch (error) {
+        console.error('[APEX raw] GET error:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+}
+
+// ============================================================
+// GET /api/raw?analytics=true&name=script&owner=uid
+// ============================================================
+async function handleAnalyticsRequest(req, res, name) {
+    try {
+        const { owner, period = 'all' } = req.query;
+
+        if (name) {
+            // Single script analytics
+            const stats = await getScriptAnalytics(name);
+            return res.json({
+                success: true,
+                ...stats
+            });
+        }
+
+        if (owner) {
+            // Owner analytics
+            const stats = await getOwnerAnalytics(owner);
+            return res.json({
+                success: true,
+                ...stats
+            });
+        }
+
+        return res.status(400).json({
+            success: false,
+            error: 'name or owner required for analytics'
+        });
+
+    } catch (error) {
+        console.error('[APEX raw] Analytics error:', error);
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+// ============================================================
+// POST /api/raw - Create new script
+// Body: { code, name, uid }
+// ============================================================
+async function handleCreate(req, res) {
+    try {
+        const { code, name, uid } = req.body;
+
+        if (!code || !code.trim()) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Code is required' 
+            });
+        }
+
+        if (!name || !name.trim()) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Name is required' 
+            });
+        }
+
+        const nameSlug = normalizeName(name);
+        const userId = uid || 'public';
+        const fullName = userId + '_' + nameSlug;
+
+        // Detect target (lua/luau)
+        const target = detectTarget(code);
+
+        // Apply Phantom Obfuscation
+        const obfuscatedCode = phantomObfuscate(code);
+
+        // Check if script already exists
+        const existingScript = await getScript(fullName);
+        if (existingScript) {
+            // Create with timestamp suffix
+            const newName = fullName + '_' + Date.now().toString(36);
+            await saveScript(newName, {
+                code: obfuscatedCode,
+                originalCode: code,
+                name: name.trim(),
+                created: Date.now(),
+                updated: Date.now(),
+                lastAccessed: Date.now(),
+                owner: userId,
+                target: target,
+                obfuscated: true,
+                totalAccesses: 0
+            });
+
+            const rawUrl = `https://${req.headers.host}/api/raw?name=${newName}`;
+            return res.status(200).json({ 
+                success: true, 
+                raw: rawUrl, 
+                name: newName, 
+                existed: true,
+                target: target
+            });
+        }
+
+        // Save new script
+        await saveScript(fullName, {
+            code: obfuscatedCode,
+            originalCode: code,
+            name: name.trim(),
+            created: Date.now(),
+            updated: Date.now(),
+            lastAccessed: Date.now(),
+            owner: userId,
+            target: target,
+            obfuscated: true,
+            totalAccesses: 0
+        });
+
+        const rawUrl = `https://${req.headers.host}/api/raw?name=${fullName}`;
+        return res.status(200).json({ 
+            success: true, 
+            raw: rawUrl, 
+            name: fullName,
+            target: target
+        });
+
+    } catch (error) {
+        console.error('[APEX raw] Create error:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+}
+
+// ============================================================
+// PUT /api/raw - Update existing script
+// Body: { name, code, uid }
+// ============================================================
+async function handleUpdate(req, res) {
+    try {
+        const { name, code, uid } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Name is required' 
+            });
+        }
+
+        if (!code || !code.trim()) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Code is required' 
+            });
+        }
+
+        const scriptData = await getScript(name);
+        if (!scriptData) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Script not found' 
+            });
+        }
+
+        // Check ownership
+        if (uid && scriptData.owner && scriptData.owner !== uid && scriptData.owner !== 'public') {
+            return res.status(403).json({ 
+                success: false, 
+                error: 'Not your script' 
+            });
+        }
+
+        // Apply obfuscation
+        const obfuscatedCode = phantomObfuscate(code);
+        const target = detectTarget(code);
+
+        scriptData.code = obfuscatedCode;
+        scriptData.originalCode = code;
+        scriptData.updated = Date.now();
+        scriptData.lastAccessed = Date.now();
+        scriptData.target = target;
+        scriptData.obfuscated = true;
+
+        await saveScript(name, scriptData);
+
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Updated successfully', 
+            name: name,
+            target: target
+        });
+
+    } catch (error) {
+        console.error('[APEX raw] Update error:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+}
+
+// ============================================================
+// DELETE /api/raw?name=script&uid=owner
+// ============================================================
+async function handleDelete(req, res) {
+    try {
+        const { name, uid } = req.query;
+
+        if (!name) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Name is required' 
+            });
+        }
+
+        const scriptData = await getScript(name);
+        if (!scriptData) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Script not found' 
+            });
+        }
+
+        // Check ownership
+        if (uid && scriptData.owner && scriptData.owner !== uid && scriptData.owner !== 'public') {
+            return res.status(403).json({ 
+                success: false, 
+                error: 'Not your script' 
+            });
+        }
+
+        await deleteScript(name);
+
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Deleted successfully' 
+        });
+
+    } catch (error) {
+        console.error('[APEX raw] Delete error:', error);
+        return res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+}
+
+// ============================================================
+// HELPER FUNCTIONS
+// ============================================================
+
+function getScript(name) {
+    if (FirebaseManager.isAvailable()) {
+        return FirebaseManager.getScript(name);
+    }
+    return global.scripts[name] || null;
+}
+
+async function saveScript(name, data) {
+    if (FirebaseManager.isAvailable()) {
+        await FirebaseManager.saveScript(name, data);
+    }
+    global.scripts[name] = data;
+    return true;
+}
+
+async function deleteScript(name) {
+    if (FirebaseManager.isAvailable()) {
+        await FirebaseManager.deleteScript(name);
+    }
+    delete global.scripts[name];
+    return true;
+}
+
+function normalizeName(name) {
+    return name.trim().toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'script';
+}
+
+function detectTarget(code) {
+    if (code.match(/\bgame\s*:\s*GetService\s*\(/) ||
+        code.match(/\bInstance\.new\s*\(/) ||
+        code.match(/\btask\.(spawn|wait|defer)\s*\(/) ||
+        code.match(/\bworkspace\b/) ||
+        code.match(/--!/)) {
+        return 'luau';
+    }
+    return 'lua';
+}
+
+function generateChallenge() {
+    const ops = ['+', '-', '*'];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    let num1, num2, answer;
+    
+    switch(op) {
+        case '+': 
+            num1 = Math.floor(Math.random() * 50) + 1; 
+            num2 = Math.floor(Math.random() * 50) + 1; 
+            answer = num1 + num2; 
+            break;
+        case '-': 
+            num1 = Math.floor(Math.random() * 50) + 25; 
+            num2 = Math.floor(Math.random() * 25) + 1; 
+            answer = num1 - num2; 
+            break;
+        case '*': 
+            num1 = Math.floor(Math.random() * 12) + 1; 
+            num2 = Math.floor(Math.random() * 12) + 1; 
+            answer = num1 * num2; 
+            break;
+    }
+    
+    return {
+        question: `${num1} ${op} ${num2} = ?`,
+        answer: answer.toString(),
+        token: Math.random().toString(36).substring(2, 15) + Date.now().toString(36)
+    };
+}
+
+async function verifyChallenge(token, answer) {
+    // Check memory first
+    const memChallenge = global.challenges[token];
+    if (memChallenge && !memChallenge.used) {
+        if (Date.now() - memChallenge.createdAt < 60000 && answer === memChallenge.answer) {
+            memChallenge.used = true;
+            return true;
+        }
+    }
+    
+    // Check Firebase
+    if (FirebaseManager.isAvailable()) {
+        try {
+            const db = FirebaseManager.getDB();
+            const doc = await db.collection('challenges').doc(token).get();
+            if (doc.exists) {
+                const c = doc.data();
+                if (!c.used && Date.now() - c.createdAt < 60000 && answer === c.answer) {
+                    await doc.ref.update({ used: true });
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.error('[APEX raw] Challenge verify error:', error.message);
+        }
+    }
+    
+    return false;
+}
+
+// ============================================================
+// ANALYTICS TRACKING
+// ============================================================
+
+async function trackScriptAccess(scriptName, clientIP) {
+    try {
+        const now = new Date();
+        const dayKey = now.toISOString().split('T')[0];
+        const monthKey = now.toISOString().slice(0, 7);
+        const yearKey = now.getFullYear().toString();
+
+        // Memory tracking
+        global.analytics[scriptName] = global.analytics[scriptName] || {
+            scriptName: scriptName,
+            totalAccesses: 0,
+            totalUniqueIPs: new Set(),
+            daily: {},
+            monthly: {},
+            yearly: {}
+        };
+        
+        const stats = global.analytics[scriptName];
+        stats.totalAccesses++;
+        stats.totalUniqueIPs.add(clientIP);
+        stats.daily[dayKey] = (stats.daily[dayKey] || 0) + 1;
+        stats.monthly[monthKey] = (stats.monthly[monthKey] || 0) + 1;
+        stats.yearly[yearKey] = (stats.yearly[yearKey] || 0) + 1;
+
+        // Firebase tracking
+        if (FirebaseManager.isAvailable()) {
+            try {
+                const db = FirebaseManager.getDB();
+                const statsRef = db.collection('script_stats').doc(scriptName);
+                await statsRef.set({
+                    scriptName: scriptName,
+                    totalAccesses: admin.firestore.FieldValue.increment(1),
+                    [`daily_${dayKey}`]: admin.firestore.FieldValue.increment(1),
+                    [`monthly_${monthKey}`]: admin.firestore.FieldValue.increment(1),
+                    [`yearly_${yearKey}`]: admin.firestore.FieldValue.increment(1),
+                    updatedAt: Date.now()
+                }, { merge: true });
+            } catch (fbError) {
+                console.error('[APEX raw] Firebase tracking error:', fbError.message);
+            }
+        }
+    } catch (error) {
+        console.error('[APEX raw] Track access error:', error.message);
+    }
+}
+
+async function getScriptAnalytics(scriptName) {
+    // Check memory first
+    if (global.analytics[scriptName]) {
+        const stats = global.analytics[scriptName];
+        return {
+            scriptName: scriptName,
+            totalAccesses: stats.totalAccesses,
+            totalUniqueIPs: stats.totalUniqueIPs.size,
+            daily: stats.daily,
+            monthly: stats.monthly,
+            yearly: stats.yearly
+        };
+    }
+
+    // Check Firebase
+    if (FirebaseManager.isAvailable()) {
+        try {
+            const db = FirebaseManager.getDB();
+            const doc = await db.collection('script_stats').doc(scriptName).get();
+            if (doc.exists) {
+                const data = doc.data();
+                const daily = {};
+                const monthly = {};
+                const yearly = {};
+                
+                Object.keys(data).forEach(key => {
+                    if (key.startsWith('daily_')) {
+                        daily[key.replace('daily_', '')] = data[key];
+                    } else if (key.startsWith('monthly_')) {
+                        monthly[key.replace('monthly_', '')] = data[key];
+                    } else if (key.startsWith('yearly_')) {
+                        yearly[key.replace('yearly_', '')] = data[key];
+                    }
+                });
+
+                return {
+                    scriptName: scriptName,
+                    totalAccesses: data.totalAccesses || 0,
+                    daily: daily,
+                    monthly: monthly,
+                    yearly: yearly,
+                    updatedAt: data.updatedAt || Date.now()
+                };
+            }
+        } catch (error) {
+            console.error('[APEX raw] Get analytics error:', error.message);
+        }
+    }
+
+    return {
+        scriptName: scriptName,
+        totalAccesses: 0,
+        totalUniqueIPs: 0,
+        daily: {},
+        monthly: {},
+        yearly: {}
+    };
+}
+
+async function getOwnerAnalytics(owner) {
+    const scripts = [];
+    let totalAccesses = 0;
+
+    // Check memory
+    Object.keys(global.analytics).forEach(scriptName => {
+        const stats = global.analytics[scriptName];
+        if (stats.owner === owner || scriptName.startsWith(owner + '_')) {
+            scripts.push({
+                scriptName: scriptName,
+                totalAccesses: stats.totalAccesses,
+                uniqueIPs: stats.totalUniqueIPs.size
+            });
+            totalAccesses += stats.totalAccesses;
+        }
+    });
+
+    // Check Firebase
+    if (FirebaseManager.isAvailable()) {
+        try {
+            const db = FirebaseManager.getDB();
+            const snap = await db.collection('script_stats')
+                .where('owner', '==', owner)
+                .get();
+            
+            snap.forEach(doc => {
+                const data = doc.data();
+                const existing = scripts.find(s => s.scriptName === doc.id);
+                if (!existing) {
+                    scripts.push({
+                        scriptName: doc.id,
+                        totalAccesses: data.totalAccesses || 0
+                    });
+                    totalAccesses += data.totalAccesses || 0;
+                }
+            });
+        } catch (error) {
+            console.error('[APEX raw] Owner analytics error:', error.message);
+        }
+    }
+
+    scripts.sort((a, b) => b.totalAccesses - a.totalAccesses);
+
+    return {
+        owner: owner,
+        totalScripts: scripts.length,
+        totalAccesses: totalAccesses,
+        scripts: scripts
+    };
+}
+
+// ============================================================
+// PHANTOM OBFUSCATOR
+// ============================================================
+
+function phantomObfuscate(code) {
+    code = fragmentStrings(code);
+    code = injectPhantomFunctions(code);
+    code = encryptNumbers(code);
+    code = wrapWithTimeBomb(code);
+    code = injectAntiDebug(code);
+    return code;
+}
+
+function fragmentStrings(code) {
+    return code.replace(/"([^"]+)"/g, (match, str) => {
+        if (str.length < 6) return match;
+        
+        const fragments = [];
+        let remaining = str;
+        while (remaining.length > 0) {
+            const len = Math.floor(Math.random() * 5) + 2;
+            fragments.push(remaining.substring(0, len));
+            remaining = remaining.substring(len);
+        }
+        
+        const varName = '_s' + Math.random().toString(36).substring(2, 8);
+        const parts = fragments.map(f => `"${f}"`).join(',');
+        
+        return `(function() local ${varName}="" local _p={${parts}} for _i=1,#_p do ${varName}=${varName}.._p[_i] end return ${varName} end)()`;
+    });
+}
+
+function injectPhantomFunctions(code) {
+    const phantomTemplates = [
+        `local _p${randomId()}=function(...) local _a=table.pack(...) local _r=0 for _i=1,_a.n do _r=_r+(_a[_i]or 0)*_i end return _r end`,
+        `local _q${randomId()}=function(_x) local _t={} for _i=1,math.abs(_x%20)+1 do _t[_i]=_i*_x%7 end return _t end`,
+        `local _v${randomId()}=function(_s) local _h=0 for _i=1,#_s do _h=_h+string.byte(_s,_i)*_i%256 end return _h end`,
+        `local _m${randomId()}=function(_a,_b) local _r={} for _i=1,math.max(#_a,#_b) do _r[_i]=(_a[_i]or 0)^(_b[_i]or 1)%100 end return _r end`,
+    ];
+    
+    const lines = code.split('\n');
+    const result = [];
+    
+    for (const line of lines) {
+        result.push(line);
+        if (line.trim() && Math.random() < 0.15) {
+            const phantom = phantomTemplates[Math.floor(Math.random() * phantomTemplates.length)];
+            result.push(phantom);
+        }
+    }
+    
+    return result.join('\n');
+}
+
+function encryptNumbers(code) {
+    return code.replace(/\b(\d+)\b/g, (match, num) => {
+        const n = parseInt(num);
+        if (n < 2 || n > 9999) return match;
+        if (Math.random() > 0.5) return match;
+        
+        const templates = [
+            () => {
+                const a = Math.floor(Math.random() * n);
+                const b = n - a;
+                const op = Math.random() > 0.5 ? '+' : '-';
+                return op === '+' ? `(${a}+${b})` : `(${a + n}-${a})`;
+            },
+            () => {
+                const factors = [];
+                for (let i = 2; i <= Math.sqrt(n); i++) {
+                    if (n % i === 0) factors.push({ a: i, b: n / i });
+                }
+                if (factors.length > 0) {
+                    const f = factors[Math.floor(Math.random() * factors.length)];
+                    return `(${f.a}*${f.b})`;
+                }
+                return `(${n - 1}+1)`;
+            },
+            () => {
+                const x = Math.floor(Math.random() * 20) + 2;
+                return `(${n + x}-${x})`;
+            },
+            () => {
+                return `math.floor(${n + Math.random() * 0.5})`;
+            },
+        ];
+        
+        return templates[Math.floor(Math.random() * templates.length)]();
+    });
+}
+
+function wrapWithTimeBomb(code) {
+    const seed = Date.now() % 100000;
+    const checkVar = '_t' + randomId();
+    
+    return `
+local ${checkVar} = ${seed}
+local function _validate()
+    local _seed = ${seed}
+    local _now = os and os.time and os.time() or 0
+    local _check = (_now % 100000) - _seed
+    if math.abs(_check) > 86400 then
+        return false
+    end
+    return true
+end
+if not _validate() then return end
+do
+${code}
+end
+${checkVar} = nil _validate = nil`;
+}
+
+function injectAntiDebug(code) {
+    const traps = [
+        `if debug and debug.getinfo and debug.getinfo(1) and debug.getinfo(1).short_src:match("hook") then return end`,
+        `if rawget and rawget(_G, "hooked") then return end`,
+        `local _dbg = nil if debug then _dbg = debug.getregistry and debug.getregistry() end if _dbg and _dbg._HOOKED then return end`,
+    ];
+    
+    const trap = traps[Math.floor(Math.random() * traps.length)];
+    return trap + '\n' + code;
+}
+
+function generateLoader(code) {
+    const timestamp = Date.now().toString(36);
+    const seed = generateSeed(code);
+    const key = deriveKey(seed, timestamp);
+    const nonce = generateNonce(12);
+    
+    const encrypted = encryptWithKey(code, key, nonce);
+    const hexData = encrypted.toString('hex');
+    
+    return buildObfuscatedLoader(hexData, seed, timestamp, nonce);
+}
+
+function generateSeed(code) {
+    let hash = 0;
+    for (let i = 0; i < Math.min(code.length, 100); i++) {
+        hash = ((hash << 5) - hash) + code.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash).toString(36);
+}
+
+function deriveKey(seed, salt) {
+    let key = '';
+    const combined = seed + salt;
+    for (let i = 0; i < 16; i++) {
+        let charCode = 0;
+        for (let j = 0; j < combined.length; j++) {
+            charCode = (charCode * 31 + combined.charCodeAt(j) * (i + 1)) % 256;
+        }
+        key += String.fromCharCode(charCode);
+    }
+    return key;
+}
+
+function encryptWithKey(code, key, nonce) {
+    const bytes = Buffer.from(code, 'utf8');
+    const encrypted = Buffer.alloc(bytes.length);
+    
+    for (let i = 0; i < bytes.length; i++) {
+        const k = key.charCodeAt(i % key.length);
+        const n = nonce.charCodeAt(i % nonce.length);
+        encrypted[i] = (bytes[i] + k + n) % 256;
+    }
+    
+    return encrypted;
+}
+
+function generateNonce(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+function buildObfuscatedLoader(hexData, seed, timestamp, nonce) {
+    const out = [];
+    
+    out.push(`-- APEX HUB Loader v9 (Phantom Edition)`);
+    out.push(`-- Multi-layer protection active`);
+    out.push(``);
+    out.push(`local _seed = "${seed}"`);
+    out.push(`local _ts = "${timestamp}"`);
+    out.push(`local _nc = "${nonce}"`);
+    out.push(`local _hex = "${hexData}"`);
+    out.push(``);
+    out.push(`local function _dk(s,t)`);
+    out.push(`    local k=""`);
+    out.push(`    local c=s..t`);
+    out.push(`    for i=1,16 do`);
+    out.push(`        local v=0`);
+    out.push(`        for j=1,#c do`);
+    out.push(`            v=(v*31+string.byte(c,j)*i)%256`);
+    out.push(`        end`);
+    out.push(`        k=k..string.char(v)`);
+    out.push(`    end`);
+    out.push(`    return k`);
+    out.push(`end`);
+    out.push(``);
+    out.push(`local _key = _dk(_seed, _ts)`);
+    out.push(`local _bytes = {}`);
+    out.push(`local _idx = 1`);
+    out.push(`for _c in _hex:gmatch("..") do`);
+    out.push(`    local _b = tonumber(_c, 16)`);
+    out.push(`    local _kb = string.byte(_key, (_idx - 1) % #_key + 1)`);
+    out.push(`    local _nb = string.byte(_nc, (_idx - 1) % #_nc + 1)`);
+    out.push(`    _bytes[_idx] = string.char((_b - _kb - _nb) % 256)`);
+    out.push(`    _idx = _idx + 1`);
+    out.push(`end`);
+    out.push(``);
+    out.push(`local _code = table.concat(_bytes)`);
+    out.push(`_hex = nil _key = nil _nc = nil _bytes = nil _seed = nil _ts = nil _dk = nil`);
+    out.push(``);
+    out.push(`local _f, _e = loadstring(_code)`);
+    out.push(`if not _f then error("APEX Error: " .. tostring(_e)) end`);
+    out.push(`_code = nil`);
+    out.push(`_f()`);
+    out.push(`_f = nil`);
+    out.push(`collectgarbage("collect")`);
+    
+    return out.join('\n');
+}
+
+function randomId() {
+    return Math.random().toString(36).substring(2, 8);
+}
+
+// ============================================================
+// UI PAGES
+// ============================================================
+
+function getProtectionPage(name) {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>APEX HUB | Security Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:56px 52px;border:1px solid var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5);animation:fadeIn 0.7s cubic-bezier(0.22,1,0.36,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}.logo{font-size:26px;font-weight:600;letter-spacing:-0.03em;margin-bottom:6px}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin-bottom:36px}.sep{width:100%;height:1px;background:var(--border);margin:24px 0}.title{font-size:22px;font-weight:600;margin-bottom:12px}.desc{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:32px}.status{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:12px;padding:20px 24px;text-align:left;margin-bottom:28px}.row{display:flex;justify-content:space-between;padding:6px 0;font-size:11px}.label{color:var(--t3);text-transform:uppercase;font-size:10px}.value{font-family:monospace;color:var(--t2)}.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 28px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;color:var(--t1);text-decoration:none;font-size:14px;transition:all 0.3s}.btn:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14)}.footer{margin-top:28px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}@media(max-width:600px){.card{padding:40px 24px}.title{font-size:19px}}</style></head><body><div class="card"><div class="logo">APEX HUB</div><div class="sub">Security Gateway</div><div class="sep"></div><div class="title">Restricted endpoint.</div><p class="desc">Access to this resource is limited to authorized clients. Requests from standard browsers are not permitted.</p><div class="status"><div class="row"><span class="label">Status</span><span class="value">ACTIVE</span></div><div class="row"><span class="label">Transport</span><span class="value">ENCRYPTED</span></div><div class="row"><span class="label">Access</span><span class="value">RESTRICTED</span></div><div class="row"><span class="label">Script</span><span class="value">${name || 'N/A'}</span></div></div><a href="https://apexhubeditor.vercel.app/" class="btn">Open APEX HUB →</a><div class="footer">APEX HUB / Security Infrastructure</div></div></body></html>`;
+}
+
+function getWelcomePage() {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>APEX HUB | API Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:52px 48px;border:1px solid var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)}.brand{font-size:28px;font-weight:600;letter-spacing:-0.03em}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin:6px 0 32px}.desc{font-size:14px;color:var(--t2);margin-bottom:32px}.sep{height:1px;background:var(--border);margin-bottom:28px}.ep{display:flex;align-items:center;gap:14px;padding:12px 16px;font-size:13px;font-family:monospace;border-radius:8px;transition:0.2s}.ep:hover{background:rgba(255,255,255,0.02)}.method{font-size:10px;text-transform:uppercase;padding:4px 10px;border-radius:6px;min-width:50px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:var(--t2)}.footer{margin-top:32px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}</style></head><body><div class="card"><h1 class="brand">APEX HUB</h1><div class="sub">API Gateway</div><p class="desc">Production infrastructure for secure script delivery and API access.</p><div class="sep"></div><div class="ep"><span class="method">POST</span>/api/raw</div><div class="ep"><span class="method">PUT</span>/api/raw</div><div class="ep"><span class="method">GET</span>/api/raw?name=script</div><div class="ep"><span class="method">GET</span>/api/raw?analytics=true&name=script</div><div class="ep"><span class="method">DEL</span>/api/raw?name=script</div><div class="footer">APEX HUB · API Infrastructure · V9</div></div></body></html>`;
+}
+
+function getErrorPage(name) {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>404 | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.5)}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.ref{display:inline-block;padding:8px 18px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:12px;color:var(--t2)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div class="card"><div class="code">404</div><div class="title">Resource not found</div><p class="msg">The requested script could not be located.</p><div class="ref">${name}</div><br><a href="https://apexhubeditor.vercel.app/">← Return to Gateway</a></div></body></html>`;
+}
+
+// Export for testing
+export { handleGet, handleCreate, handleUpdate, handleDelete, trackScriptAccess, getScriptAnalytics, getOwnerAnalytics };
