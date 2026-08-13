@@ -2,29 +2,7 @@
   "name": "apex-hub",
   "version": "1.0.0",
   "type": "module",
-  "description": "APEX HUB - Lua Code Editor & Protection System",
-  "main": "api/raw.js",
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel deploy --prod",
-    "start": "vercel dev"
-  },
   "dependencies": {
-    "firebase-admin": "^13.4.0",
-    "crypto-js": "^4.2.0"
-  },
-  "engines": {
-    "node": ">=18.x"
-  },
-  "keywords": [
-    "lua",
-    "luau",
-    "obfuscator",
-    "script-editor",
-    "apex-hub",
-    "firebase",
-    "vercel"
-  ],
-  "author": "APEX HUB",
-  "license": "MIT"
+    "firebase-admin": "^13.4.0"
+  }
 }
