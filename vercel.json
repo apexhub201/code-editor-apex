@@ -16,10 +16,6 @@
             "memory": 512,
             "maxDuration": 15
         },
-        "api/analytics.js": {
-            "memory": 512,
-            "maxDuration": 15
-        },
         "api/verify.js": {
             "memory": 256,
             "maxDuration": 5
@@ -49,10 +45,6 @@
         {
             "source": "/raw",
             "destination": "/api/raw"
-        },
-        {
-            "source": "/analytics",
-            "destination": "/api/analytics"
         },
         {
             "source": "/verify",
@@ -93,14 +85,9 @@
                 },
                 {
                     "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key"
+                    "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
                 }
             ]
         }
-    ],
-    "env": {
-        "FIREBASE_PROJECT_ID": "@firebase-project-id",
-        "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
-        "FIREBASE_PRIVATE_KEY": "@firebase-private-key"
-    }
+    ]
 }
