@@ -1,8 +1,5 @@
 // API endpoint for APEX AI using Groq
-// This file should be placed in the /api directory of your Vercel project
-
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -14,7 +11,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Messages are required' });
     }
 
-    // Get API key from environment variable
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
     if (!GROQ_API_KEY) {
@@ -23,7 +19,6 @@ export default async function handler(req, res) {
     }
 
     const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-
     const selectedModel = model || 'openai/gpt-oss-120b';
 
     const requestBody = {
