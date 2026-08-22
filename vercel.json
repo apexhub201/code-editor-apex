@@ -27,10 +27,6 @@
         "api/challenge.js": {
             "memory": 256,
             "maxDuration": 5
-        },
-        "api/ai.js": {
-            "memory": 1024,
-            "maxDuration": 60
         }
     },
     "rewrites": [
@@ -61,10 +57,6 @@
         {
             "source": "/challenge",
             "destination": "/api/challenge"
-        },
-        {
-            "source": "/api/ai",
-            "destination": "/api/ai"
         }
     ],
     "headers": [
@@ -97,8 +89,5 @@
                 }
             ]
         }
-    ],
-    "env": {
-        "GROQ_API_KEY": "@groq-api-key"
-    }
+    ]
 }
