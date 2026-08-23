@@ -3,9 +3,5 @@
   "version": "1.0.0",
   "dependencies": {
     "firebase-admin": "^13.4.0"
-  },
-  "scripts": {
-    "start": "vercel dev",
-    "build": "echo 'No build step required'"
   }
 }
