@@ -1,5 +1,4 @@
-// API endpoint for APEX AI using Groq
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,7 +23,7 @@ export default async function handler(req, res) {
     if (!GROQ_API_KEY) {
       return res.status(500).json({ 
         success: false, 
-        error: 'API key not configured. Please set GROQ_API_KEY in environment variables.' 
+        error: 'API key not configured' 
       });
     }
 
@@ -57,16 +56,15 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      return res.status(500).json({ success: false, error: 'Invalid response from Groq API' });
+      return res.status(500).json({ success: false, error: 'Invalid response' });
     }
 
     return res.status(200).json({
       success: true,
-      content: data.choices[0].message.content,
-      model: data.model || selectedModel
+      content: data.choices[0].message.content
     });
 
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
   }
-}
+};
