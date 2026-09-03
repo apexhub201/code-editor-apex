@@ -1,1 +1,1711 @@
-(function(_0x477393,_0x4802c8){const _0x36c8b2=_0x4433,_0x4ee211=_0x477393();while(!![]){try{const _0x24dae7=parseInt(_0x36c8b2(0x20e))/0x1+-parseInt(_0x36c8b2(0x21b))/0x2+parseInt(_0x36c8b2(0x237))/0x3+-parseInt(_0x36c8b2(0x204))/0x4+-parseInt(_0x36c8b2(0x23e))/0x5*(-parseInt(_0x36c8b2(0x291))/0x6)+-parseInt(_0x36c8b2(0x1f6))/0x7*(parseInt(_0x36c8b2(0x254))/0x8)+parseInt(_0x36c8b2(0x250))/0x9;if(_0x24dae7===_0x4802c8)break;else _0x4ee211['push'](_0x4ee211['shift']());}catch(_0x410a26){_0x4ee211['push'](_0x4ee211['shift']());}}}(_0x4f10,0xf02b1));import{initializeApp,getApps,cert}from'firebase-admin/app';function _0x4433(_0x53b3d9,_0x4951a5){_0x53b3d9=_0x53b3d9-0x1f1;const _0x4f1086=_0x4f10();let _0x443383=_0x4f1086[_0x53b3d9];return _0x443383;}function _0x4f10(){const _0x433faa=['Firebase\x20init\x20error:','local\x20function\x20_dk(s,t)','query','Challenge\x20required','text/html;\x20charset=utf-8','resetTime','body','6583644DFlQoq','status','now','}\x20for\x20_i=1,#_p\x20do\x20','52600plWAis','local\x20_p','local\x20_idx\x20=\x201','--\x20APEX\x20HUB\x20(LANG\x20PHI\x20THOI\x20GIAN\x20BAY\x20NUA\x20DI)','min','\x20\x20\x20\x20local\x20_kb\x20=\x20string.byte(_key,\x20(_idx\x20-\x201)\x20%\x20#_key\x20+\x201)','x-forwarded-for','=function(_x)\x20local\x20_t={}\x20for\x20_i=1,math.abs(_x%20)+1\x20do\x20_t[_i]=_i*_x%7\x20end\x20return\x20_t\x20end','charAt','ref','\x20\x20\x20\x20return\x20k','match','Content-Type','Create\x20error:','Handler\x20error:','nosniff','local\x20_nc\x20=\x20\x22','electron','no-store,\x20no-cache,\x20must-revalidate','timestamp','utf8','\x20=\x20nil\x20_validate\x20=\x20nil','GET,\x20POST,\x20PUT,\x20DELETE,\x20OPTIONS','message','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>APEX\x20HUB\x20|\x20API\x20Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5)}.brand{font-size:28px;font-weight:600;letter-spacing:-0.03em}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin:6px\x200\x2032px}.desc{font-size:14px;color:var(--t2);margin-bottom:32px}.sep{height:1px;background:var(--border);margin-bottom:28px}.ep{display:flex;align-items:center;gap:14px;padding:12px\x2016px;font-size:13px;font-family:monospace;border-radius:8px;transition:0.2s}.ep:hover{background:rgba(255,255,255,0.02)}.method{font-size:10px;text-transform:uppercase;padding:4px\x2010px;border-radius:6px;min-width:50px;text-align:center;background:rgba(255,255,255,0.03);border:1px\x20solid\x20rgba(255,255,255,0.05);color:var(--t2)}.footer{margin-top:32px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><h1\x20class=\x22brand\x22>APEX\x20HUB</h1><div\x20class=\x22sub\x22>API\x20Gateway</div><p\x20class=\x22desc\x22>Production\x20infrastructure\x20for\x20secure\x20script\x20delivery\x20and\x20API\x20access.</p><div\x20class=\x22sep\x22></div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>POST</span>/api/raw</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>PUT</span>/api/raw</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>GET</span>/api/raw?name=script</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>DEL</span>/api/raw?name=script</div><div\x20class=\x22footer\x22>APEX\x20HUB\x20·\x20API\x20Infrastructure\x20·\x20V9</div></div></body></html>','end','host','roblox','local\x20_seed\x20=\x20\x22','answer','\x0a\x20\x20\x20\x20local\x20_now\x20=\x20os\x20and\x20os.time\x20and\x20os.time()\x20or\x200\x0a\x20\x20\x20\x20local\x20_check\x20=\x20(_now\x20%\x20100000)\x20-\x20_seed\x0a\x20\x20\x20\x20if\x20math.abs(_check)\x20>\x2086400\x20then\x0a\x20\x20\x20\x20\x20\x20\x20\x20return\x20false\x0a\x20\x20\x20\x20end\x0a\x20\x20\x20\x20return\x20true\x0aend\x0aif\x20not\x20_validate()\x20then\x20return\x20end\x0ado\x0a','apex-master-key-2024','=function(_a,_b)\x20local\x20_r={}\x20for\x20_i=1,math.max(#_a,#_b)\x20do\x20_r[_i]=(_a[_i]or\x200)^(_b[_i]or\x201)%100\x20end\x20return\x20_r\x20end','split','Updated\x20successfully','Method\x20not\x20allowed','_f\x20=\x20nil','local\x20_bytes\x20=\x20{}','local\x20_hex\x20=\x20\x22','connection','Access-Control-Allow-Methods','scripts','true','Access-Control-Allow-Origin','\x20\x20\x20\x20\x20\x20\x20\x20k=k..string.char(v)','aris','Cache-Control','local\x20_q','headers','floor','\x20\x20\x20\x20\x20\x20\x20\x20local\x20v=0','fluxus','=\x22\x22\x20local\x20_p={','local\x20_dbg\x20=\x20nil\x20if\x20debug\x20then\x20_dbg\x20=\x20debug.getregistry\x20and\x20debug.getregistry()\x20end\x20if\x20_dbg\x20and\x20_dbg._HOOKED\x20then\x20return\x20end','\x20\x20\x20\x20end','POST','bannedUntil','challenges','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>Rate\x20Limited\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px\x20solid\x20rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0\x20auto\x2024px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.bar{width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:24px}.fill{width:100%;height:100%;background:rgba(255,255,255,0.15);animation:progress\x2060s\x20linear}@keyframes\x20progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}.panel{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:10px;padding:16px\x2020px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px\x200;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22icon\x22>—</div><div\x20class=\x22title\x22>Request\x20Throttled</div><p\x20class=\x22msg\x22>Too\x20many\x20requests\x20from\x20this\x20client.</p><div\x20class=\x22bar\x22><div\x20class=\x22fill\x22></div></div><div\x20class=\x22panel\x22><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Policy</span><span\x20class=\x22val\x22>RATE\x20LIMIT</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Status</span><span\x20class=\x22val\x22>THROTTLED</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Retry</span><span\x20class=\x22val\x22>AUTOMATIC</span></div></div><div\x20class=\x22ft\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div></div></body></html>','script','_f()','18jZDPkn','length','log','remoteAddress','lua','\x20\x20\x20\x20for\x20i=1,16\x20do','count','sentinel','includes','trigon','local\x20_v','push','comet','rate_limits','if\x20debug\x20and\x20debug.getinfo\x20and\x20debug.getinfo(1)\x20and\x20debug.getinfo(1).short_src:match(\x22hook\x22)\x20then\x20return\x20end','delete','text/plain;\x20charset=utf-8','\x20\x20\x20\x20local\x20_nb\x20=\x20string.byte(_nc,\x20(_idx\x20-\x201)\x20%\x20#_nc\x20+\x201)','used','owner','GET','fromCharCode','OPTIONS','toLowerCase','273MYRlHI','krnl','/api/raw?name=','trim','token','abs','X-Content-Type-Options','safari','doc','solara','Content-Type,\x20X-Challenge-Token,\x20X-Challenge-Answer,\x20X-Auth-Key','hex','createdAt','_code\x20=\x20nil','6961476sFYTsY','send','evon','join','\x20\x20\x20\x20local\x20k=\x22\x22','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>Access\x20Denied\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px\x20solid\x20rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0\x20auto\x2024px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:24px}.panel{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:10px;padding:16px\x2020px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px\x200;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22icon\x22>—</div><div\x20class=\x22title\x22>Access\x20Denied</div><p\x20class=\x22msg\x22>This\x20request\x20has\x20been\x20temporarily\x20blocked\x20by\x20the\x20APEX\x20security\x20gateway.</p><div\x20class=\x22panel\x22><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Event</span><span\x20class=\x22val\x22>ACCESS\x20POLICY\x20VIOLATION</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Status</span><span\x20class=\x22val\x22>TEMPORARILY\x20BLOCKED</span></div></div><div\x20class=\x22ft\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div></div></body></html>','DELETE','setHeader','\x20\x20\x20\x20\x20\x20\x20\x20end','update','1343607MofCqQ','math.floor(','code','hydrogen','set','celestial','toString','\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20v=(v*31+string.byte(c,j)*i)%256','local\x20_ts\x20=\x20\x22','firefox','Script\x20not\x20found','codex','Not\x20your\x20script','541594ZHhBAc','for\x20_c\x20in\x20_hex:gmatch(\x22..\x22)\x20do','alloc','nexus','\x20\x20\x20\x20local\x20_b\x20=\x20tonumber(_c,\x2016)','https://','error','replace','\x20=\x20?','get','if\x20not\x20_f\x20then\x20error(\x22APEX\x20Error:\x20\x22\x20..\x20tostring(_e))\x20end','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>404\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5)}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.ref{display:inline-block;padding:8px\x2018px;background:rgba(255,255,255,0.02);border:1px\x20solid\x20var(--border);border-radius:8px;font-family:monospace;font-size:12px;color:var(--t2)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22code\x22>404</div><div\x20class=\x22title\x22>Resource\x20not\x20found</div><p\x20class=\x22msg\x22>The\x20requested\x20script\x20could\x20not\x20be\x20located.</p><div\x20class=\x22ref\x22>','[APEX]\x20Applying\x20Phantom\x20obfuscation...','Code\x20is\x20required','lastAccessed','Deleted\x20successfully','luau','\x20=\x20','exists','local\x20_key\x20=\x20_dk(_seed,\x20_ts)','if\x20rawget\x20and\x20rawget(_G,\x20\x22hooked\x22)\x20then\x20return\x20end','random','=function(...)\x20local\x20_a=table.pack(...)\x20local\x20_r=0\x20for\x20_i=1,_a.n\x20do\x20_r=_r+(_a[_i]or\x200)*_i\x20end\x20return\x20_r\x20end','data','updated','x-auth-key','question','collection','659607sacIym','Name\x20is\x20required','vega','DENY','public','charCodeAt','local\x20_f,\x20_e\x20=\x20loadstring(_code)','1593880cfYHyw','substring','+1)','valyse','=function(_s)\x20local\x20_h=0\x20for\x20_i=1,#_s\x20do\x20_h=_h+string.byte(_s,_i)*_i%256\x20end\x20return\x20_h\x20end','method','Internal\x20server\x20error','json','ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789','\x0alocal\x20','oxygen'];_0x4f10=function(){return _0x433faa;};return _0x4f10();}import{getFirestore}from'firebase-admin/firestore';export default(function(){const _0x1ebe98=_0x4433;if(!getApps()[_0x1ebe98(0x292)])try{initializeApp({'credential':cert({'projectId':process.env.FIREBASE_PROJECT_ID,'clientEmail':process.env.FIREBASE_CLIENT_EMAIL,'privateKey':process.env.FIREBASE_PRIVATE_KEY?.[_0x1ebe98(0x222)](/\\n/g,'\x0a')})});}catch(_0x425192){console[_0x1ebe98(0x221)](_0x1ebe98(0x249),_0x425192);}const _0x57af9e=getFirestore();function _0x3ef0fd(){const _0x135671=_0x1ebe98;return{'SCRIPTS_COLLECTION':_0x135671(0x27d),'CHALLENGES_COLLECTION':_0x135671(0x28d),'RATE_LIMITS_COLLECTION':_0x135671(0x29e),'BANNED_COLLECTION':'banned_ips'};}const _0xc1a3ab=new Map(),_0x27640f=0x5*0x3c*0x3e8;function _0x70a2a9(_0xd01f9e){return _0xd01f9e=_0x22d61a(_0xd01f9e),_0xd01f9e=_0x512f6a(_0xd01f9e),_0xd01f9e=_0x3595ae(_0xd01f9e),_0xd01f9e=_0x3b845e(_0xd01f9e),_0xd01f9e=_0x532430(_0xd01f9e),_0xd01f9e;}function _0x22d61a(_0x29147b){const _0x5fd275=_0x1ebe98;return _0x29147b[_0x5fd275(0x222)](/"([^"]+)"/g,(_0x2959be,_0xdefbe4)=>{const _0x440637=_0x5fd275;if(_0xdefbe4['length']<0x6)return _0x2959be;const _0x52ed8e=[];let _0x5b128e=_0xdefbe4;while(_0x5b128e[_0x440637(0x292)]>0x0){const _0x3594b6=Math['floor'](Math[_0x440637(0x230)]()*0x5)+0x2;_0x52ed8e[_0x440637(0x29c)](_0x5b128e['substring'](0x0,_0x3594b6)),_0x5b128e=_0x5b128e[_0x440637(0x23f)](_0x3594b6);}const _0x4f18af='_s'+Math[_0x440637(0x230)]()[_0x440637(0x214)](0x24)[_0x440637(0x23f)](0x2,0x8),_0x4aed4c=_0x52ed8e['map'](_0x35de5f=>'\x22'+_0x35de5f+'\x22')['join'](',');return'(function()\x20local\x20'+_0x4f18af+_0x440637(0x288)+_0x4aed4c+_0x440637(0x253)+_0x4f18af+'='+_0x4f18af+'.._p[_i]\x20end\x20return\x20'+_0x4f18af+'\x20end)()';});}function _0x512f6a(_0x14b872){const _0x762bbb=_0x1ebe98,_0x51fc8c=[_0x762bbb(0x255)+_0x1b7b7c()+_0x762bbb(0x231),_0x762bbb(0x283)+_0x1b7b7c()+_0x762bbb(0x25b),_0x762bbb(0x29b)+_0x1b7b7c()+_0x762bbb(0x242),'local\x20_m'+_0x1b7b7c()+_0x762bbb(0x274)],_0x280534=_0x14b872[_0x762bbb(0x275)]('\x0a'),_0xc448db=[];for(const _0x4dd74c of _0x280534){_0xc448db[_0x762bbb(0x29c)](_0x4dd74c);if(_0x4dd74c[_0x762bbb(0x1f9)]()&&Math[_0x762bbb(0x230)]()<0.15){const _0x117b38=_0x51fc8c[Math[_0x762bbb(0x285)](Math['random']()*_0x51fc8c[_0x762bbb(0x292)])];_0xc448db['push'](_0x117b38);}}return _0xc448db[_0x762bbb(0x207)]('\x0a');}function _0x3595ae(_0x65bfee){const _0x444e90=_0x1ebe98;return _0x65bfee[_0x444e90(0x222)](/\b(\d+)\b/g,(_0x5d1b4a,_0x3eb754)=>{const _0xd81d8a=_0x444e90,_0x1794cb=parseInt(_0x3eb754);if(_0x1794cb<0x2||_0x1794cb>0x270f)return _0x5d1b4a;if(Math['random']()>0.5)return _0x5d1b4a;const _0x356630=[()=>{const _0xfb5bb4=_0x4433,_0x5d002e=Math[_0xfb5bb4(0x285)](Math[_0xfb5bb4(0x230)]()*_0x1794cb),_0x243ce3=_0x1794cb-_0x5d002e,_0x3e9897=Math[_0xfb5bb4(0x230)]()>0.5?'+':'-';return _0x3e9897==='+'?'('+_0x5d002e+'+'+_0x243ce3+')':'('+(_0x5d002e+_0x1794cb)+'-'+_0x5d002e+')';},()=>{const _0x59abca=_0x4433,_0x3b1c30=[];for(let _0x9b9395=0x2;_0x9b9395<=Math['sqrt'](_0x1794cb);_0x9b9395++){if(_0x1794cb%_0x9b9395===0x0)_0x3b1c30[_0x59abca(0x29c)]({'a':_0x9b9395,'b':_0x1794cb/_0x9b9395});}if(_0x3b1c30['length']>0x0){const _0x283439=_0x3b1c30[Math[_0x59abca(0x285)](Math[_0x59abca(0x230)]()*_0x3b1c30[_0x59abca(0x292)])];return'('+_0x283439['a']+'*'+_0x283439['b']+')';}return'('+(_0x1794cb-0x1)+_0x59abca(0x240);},()=>{const _0x53e15b=_0x4433,_0x3a0f6d=Math[_0x53e15b(0x285)](Math[_0x53e15b(0x230)]()*0x14)+0x2;return'('+(_0x1794cb+_0x3a0f6d)+'-'+_0x3a0f6d+')';},()=>{const _0x1832fa=_0x4433;return _0x1832fa(0x20f)+(_0x1794cb+Math[_0x1832fa(0x230)]()*0.5)+')';}];return _0x356630[Math[_0xd81d8a(0x285)](Math[_0xd81d8a(0x230)]()*_0x356630[_0xd81d8a(0x292)])]();});}function _0x3b845e(_0x3fd5a9){const _0x265c09=_0x1ebe98,_0x3a1a57=Date['now']()%0x186a0,_0x3cdbe0='_t'+_0x1b7b7c();return _0x265c09(0x247)+_0x3cdbe0+_0x265c09(0x22c)+_0x3a1a57+'\x0alocal\x20function\x20_validate()\x0a\x20\x20\x20\x20local\x20_seed\x20=\x20'+_0x3a1a57+_0x265c09(0x272)+_0x3fd5a9+'\x0aend\x0a'+_0x3cdbe0+_0x265c09(0x269);}function _0x532430(_0x47d5a6){const _0xae6680=_0x1ebe98,_0x3da836=[_0xae6680(0x29f),_0xae6680(0x22f),_0xae6680(0x289)],_0xeec1e4=_0x3da836[Math[_0xae6680(0x285)](Math[_0xae6680(0x230)]()*_0x3da836[_0xae6680(0x292)])];return _0xeec1e4+'\x0a'+_0x47d5a6;}function _0x1b7b7c(){const _0x401cc4=_0x1ebe98;return Math['random']()[_0x401cc4(0x214)](0x24)['substring'](0x2,0x8);}function _0x29dd21(_0x57e387){const _0xcb9e52=_0x1ebe98,_0x13a7a6=Date[_0xcb9e52(0x252)]()[_0xcb9e52(0x214)](0x24),_0x287a94=_0x4e2d39(_0x57e387),_0x3e4306=_0x15c7f2(_0x287a94,_0x13a7a6),_0x155b2e=_0x33f453(0xc),_0x1a180e=_0x3c7ba0(_0x57e387,_0x3e4306,_0x155b2e),_0x554d9f=_0x1a180e['toString'](_0xcb9e52(0x201)),_0x1bf497=_0x34ad40(_0x554d9f,_0x287a94,_0x13a7a6,_0x155b2e);return _0x1bf497;}function _0x4e2d39(_0x54f069){const _0x3187eb=_0x1ebe98;let _0x3e103c=0x0;for(let _0x9da46=0x0;_0x9da46<Math[_0x3187eb(0x258)](_0x54f069[_0x3187eb(0x292)],0x64);_0x9da46++){_0x3e103c=(_0x3e103c<<0x5)-_0x3e103c+_0x54f069['charCodeAt'](_0x9da46),_0x3e103c|=0x0;}return Math[_0x3187eb(0x1fb)](_0x3e103c)[_0x3187eb(0x214)](0x24);}function _0x15c7f2(_0x468f02,_0xd405f5){const _0xa60f3e=_0x1ebe98;let _0x253b46='';const _0x463d8c=_0x468f02+_0xd405f5;for(let _0x5b5908=0x0;_0x5b5908<0x10;_0x5b5908++){let _0x296a65=0x0;for(let _0x447719=0x0;_0x447719<_0x463d8c[_0xa60f3e(0x292)];_0x447719++){_0x296a65=(_0x296a65*0x1f+_0x463d8c[_0xa60f3e(0x23c)](_0x447719)*(_0x5b5908+0x1))%0x100;}_0x253b46+=String[_0xa60f3e(0x1f3)](_0x296a65);}return _0x253b46;}function _0x3c7ba0(_0x21afe7,_0x57c5fa,_0x516859){const _0x4d1e03=_0x1ebe98,_0x199e3f=Buffer['from'](_0x21afe7,_0x4d1e03(0x268)),_0x41fc94=Buffer[_0x4d1e03(0x21d)](_0x199e3f[_0x4d1e03(0x292)]);for(let _0x13d871=0x0;_0x13d871<_0x199e3f[_0x4d1e03(0x292)];_0x13d871++){const _0x3e55c7=_0x57c5fa['charCodeAt'](_0x13d871%_0x57c5fa[_0x4d1e03(0x292)]),_0x25a1d3=_0x516859[_0x4d1e03(0x23c)](_0x13d871%_0x516859[_0x4d1e03(0x292)]);_0x41fc94[_0x13d871]=(_0x199e3f[_0x13d871]+_0x3e55c7+_0x25a1d3)%0x100;}return _0x41fc94;}function _0x33f453(_0x4046ce){const _0x3bdf20=_0x1ebe98,_0x44c348=_0x3bdf20(0x246);let _0x41b786='';for(let _0x2704a2=0x0;_0x2704a2<_0x4046ce;_0x2704a2++){_0x41b786+=_0x44c348[_0x3bdf20(0x25c)](Math[_0x3bdf20(0x285)](Math[_0x3bdf20(0x230)]()*_0x44c348[_0x3bdf20(0x292)]));}return _0x41b786;}function _0x34ad40(_0x10195c,_0x56f868,_0x3d6b9b,_0x164256){const _0x1ab647=_0x1ebe98,_0x23640a=[];return _0x23640a['push'](_0x1ab647(0x257)),_0x23640a[_0x1ab647(0x29c)]('--\x20Multi-layer\x20protection\x20active'),_0x23640a[_0x1ab647(0x29c)](''),_0x23640a['push'](_0x1ab647(0x270)+_0x56f868+'\x22'),_0x23640a['push'](_0x1ab647(0x216)+_0x3d6b9b+'\x22'),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x264)+_0x164256+'\x22'),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x27a)+_0x10195c+'\x22'),_0x23640a['push'](''),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x24a)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x208)),_0x23640a[_0x1ab647(0x29c)]('\x20\x20\x20\x20local\x20c=s..t'),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x296)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x286)),_0x23640a[_0x1ab647(0x29c)]('\x20\x20\x20\x20\x20\x20\x20\x20for\x20j=1,#c\x20do'),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x215)),_0x23640a['push'](_0x1ab647(0x20c)),_0x23640a['push'](_0x1ab647(0x280)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x28a)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x25e)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x26d)),_0x23640a[_0x1ab647(0x29c)](''),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x22e)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x279)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x256)),_0x23640a['push'](_0x1ab647(0x21c)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x21f)),_0x23640a['push'](_0x1ab647(0x259)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x2a2)),_0x23640a[_0x1ab647(0x29c)]('\x20\x20\x20\x20_bytes[_idx]\x20=\x20string.char((_b\x20-\x20_kb\x20-\x20_nb)\x20%\x20256)'),_0x23640a[_0x1ab647(0x29c)]('\x20\x20\x20\x20_idx\x20=\x20_idx\x20+\x201'),_0x23640a['push'](_0x1ab647(0x26d)),_0x23640a['push'](''),_0x23640a[_0x1ab647(0x29c)]('local\x20_code\x20=\x20table.concat(_bytes)'),_0x23640a[_0x1ab647(0x29c)]('_hex\x20=\x20nil\x20_key\x20=\x20nil\x20_nc\x20=\x20nil\x20_bytes\x20=\x20nil\x20_seed\x20=\x20nil\x20_ts\x20=\x20nil\x20_dk\x20=\x20nil'),_0x23640a[_0x1ab647(0x29c)](''),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x23d)),_0x23640a['push'](_0x1ab647(0x225)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x203)),_0x23640a['push'](_0x1ab647(0x290)),_0x23640a[_0x1ab647(0x29c)](_0x1ab647(0x278)),_0x23640a[_0x1ab647(0x29c)]('collectgarbage(\x22collect\x22)'),_0x23640a[_0x1ab647(0x207)]('\x0a');}function _0x5c2954(_0x333528=0x20){const _0x563759=_0x1ebe98,_0x2529ee=_0x563759(0x246);let _0x16f1c2='';for(let _0x5e20a6=0x0;_0x5e20a6<_0x333528;_0x5e20a6++){_0x16f1c2+=_0x2529ee[_0x563759(0x25c)](Math[_0x563759(0x285)](Math['random']()*_0x2529ee['length']));}return _0x16f1c2;}function _0x42d31c(_0x2c3157){const _0x3afe9f=_0x1ebe98;return{'code':_0x2c3157,'data':Buffer['from'](_0x2c3157)['toString'](_0x3afe9f(0x201))};}function _0x50616a(){const _0x3a5bc4=_0x1ebe98,_0x1e9983=['+','-','*'],_0x4cd4b1=_0x1e9983[Math['floor'](Math[_0x3a5bc4(0x230)]()*_0x1e9983[_0x3a5bc4(0x292)])];let _0x1ecf48,_0x79a2e1,_0x1e8f84;switch(_0x4cd4b1){case'+':_0x1ecf48=Math['floor'](Math['random']()*0x32)+0x1,_0x79a2e1=Math['floor'](Math[_0x3a5bc4(0x230)]()*0x32)+0x1,_0x1e8f84=_0x1ecf48+_0x79a2e1;break;case'-':_0x1ecf48=Math[_0x3a5bc4(0x285)](Math['random']()*0x32)+0x19,_0x79a2e1=Math['floor'](Math['random']()*0x19)+0x1,_0x1e8f84=_0x1ecf48-_0x79a2e1;break;case'*':_0x1ecf48=Math[_0x3a5bc4(0x285)](Math['random']()*0xc)+0x1,_0x79a2e1=Math['floor'](Math[_0x3a5bc4(0x230)]()*0xc)+0x1,_0x1e8f84=_0x1ecf48*_0x79a2e1;break;}return{'question':_0x1ecf48+'\x20'+_0x4cd4b1+'\x20'+_0x79a2e1+_0x3a5bc4(0x223),'answer':_0x1e8f84[_0x3a5bc4(0x214)](),'token':Math[_0x3a5bc4(0x230)]()[_0x3a5bc4(0x214)](0x24)[_0x3a5bc4(0x23f)](0x2,0xf)+Date[_0x3a5bc4(0x252)]()['toString'](0x24)};}async function _0x12b12f(_0x321c63){const _0x47a895=_0x1ebe98,_0x5205a7=Date[_0x47a895(0x252)](),{RATE_LIMITS_COLLECTION:_0x32e130,BANNED_COLLECTION:_0x597454}=_0x3ef0fd();try{const _0x20d930=_0x57af9e[_0x47a895(0x236)](_0x32e130)['doc'](_0x321c63),_0x1b9635=await _0x20d930[_0x47a895(0x224)]();if(!_0x1b9635[_0x47a895(0x22d)])return await _0x20d930[_0x47a895(0x212)]({'count':0x1,'resetTime':_0x5205a7+0xea60,'createdAt':_0x5205a7}),!![];const _0x291eda=_0x1b9635['data']();if(_0x5205a7>_0x291eda[_0x47a895(0x24e)])return await _0x20d930[_0x47a895(0x20d)]({'count':0x1,'resetTime':_0x5205a7+0xea60}),!![];if(_0x291eda['count']>=0x1e)return await _0x57af9e['collection'](_0x597454)['doc'](_0x321c63)[_0x47a895(0x212)]({'bannedUntil':_0x5205a7+0x493e0,'reason':'Rate\x20limit\x20exceeded','createdAt':_0x5205a7}),![];return await _0x20d930[_0x47a895(0x20d)]({'count':_0x291eda[_0x47a895(0x297)]+0x1}),!![];}catch(_0xf17f21){return!![];}}async function _0xc18482(_0x53bd1f){const _0x5d2ac5=_0x1ebe98,{BANNED_COLLECTION:_0x2e95a8}=_0x3ef0fd();try{const _0x42a0ed=await _0x57af9e[_0x5d2ac5(0x236)](_0x2e95a8)[_0x5d2ac5(0x1fe)](_0x53bd1f)[_0x5d2ac5(0x224)]();if(!_0x42a0ed[_0x5d2ac5(0x22d)])return![];const _0x389833=_0x42a0ed[_0x5d2ac5(0x232)]();if(Date[_0x5d2ac5(0x252)]()<_0x389833[_0x5d2ac5(0x28c)])return!![];return await _0x42a0ed[_0x5d2ac5(0x25d)][_0x5d2ac5(0x2a0)](),![];}catch(_0x4f7cdc){return![];}}async function _0x1c6e8e(_0x18d316){const _0x646cc1=_0x1ebe98,{SCRIPTS_COLLECTION:_0x30541a}=_0x3ef0fd(),_0x3a64e0=_0xc1a3ab[_0x646cc1(0x224)](_0x18d316);if(_0x3a64e0&&Date[_0x646cc1(0x252)]()-_0x3a64e0[_0x646cc1(0x267)]<_0x27640f)return _0x3a64e0[_0x646cc1(0x232)];try{const _0x23e1d6=await _0x57af9e[_0x646cc1(0x236)](_0x30541a)['doc'](_0x18d316)[_0x646cc1(0x224)]();if(!_0x23e1d6[_0x646cc1(0x22d)])return null;const _0x3f9d15=_0x23e1d6[_0x646cc1(0x232)]();return await _0x23e1d6[_0x646cc1(0x25d)][_0x646cc1(0x20d)]({'lastAccessed':Date[_0x646cc1(0x252)]()}),_0xc1a3ab[_0x646cc1(0x212)](_0x18d316,{'data':_0x3f9d15,'timestamp':Date[_0x646cc1(0x252)]()}),_0x3f9d15;}catch(_0xd823d2){return null;}}async function _0x4cfade(_0x572af3,_0x583670){const _0x1b8052=_0x1ebe98,{SCRIPTS_COLLECTION:_0x542400}=_0x3ef0fd();try{return await _0x57af9e[_0x1b8052(0x236)](_0x542400)['doc'](_0x572af3)[_0x1b8052(0x212)]({..._0x583670,'updatedAt':Date[_0x1b8052(0x252)]()},{'merge':!![]}),_0xc1a3ab[_0x1b8052(0x2a0)](_0x572af3),!![];}catch(_0x4445df){return![];}}async function _0x42f486(_0x5dd129){const _0x44d2e4=_0x1ebe98,{SCRIPTS_COLLECTION:_0x56cf34}=_0x3ef0fd();try{return await _0x57af9e[_0x44d2e4(0x236)](_0x56cf34)[_0x44d2e4(0x1fe)](_0x5dd129)['delete'](),_0xc1a3ab[_0x44d2e4(0x2a0)](_0x5dd129),!![];}catch(_0x437a4f){return![];}}function _0x5a34f7(_0x350993){const _0x421f26=_0x1ebe98;return _0x350993[_0x421f26(0x1f9)]()['toLowerCase']()[_0x421f26(0x222)](/[^a-z0-9\s-]/g,'')[_0x421f26(0x222)](/\s+/g,'-')['replace'](/-+/g,'-')[_0x421f26(0x222)](/^-|-$/g,'')||_0x421f26(0x28f);}function _0x4ed635(_0x5ec1a0){const _0x28734e=_0x1ebe98;if(_0x5ec1a0[_0x28734e(0x25f)](/\bgame\s*:\s*GetService\s*\(/)||_0x5ec1a0[_0x28734e(0x25f)](/\bInstance\.new\s*\(/)||_0x5ec1a0['match'](/\btask\.(spawn|wait|defer)\s*\(/)||_0x5ec1a0['match'](/\bworkspace\b/)||_0x5ec1a0[_0x28734e(0x25f)](/--!/))return _0x28734e(0x22b);return _0x28734e(0x295);}async function _0x48f6d1(_0x14f4e7,_0x1fe4fa){const _0x6958fb=_0x1ebe98,{name:_0x3b2987,key:_0x230686,raw:_0x48c30a,challenge:_0x3b0605,answer:_0x7f5be}=_0x14f4e7[_0x6958fb(0x24b)],_0x1ec84b=(_0x14f4e7[_0x6958fb(0x284)]['user-agent']||'')[_0x6958fb(0x1f5)](),_0x55fb77=_0x14f4e7[_0x6958fb(0x284)][_0x6958fb(0x25a)]||_0x14f4e7[_0x6958fb(0x27b)]?.[_0x6958fb(0x294)]||'unknown',_0x5f1298=_0x14f4e7['headers'][_0x6958fb(0x234)]||'',{CHALLENGES_COLLECTION:_0xc6293d,BANNED_COLLECTION:_0x1414cb}=_0x3ef0fd();if(await _0xc18482(_0x55fb77))return _0x1fe4fa['setHeader'](_0x6958fb(0x260),'text/html;\x20charset=utf-8'),_0x1fe4fa[_0x6958fb(0x251)](0x193)[_0x6958fb(0x205)](_0x5ca8d3());if(!await _0x12b12f(_0x55fb77))return _0x1fe4fa[_0x6958fb(0x20b)](_0x6958fb(0x260),'text/html;\x20charset=utf-8'),_0x1fe4fa['status'](0x1ad)[_0x6958fb(0x205)](_0x4be4a8());if(!_0x3b2987)return _0x1fe4fa[_0x6958fb(0x20b)](_0x6958fb(0x260),_0x6958fb(0x24d)),_0x1fe4fa[_0x6958fb(0x205)](_0x123f10());const _0x127ef=await _0x1c6e8e(_0x3b2987);if(!_0x127ef)return _0x1fe4fa[_0x6958fb(0x20b)](_0x6958fb(0x260),_0x6958fb(0x24d)),_0x1fe4fa[_0x6958fb(0x251)](0x194)[_0x6958fb(0x205)](_0x36c8f6(_0x3b2987));const _0x3d0ec0=['d0egkw6en9eusrjje5vn70p2tvkngkkn',_0x6958fb(0x273)],_0x58f202=_0x3d0ec0[_0x6958fb(0x299)](_0x230686)||_0x3d0ec0[_0x6958fb(0x299)](_0x5f1298),_0x138e91=_0x48c30a===_0x6958fb(0x27e);if(_0x58f202||_0x138e91)return _0x1fe4fa[_0x6958fb(0x245)]({'success':!![],'code':_0x127ef['code']});const _0x3c6b70=[_0x6958fb(0x26f),'synapse',_0x6958fb(0x1f7),'script-ware',_0x6958fb(0x298),_0x6958fb(0x287),_0x6958fb(0x265),_0x6958fb(0x29d),_0x6958fb(0x248),_0x6958fb(0x241),_0x6958fb(0x211),_0x6958fb(0x219),_0x6958fb(0x239),_0x6958fb(0x29a),_0x6958fb(0x21e),_0x6958fb(0x1ff),'jjsploit',_0x6958fb(0x213),_0x6958fb(0x206),_0x6958fb(0x281)],_0x146b3e=_0x3c6b70['some'](_0x53a756=>_0x1ec84b[_0x6958fb(0x299)](_0x53a756));if(_0x146b3e)return _0x1fe4fa[_0x6958fb(0x20b)](_0x6958fb(0x260),_0x6958fb(0x2a1)),_0x1fe4fa[_0x6958fb(0x20b)](_0x6958fb(0x282),_0x6958fb(0x266)),_0x1fe4fa['send'](_0x29dd21(_0x127ef[_0x6958fb(0x210)]));if(_0x3b0605&&_0x7f5be)try{const _0x1a4e75=await _0x57af9e['collection'](_0xc6293d)['doc'](_0x3b0605)['get']();if(_0x1a4e75['exists']){const _0x8b7939=_0x1a4e75[_0x6958fb(0x232)]();if(!_0x8b7939[_0x6958fb(0x2a3)]&&Date[_0x6958fb(0x252)]()-_0x8b7939[_0x6958fb(0x202)]<0xea60&&_0x7f5be===_0x8b7939[_0x6958fb(0x271)])return await _0x1a4e75[_0x6958fb(0x25d)][_0x6958fb(0x20d)]({'used':!![]}),_0x1fe4fa[_0x6958fb(0x245)]({'success':!![],'code':_0x127ef['code']});}}catch(_0x38d348){}const _0x503c8c=_0x1ec84b['includes']('mozilla')||_0x1ec84b[_0x6958fb(0x299)]('chrome')||_0x1ec84b[_0x6958fb(0x299)](_0x6958fb(0x1fd))||_0x1ec84b['includes'](_0x6958fb(0x217));if(_0x503c8c)return _0x1fe4fa[_0x6958fb(0x20b)]('Content-Type',_0x6958fb(0x24d)),_0x1fe4fa[_0x6958fb(0x205)](_0xd48ddc());const _0x33ccd0=_0x50616a();try{await _0x57af9e[_0x6958fb(0x236)](_0xc6293d)['doc'](_0x33ccd0[_0x6958fb(0x1fa)])[_0x6958fb(0x212)]({'answer':_0x33ccd0[_0x6958fb(0x271)],'createdAt':Date[_0x6958fb(0x252)](),'used':![],'attempts':0x0});}catch(_0x1a5012){}return _0x1fe4fa['json']({'protected':!![],'message':_0x6958fb(0x24c),'challenge':{'question':_0x33ccd0[_0x6958fb(0x235)],'token':_0x33ccd0[_0x6958fb(0x1fa)]}});}async function _0x58087b(_0xb8b10b,_0x4aa358){const _0x323789=_0x1ebe98;try{const {code:_0x598814,name:_0x888219,uid:_0x4520b6}=_0xb8b10b[_0x323789(0x24f)];if(!_0x598814||!_0x598814[_0x323789(0x1f9)]())return _0x4aa358['status'](0x190)[_0x323789(0x245)]({'success':![],'error':_0x323789(0x228)});if(!_0x888219||!_0x888219[_0x323789(0x1f9)]())return _0x4aa358[_0x323789(0x251)](0x190)[_0x323789(0x245)]({'success':![],'error':'Name\x20is\x20required'});const _0x4ff35f=_0x5a34f7(_0x888219),_0x2b10d4=_0x4520b6||_0x323789(0x23b),_0x1ede26=_0x2b10d4+'_'+_0x4ff35f,_0x457035=_0x4ed635(_0x598814);console[_0x323789(0x293)](_0x323789(0x227));const _0x9ba4dd=_0x70a2a9(_0x598814),_0x1b6ef0=await _0x1c6e8e(_0x1ede26);if(_0x1b6ef0){const _0x33c0fe=_0x1ede26+'_'+Date['now']()[_0x323789(0x214)](0x24);await _0x4cfade(_0x33c0fe,{'code':_0x9ba4dd,'originalCode':_0x598814,'name':_0x888219[_0x323789(0x1f9)](),'created':Date['now'](),'lastAccessed':Date['now'](),'owner':_0x2b10d4,'target':_0x457035,'obfuscated':!![]});const _0x4fe603=_0x323789(0x220)+_0xb8b10b[_0x323789(0x284)]['host']+_0x323789(0x1f8)+_0x33c0fe;return _0x4aa358['status'](0xc8)[_0x323789(0x245)]({'success':!![],'raw':_0x4fe603,'name':_0x33c0fe,'existed':!![]});}await _0x4cfade(_0x1ede26,{'code':_0x9ba4dd,'originalCode':_0x598814,'name':_0x888219[_0x323789(0x1f9)](),'created':Date['now'](),'lastAccessed':Date[_0x323789(0x252)](),'owner':_0x2b10d4,'target':_0x457035,'obfuscated':!![]});const _0xf21242=_0x323789(0x220)+_0xb8b10b[_0x323789(0x284)][_0x323789(0x26e)]+_0x323789(0x1f8)+_0x1ede26;return _0x4aa358[_0x323789(0x251)](0xc8)['json']({'success':!![],'raw':_0xf21242,'name':_0x1ede26});}catch(_0x28e4b3){return console[_0x323789(0x221)](_0x323789(0x261),_0x28e4b3),_0x4aa358[_0x323789(0x251)](0x1f4)['json']({'success':![],'error':_0x28e4b3['message']});}}async function _0x240a70(_0x125df5,_0x187422){const _0x2fdd2d=_0x1ebe98;try{const {name:_0x561d97,code:_0x3f6e00,uid:_0x3c1eeb}=_0x125df5[_0x2fdd2d(0x24f)];if(!_0x561d97)return _0x187422[_0x2fdd2d(0x251)](0x190)['json']({'success':![],'error':_0x2fdd2d(0x238)});const _0x439457=await _0x1c6e8e(_0x561d97);if(!_0x439457)return _0x187422[_0x2fdd2d(0x251)](0x194)[_0x2fdd2d(0x245)]({'success':![],'error':_0x2fdd2d(0x218)});if(!_0x3f6e00||!_0x3f6e00[_0x2fdd2d(0x1f9)]())return _0x187422[_0x2fdd2d(0x251)](0x190)[_0x2fdd2d(0x245)]({'success':![],'error':_0x2fdd2d(0x228)});if(_0x3c1eeb&&_0x439457[_0x2fdd2d(0x1f1)]&&_0x439457[_0x2fdd2d(0x1f1)]!==_0x3c1eeb)return _0x187422[_0x2fdd2d(0x251)](0x193)['json']({'success':![],'error':_0x2fdd2d(0x21a)});return _0x439457['code']=_0x70a2a9(_0x3f6e00),_0x439457['originalCode']=_0x3f6e00,_0x439457[_0x2fdd2d(0x233)]=Date['now'](),_0x439457[_0x2fdd2d(0x229)]=Date['now'](),await _0x4cfade(_0x561d97,_0x439457),_0x187422[_0x2fdd2d(0x251)](0xc8)[_0x2fdd2d(0x245)]({'success':!![],'message':_0x2fdd2d(0x276),'name':_0x561d97});}catch(_0x1a9906){return _0x187422[_0x2fdd2d(0x251)](0x1f4)[_0x2fdd2d(0x245)]({'success':![],'error':_0x1a9906[_0x2fdd2d(0x26b)]});}}async function _0x1d6300(_0x3445da,_0x20399b){const _0x171e73=_0x1ebe98;try{const {name:_0x1eb2fe,uid:_0x5004fb}=_0x3445da[_0x171e73(0x24b)];if(!_0x1eb2fe)return _0x20399b['status'](0x190)['json']({'success':![],'error':_0x171e73(0x238)});const _0x2ae692=await _0x1c6e8e(_0x1eb2fe);if(!_0x2ae692)return _0x20399b[_0x171e73(0x251)](0x194)['json']({'success':![],'error':'Script\x20not\x20found'});if(_0x5004fb&&_0x2ae692[_0x171e73(0x1f1)]&&_0x2ae692[_0x171e73(0x1f1)]!==_0x5004fb)return _0x20399b['status'](0x193)[_0x171e73(0x245)]({'success':![],'error':_0x171e73(0x21a)});return await _0x42f486(_0x1eb2fe),_0x20399b[_0x171e73(0x251)](0xc8)[_0x171e73(0x245)]({'success':!![],'message':_0x171e73(0x22a)});}catch(_0x26c3ff){return _0x20399b[_0x171e73(0x251)](0x1f4)[_0x171e73(0x245)]({'success':![],'error':_0x26c3ff[_0x171e73(0x26b)]});}}function _0xd48ddc(){return'<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>APEX\x20HUB\x20|\x20Security\x20Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:56px\x2052px;border:1px\x20solid\x20var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5);animation:fadeIn\x200.7s\x20cubic-bezier(0.22,1,0.36,1)}@keyframes\x20fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}.logo{font-size:26px;font-weight:600;letter-spacing:-0.03em;margin-bottom:6px}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin-bottom:36px}.sep{width:100%;height:1px;background:var(--border);margin:24px\x200}.title{font-size:22px;font-weight:600;margin-bottom:12px}.desc{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:32px}.status{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:12px;padding:20px\x2024px;text-align:left;margin-bottom:28px}.row{display:flex;justify-content:space-between;padding:6px\x200;font-size:11px}.label{color:var(--t3);text-transform:uppercase;font-size:10px}.value{font-family:monospace;color:var(--t2)}.btn{display:inline-flex;align-items:center;gap:10px;padding:15px\x2028px;background:rgba(255,255,255,0.03);border:1px\x20solid\x20var(--border);border-radius:10px;color:var(--t1);text-decoration:none;font-size:14px;transition:all\x200.3s}.btn:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14)}.footer{margin-top:28px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}@media(max-width:600px){.card{padding:40px\x2024px}.title{font-size:19px}}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22logo\x22>APEX\x20HUB</div><div\x20class=\x22sub\x22>Security\x20Gateway</div><div\x20class=\x22sep\x22></div><div\x20class=\x22title\x22>Restricted\x20endpoint.</div><p\x20class=\x22desc\x22>Access\x20to\x20this\x20resource\x20is\x20limited\x20to\x20authorized\x20clients.\x20Requests\x20from\x20standard\x20browsers\x20are\x20not\x20permitted.</p><div\x20class=\x22status\x22><div\x20class=\x22row\x22><span\x20class=\x22label\x22>Status</span><span\x20class=\x22value\x22>ACTIVE</span></div><div\x20class=\x22row\x22><span\x20class=\x22label\x22>Transport</span><span\x20class=\x22value\x22>ENCRYPTED</span></div><div\x20class=\x22row\x22><span\x20class=\x22label\x22>Access</span><span\x20class=\x22value\x22>RESTRICTED</span></div><div\x20class=\x22row\x22><span\x20class=\x22label\x22>Gateway</span><span\x20class=\x22value\x22>V9\x20PHANTOM</span></div></div><a\x20href=\x22https://apexhubeditor.vercel.app/\x22\x20class=\x22btn\x22>Open\x20APEX\x20HUB\x20→</a><div\x20class=\x22footer\x22>APEX\x20HUB\x20/\x20Security\x20Infrastructure</div></div></body></html>';}function _0x123f10(){const _0x54c357=_0x1ebe98;return _0x54c357(0x26c);}function _0x36c8f6(_0x127bec){const _0x2512b5=_0x1ebe98;return _0x2512b5(0x226)+_0x127bec+'</div><br><a\x20href=\x22https://apexhubeditor.vercel.app/\x22>←\x20Return\x20to\x20Gateway</a></div></body></html>';}function _0x5ca8d3(){const _0x5a3493=_0x1ebe98;return _0x5a3493(0x209);}function _0x4be4a8(){const _0x4d354e=_0x1ebe98;return _0x4d354e(0x28e);}return async function _0x3416c2(_0xaea1f3,_0x45a1c7){const _0x4123e6=_0x1ebe98;_0x45a1c7[_0x4123e6(0x20b)](_0x4123e6(0x27f),'*'),_0x45a1c7[_0x4123e6(0x20b)](_0x4123e6(0x27c),_0x4123e6(0x26a)),_0x45a1c7[_0x4123e6(0x20b)]('Access-Control-Allow-Headers',_0x4123e6(0x200)),_0x45a1c7[_0x4123e6(0x20b)](_0x4123e6(0x1fc),_0x4123e6(0x263)),_0x45a1c7['setHeader']('X-Frame-Options',_0x4123e6(0x23a));if(_0xaea1f3['method']===_0x4123e6(0x1f4))return _0x45a1c7['status'](0xc8)['end']();try{if(_0xaea1f3[_0x4123e6(0x243)]===_0x4123e6(0x1f2))return await _0x48f6d1(_0xaea1f3,_0x45a1c7);if(_0xaea1f3[_0x4123e6(0x243)]===_0x4123e6(0x28b))return await _0x58087b(_0xaea1f3,_0x45a1c7);if(_0xaea1f3[_0x4123e6(0x243)]==='PUT')return await _0x240a70(_0xaea1f3,_0x45a1c7);if(_0xaea1f3['method']===_0x4123e6(0x20a))return await _0x1d6300(_0xaea1f3,_0x45a1c7);return _0x45a1c7[_0x4123e6(0x251)](0x195)[_0x4123e6(0x245)]({'error':_0x4123e6(0x277)});}catch(_0x3ec704){return console[_0x4123e6(0x221)](_0x4123e6(0x262),_0x3ec704),_0x45a1c7[_0x4123e6(0x251)](0x1f4)[_0x4123e6(0x245)]({'success':![],'error':_0x4123e6(0x244)});}};}());
+// ============================================================
+// api/raw.js - APEX HUB V8 (Firebase Persistence + Professional UI)
+// ============================================================
+
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+
+// Export trực tiếp handler từ IIFE
+export default (function() {
+    // Khởi tạo Firebase Admin (chỉ chạy 1 lần)
+    if (!getApps().length) {
+        try {
+            initializeApp({
+                credential: cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+                })
+            });
+        } catch (error) {
+            console.error('Firebase init error:', error);
+        }
+    }
+
+    const db = getFirestore();
+    
+    function getConstants() {
+        return {
+            SCRIPTS_COLLECTION: 'scripts',
+            CHALLENGES_COLLECTION: 'challenges',
+            RATE_LIMITS_COLLECTION: 'rate_limits',
+            BANNED_COLLECTION: 'banned_ips'
+        };
+    }
+
+    const memoryCache = new Map();
+    const CACHE_TTL = 5 * 60 * 1000;
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+
+    function generateRandomKey(length = 32) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    function encryptPayload(code) {
+        const key = generateRandomKey(16);
+        const bytes = Buffer.from(code, 'utf8');
+        const encrypted = Buffer.alloc(bytes.length);
+        
+        for (let i = 0; i < bytes.length; i++) {
+            const keyChar = key.charCodeAt(i % key.length);
+            encrypted[i] = bytes[i] ^ keyChar;
+        }
+        return { data: encrypted.toString('hex'), key: key };
+    }
+
+    function generateChallenge() {
+        const ops = ['+', '-', '*'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let num1, num2, answer;
+        
+        switch(op) {
+            case '+': 
+                num1 = Math.floor(Math.random() * 50) + 1; 
+                num2 = Math.floor(Math.random() * 50) + 1; 
+                answer = num1 + num2; 
+                break;
+            case '-': 
+                num1 = Math.floor(Math.random() * 50) + 25; 
+                num2 = Math.floor(Math.random() * 25) + 1; 
+                answer = num1 - num2; 
+                break;
+            case '*': 
+                num1 = Math.floor(Math.random() * 12) + 1; 
+                num2 = Math.floor(Math.random() * 12) + 1; 
+                answer = num1 * num2; 
+                break;
+        }
+        
+        return {
+            question: `${num1} ${op} ${num2} = ?`,
+            answer: answer.toString(),
+            token: Math.random().toString(36).substring(2, 15) + Date.now().toString(36)
+        };
+    }
+
+    async function checkRateLimit(ip) {
+        const now = Date.now();
+        const { RATE_LIMITS_COLLECTION, BANNED_COLLECTION } = getConstants();
+        
+        try {
+            const docRef = db.collection(RATE_LIMITS_COLLECTION).doc(ip);
+            const doc = await docRef.get();
+            
+            if (!doc.exists) {
+                await docRef.set({
+                    count: 1,
+                    resetTime: now + 60000,
+                    createdAt: now
+                });
+                return true;
+            }
+            
+            const data = doc.data();
+            
+            if (now > data.resetTime) {
+                await docRef.update({
+                    count: 1,
+                    resetTime: now + 60000
+                });
+                return true;
+            }
+            
+            if (data.count >= 30) {
+                await db.collection(BANNED_COLLECTION).doc(ip).set({
+                    bannedUntil: now + 300000,
+                    reason: 'Rate limit exceeded',
+                    createdAt: now
+                });
+                return false;
+            }
+            
+            await docRef.update({
+                count: data.count + 1
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('Rate limit check error:', error);
+            return true;
+        }
+    }
+
+    async function isIPBanned(ip) {
+        const { BANNED_COLLECTION } = getConstants();
+        
+        try {
+            const doc = await db.collection(BANNED_COLLECTION).doc(ip).get();
+            
+            if (!doc.exists) return false;
+            
+            const data = doc.data();
+            if (Date.now() < data.bannedUntil) {
+                return true;
+            }
+            
+            await doc.ref.delete();
+            return false;
+        } catch (error) {
+            console.error('IP ban check error:', error);
+            return false;
+        }
+    }
+
+    async function getScript(name) {
+        const { SCRIPTS_COLLECTION } = getConstants();
+        const cached = memoryCache.get(name);
+        
+        if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+            return cached.data;
+        }
+        
+        try {
+            const doc = await db.collection(SCRIPTS_COLLECTION).doc(name).get();
+            
+            if (!doc.exists) return null;
+            
+            const data = doc.data();
+            
+            await doc.ref.update({ lastAccessed: Date.now() });
+            
+            memoryCache.set(name, {
+                data: data,
+                timestamp: Date.now()
+            });
+            
+            return data;
+        } catch (error) {
+            console.error('Get script error:', error);
+            return null;
+        }
+    }
+
+    async function saveScript(name, data) {
+        const { SCRIPTS_COLLECTION } = getConstants();
+        
+        try {
+            await db.collection(SCRIPTS_COLLECTION).doc(name).set({
+                ...data,
+                updatedAt: Date.now()
+            }, { merge: true });
+            
+            memoryCache.delete(name);
+            
+            return true;
+        } catch (error) {
+            console.error('Save script error:', error);
+            return false;
+        }
+    }
+
+    async function deleteScript(name) {
+        const { SCRIPTS_COLLECTION } = getConstants();
+        
+        try {
+            await db.collection(SCRIPTS_COLLECTION).doc(name).delete();
+            memoryCache.delete(name);
+            return true;
+        } catch (error) {
+            console.error('Delete script error:', error);
+            return false;
+        }
+    }
+
+    function normalizeName(name) {
+        return name.trim().toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '') || 'script';
+    }
+
+    // ============================================================
+    // LOADER HEX SIÊU TỐC
+    // ============================================================
+
+    function generateLoader(encryptedPayload, host) {
+        const hexData = encryptedPayload.data;
+        const key = encryptedPayload.key;
+        const out = [];
+        
+        out.push(`-- APEX HUB Loader v8 (Professional Edition)`);
+        out.push(`-- Protected by APEX Security System`);
+        out.push(`local _key = "${key}"`);
+        out.push(`local _hex = "${hexData}"\n`);
+        
+        out.push(`local _byte = string.byte`);
+        out.push(`local _char = string.char`);
+        out.push(`local _tonumber = tonumber`);
+        out.push(`local _bxor = bit32 and bit32.bxor or bit and bit.bxor`);
+        out.push(`local _keyLen = #_key`);
+        out.push(`local _idx = 1\n`);
+        
+        out.push(`local _code = _hex:gsub("..", function(cc)`);
+        out.push(`    local b = _tonumber(cc, 16)`);
+        out.push(`    local kb = _byte(_key, (_idx - 1) % _keyLen + 1)`);
+        out.push(`    _idx = _idx + 1`);
+        out.push(`    return _char(_bxor(b, kb))`);
+        out.push(`end)\n`);
+        
+        out.push(`_hex = nil`);
+        out.push(`_key = nil\n`);
+        
+        out.push(`assert(type(_code) == "string", "APEX Error: Decoded data corrupted")`);
+        out.push(`assert(#_code > 0, "APEX Error: Decoded script content is empty")\n`);
+        
+        out.push(`local _f, _e = loadstring(_code)`);
+        out.push(`if not _f then`);
+        out.push(`    warn("=== APEX HUB CLIENT DEBUG ===")`);
+        out.push(`    warn("Received Payload Size: " .. #_code .. " bytes")`);
+        out.push(`    error("APEX Hub Compile Error: " .. tostring(_e))`);
+        out.push(`end`);
+        out.push(`_code = nil`);
+        out.push(`_f()`);
+        out.push(`_f = nil`);
+        out.push(`collectgarbage("collect")`);
+        
+        return out.join('\n');
+    }
+
+    // ============================================================
+    // HANDLE GET
+    // ============================================================
+
+    async function handleGet(req, res) {
+        const { name, key, raw, challenge, answer } = req.query;
+        const ua = (req.headers['user-agent'] || '').toLowerCase();
+        const clientIP = req.headers['x-forwarded-for'] || req.connection?.remoteAddress || 'unknown';
+        const authKey = req.headers['x-auth-key'] || '';
+        const { CHALLENGES_COLLECTION, BANNED_COLLECTION } = getConstants();
+
+        if (await isIPBanned(clientIP)) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(403).send(getBannedPage());
+        }
+
+        if (!await checkRateLimit(clientIP)) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(429).send(getRateLimitPage());
+        }
+
+        if (!name) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.send(getWelcomePage(req.headers.host));
+        }
+
+        const scriptData = await getScript(name);
+        
+        if (!scriptData) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(404).send(getErrorPage(name));
+        }
+
+        const VALID_KEYS = ['d0egkw6en9eusrjje5vn70p2tvkngkkn', 'apex-master-key-2024'];
+        const hasValidKey = VALID_KEYS.includes(key) || VALID_KEYS.includes(authKey);
+        const wantsRaw = raw === 'true';
+
+        if (hasValidKey || wantsRaw) {
+            const payload = encryptPayload(scriptData.code);
+            return res.json({
+                success: true,
+                payload: payload.data,
+                decryptKey: payload.key
+            });
+        }
+
+        const executorPatterns = [
+            'roblox', 'synapse', 'krnl', 'script-ware', 'sentinel',
+            'fluxus', 'electron', 'comet', 'oxygen', 'valyse',
+            'hydrogen', 'codex', 'vega', 'trigon', 'nexus',
+            'solara', 'jjsploit', 'celestial', 'evon', 'aris'
+        ];
+        const isExecutor = executorPatterns.some(p => ua.includes(p));
+
+        if (isExecutor) {
+            const payload = encryptPayload(scriptData.code);
+            res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+            return res.send(generateLoader(payload, req.headers.host));
+        }
+
+        if (challenge && answer) {
+            try {
+                const challengeDoc = await db.collection(CHALLENGES_COLLECTION).doc(challenge).get();
+                
+                if (challengeDoc.exists) {
+                    const c = challengeDoc.data();
+                    
+                    if (!c.used && Date.now() - c.createdAt < 60000) {
+                        if (answer === c.answer) {
+                            await challengeDoc.ref.update({ used: true });
+                            
+                            const payload = encryptPayload(scriptData.code);
+                            return res.json({ success: true, payload: payload.data, decryptKey: payload.key });
+                        } else {
+                            const attempts = (c.attempts || 0) + 1;
+                            await challengeDoc.ref.update({ attempts });
+                            
+                            if (attempts >= 3) {
+                                await db.collection(BANNED_COLLECTION).doc(clientIP).set({
+                                    bannedUntil: Date.now() + 600000,
+                                    reason: 'Too many failed challenges',
+                                    createdAt: Date.now()
+                                });
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Challenge check error:', error);
+            }
+        }
+
+        const isBrowser = ua.includes('mozilla') || ua.includes('chrome') ||
+                          ua.includes('safari') || ua.includes('firefox') ||
+                          ua.includes('edge') || ua.includes('opera');
+
+        if (isBrowser) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.send(getProtectionPage(req.headers.host));
+        }
+
+        const newChallenge = generateChallenge();
+        
+        try {
+            await db.collection(CHALLENGES_COLLECTION).doc(newChallenge.token).set({
+                answer: newChallenge.answer,
+                createdAt: Date.now(),
+                used: false,
+                attempts: 0
+            });
+        } catch (error) {
+            console.error('Save challenge error:', error);
+        }
+
+        return res.json({
+            protected: true,
+            message: 'Challenge required',
+            challenge: { question: newChallenge.question, token: newChallenge.token }
+        });
+    }
+
+    // ============================================================
+    // HANDLE CREATE
+    // ============================================================
+
+    async function handleCreate(req, res) {
+        try {
+            const { code, name, uid } = req.body;
+            
+            if (!code || !code.trim()) {
+                return res.status(400).json({ success: false, error: 'Code is required' });
+            }
+            if (!name || !name.trim()) {
+                return res.status(400).json({ success: false, error: 'Name is required' });
+            }
+
+            const nameSlug = normalizeName(name);
+            const userId = uid || 'public';
+            const fullName = userId + '_' + nameSlug;
+
+            const existingScript = await getScript(fullName);
+            
+            if (existingScript) {
+                const newName = fullName + '_' + Date.now().toString(36);
+                const scriptData = {
+                    code: code,
+                    name: name.trim(),
+                    created: Date.now(),
+                    lastAccessed: Date.now(),
+                    owner: userId
+                };
+                
+                await saveScript(newName, scriptData);
+                
+                const rawUrl = `https://${req.headers.host}/api/raw?name=${newName}`;
+                return res.status(200).json({
+                    success: true,
+                    raw: rawUrl,
+                    name: newName,
+                    existed: true
+                });
+            }
+
+            const scriptData = {
+                code: code,
+                name: name.trim(),
+                created: Date.now(),
+                lastAccessed: Date.now(),
+                owner: userId
+            };
+
+            await saveScript(fullName, scriptData);
+
+            const rawUrl = `https://${req.headers.host}/api/raw?name=${fullName}`;
+            const rawUrlWithKey = `https://${req.headers.host}/api/raw?name=${fullName}&key=d0egkw6en9eusrjje5vn70p2tvkngkkn`;
+
+            return res.status(200).json({
+                success: true,
+                raw: rawUrl,
+                rawWithKey: rawUrlWithKey,
+                name: fullName
+            });
+        } catch (error) {
+            console.error('Create error:', error);
+            return res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    // ============================================================
+    // HANDLE UPDATE
+    // ============================================================
+
+    async function handleUpdate(req, res) {
+        try {
+            const { name, code, uid } = req.body;
+            
+            if (!name) {
+                return res.status(400).json({ success: false, error: 'Name is required' });
+            }
+            
+            const scriptData = await getScript(name);
+            
+            if (!scriptData) {
+                return res.status(404).json({ success: false, error: 'Script not found' });
+            }
+            
+            if (!code || !code.trim()) {
+                return res.status(400).json({ success: false, error: 'Code is required' });
+            }
+
+            if (uid && scriptData.owner && scriptData.owner !== uid) {
+                return res.status(403).json({ success: false, error: 'Not your script' });
+            }
+
+            scriptData.code = code;
+            scriptData.updated = Date.now();
+            scriptData.lastAccessed = Date.now();
+
+            await saveScript(name, scriptData);
+
+            const rawUrl = `https://${req.headers.host}/api/raw?name=${name}`;
+            return res.status(200).json({
+                success: true,
+                message: 'Updated successfully',
+                raw: rawUrl,
+                name: name
+            });
+        } catch (error) {
+            console.error('Update error:', error);
+            return res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    // ============================================================
+    // HANDLE DELETE
+    // ============================================================
+
+    async function handleDelete(req, res) {
+        try {
+            const { name, uid } = req.query;
+            
+            if (!name) {
+                return res.status(400).json({ success: false, error: 'Name is required' });
+            }
+            
+            const scriptData = await getScript(name);
+            
+            if (!scriptData) {
+                return res.status(404).json({ success: false, error: 'Script not found' });
+            }
+            
+            if (uid && scriptData.owner && scriptData.owner !== uid) {
+                return res.status(403).json({ success: false, error: 'Not your script' });
+            }
+            
+            await deleteScript(name);
+            
+            return res.status(200).json({ success: true, message: 'Deleted successfully' });
+        } catch (error) {
+            console.error('Delete error:', error);
+            return res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    // ============================================================
+    // PROFESSIONAL PROTECTION PAGE - LUXURY DARK THEME
+    // ============================================================
+
+    function getProtectionPage(host) {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>APEX HUB | Advanced Protection System</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #080808;
+            --bg-secondary: #0c0c0c;
+            --bg-card: #111111;
+            --border-subtle: rgba(255, 255, 255, 0.03);
+            --border-medium: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(200, 164, 92, 0.15);
+            --text-primary: #f5f5f5;
+            --text-secondary: #999999;
+            --text-muted: #555555;
+            --accent-gold: #c8a45c;
+            --accent-gold-light: #d4b06a;
+            --accent-gold-dark: #9a7b3a;
+            --accent-silver: #b0b0b0;
+            --glow-gold: rgba(200, 164, 92, 0.06);
+            --glow-gold-strong: rgba(200, 164, 92, 0.12);
+            --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(180px);
+            opacity: 0.25;
+        }
+
+        .gradient-orb-1 {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle at 40% 40%, rgba(200, 164, 92, 0.3), transparent 70%);
+            top: -300px;
+            right: -200px;
+            animation: orbFloat1 25s ease-in-out infinite;
+        }
+
+        .gradient-orb-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle at 60% 60%, rgba(180, 180, 180, 0.2), transparent 70%);
+            bottom: -200px;
+            left: -150px;
+            animation: orbFloat2 20s ease-in-out infinite;
+            animation-delay: -10s;
+        }
+
+        .gradient-orb-3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle at 50% 50%, rgba(200, 164, 92, 0.15), transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: orbFloat3 22s ease-in-out infinite;
+            animation-delay: -5s;
+        }
+
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-50px, 40px) scale(1.05); }
+            66% { transform: translate(30px, -30px) scale(0.95); }
+        }
+
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -30px) scale(1.08); }
+            66% { transform: translate(-20px, 50px) scale(0.92); }
+        }
+
+        @keyframes orbFloat3 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            33% { transform: translate(-40%, -60%) scale(1.1); }
+            66% { transform: translate(-60%, -40%) scale(0.9); }
+        }
+
+        .grid-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 80px 80px;
+            z-index: 0;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.02;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 520px;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(60px);
+            -webkit-backdrop-filter: blur(60px);
+            border-radius: 28px;
+            padding: 64px 52px;
+            border: 1px solid var(--border-medium);
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.4),
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 120px rgba(200, 164, 92, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            animation: cardReveal 1s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(200, 164, 92, 0.3) 20%, 
+                rgba(200, 164, 92, 0.6) 50%, 
+                rgba(200, 164, 92, 0.3) 80%, 
+                transparent 100%);
+            animation: accentLine 6s ease-in-out infinite;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(200, 164, 92, 0.02), transparent 60%);
+            pointer-events: none;
+        }
+
+        @keyframes cardReveal {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.92);
+                filter: blur(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes accentLine {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .logo-section {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(200, 164, 92, 0.1);
+        }
+
+        .logo-ring-1 {
+            width: 140px;
+            height: 140px;
+            animation: ringRotate 20s linear infinite;
+        }
+
+        .logo-ring-2 {
+            width: 120px;
+            height: 120px;
+            border-style: dashed;
+            border-color: rgba(200, 164, 92, 0.08);
+            animation: ringRotate 15s linear infinite reverse;
+        }
+
+        .logo-ring-3 {
+            width: 100px;
+            height: 100px;
+            border-color: rgba(200, 164, 92, 0.06);
+            animation: ringRotate 25s linear infinite;
+        }
+
+        @keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo-inner {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-diamond {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--accent-gold-light), var(--accent-gold-dark));
+            transform: rotate(45deg);
+            border-radius: 3px;
+            box-shadow: 
+                0 0 40px rgba(200, 164, 92, 0.5),
+                0 0 80px rgba(200, 164, 92, 0.2);
+            animation: diamondPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes diamondPulse {
+            0%, 100% { 
+                transform: rotate(45deg) scale(1);
+                box-shadow: 0 0 40px rgba(200, 164, 92, 0.5), 0 0 80px rgba(200, 164, 92, 0.2);
+            }
+            50% { 
+                transform: rotate(45deg) scale(1.15);
+                box-shadow: 0 0 60px rgba(200, 164, 92, 0.7), 0 0 100px rgba(200, 164, 92, 0.3);
+            }
+        }
+
+        .title {
+            font-size: 3.2rem;
+            font-weight: 200;
+            letter-spacing: 0.15em;
+            text-align: center;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+        }
+
+        .title-accent {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            font-weight: 400;
+            margin-bottom: 48px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 36px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-medium), transparent);
+        }
+
+        .divider-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent-gold);
+            animation: dotGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes dotGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.8); }
+        }
+
+        .message-box {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 32px 28px;
+            text-align: center;
+            position: relative;
+        }
+
+        .message-text {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.9;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .highlight {
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .loading-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            animation: loadingDot 1.8s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes loadingDot {
+            0%, 80%, 100% { 
+                opacity: 0.2; 
+                transform: scale(1); 
+            }
+            40% { 
+                opacity: 1; 
+                transform: scale(2.5); 
+            }
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 36px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: statusGlow 2.5s ease-in-out infinite;
+        }
+
+        .status-indicator.active {
+            background: #c8a45c;
+            box-shadow: 0 0 8px #c8a45c;
+        }
+
+        .status-indicator.warning {
+            background: #b0b0b0;
+            box-shadow: 0 0 8px #b0b0b0;
+            animation-delay: 0.8s;
+        }
+
+        .status-indicator.info {
+            background: #8b7355;
+            box-shadow: 0 0 8px #8b7355;
+            animation-delay: 1.6s;
+        }
+
+        @keyframes statusGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .cta-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            padding: 18px 24px;
+            margin-top: 40px;
+            background: transparent;
+            border: 1px solid rgba(200, 164, 92, 0.2);
+            border-radius: 14px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(200, 164, 92, 0.05), transparent);
+            transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .cta-button:hover {
+            background: rgba(200, 164, 92, 0.04);
+            border-color: rgba(200, 164, 92, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(200, 164, 92, 0.06);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button-arrow {
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0.5;
+        }
+
+        .cta-button:hover .cta-button-arrow {
+            transform: translateX(5px);
+            opacity: 1;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 48px 28px;
+                border-radius: 24px;
+            }
+            
+            .title {
+                font-size: 2.4rem;
+                letter-spacing: 0.1em;
+            }
+            
+            .subtitle {
+                font-size: 0.6rem;
+                letter-spacing: 0.3em;
+                margin-bottom: 36px;
+            }
+            
+            .logo-ring-1 { width: 110px; height: 110px; }
+            .logo-ring-2 { width: 92px; height: 92px; }
+            .logo-ring-3 { width: 74px; height: 74px; }
+            .logo-diamond { width: 20px; height: 20px; }
+            
+            .status-row { gap: 24px; }
+            .status-item { font-size: 0.5rem; letter-spacing: 0.2em; }
+            
+            .message-box { padding: 24px 20px; }
+            .message-text { font-size: 0.8rem; }
+        }
+
+        @media (max-width: 380px) {
+            .card {
+                padding: 36px 20px;
+            }
+            
+            .title {
+                font-size: 1.9rem;
+            }
+            
+            .subtitle {
+                font-size: 0.55rem;
+                letter-spacing: 0.25em;
+            }
+            
+            .status-row { gap: 16px; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-layer">
+        <div class="gradient-orb gradient-orb-1"></div>
+        <div class="gradient-orb gradient-orb-2"></div>
+        <div class="gradient-orb gradient-orb-3"></div>
+    </div>
+    <div class="grid-texture"></div>
+    <div class="noise-overlay"></div>
+
+    <div class="container">
+        <div class="card">
+            <div class="logo-section">
+                <div class="logo-ring logo-ring-1"></div>
+                <div class="logo-ring logo-ring-2"></div>
+                <div class="logo-ring logo-ring-3"></div>
+                <div class="logo-inner">
+                    <div class="logo-diamond"></div>
+                </div>
+            </div>
+
+            <h1 class="title">
+                <span class="title-accent">Apex</span> Hub
+            </h1>
+            <p class="subtitle">Advanced Protection System</p>
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <div class="divider-dot"></div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div class="message-box">
+                <p class="message-text">
+                    This endpoint is secured by<br>
+                    <span class="highlight">APEX HUB</span> protection layer.<br>
+                    Access restricted to authorized<br>
+                    executors only.
+                </p>
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            </div>
+
+            <div class="status-row">
+                <div class="status-item">
+                    <div class="status-indicator active"></div>
+                    <span>Encrypted</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator warning"></div>
+                    <span>Protected</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator info"></div>
+                    <span>Secure</span>
+                </div>
+            </div>
+
+            <a href="https://apexhubeditor.vercel.app/" class="cta-button" target="_blank" rel="noopener noreferrer">
+                <span>Open APEX HUB Editor</span>
+                <span class="cta-button-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </span>
+            </a>
+
+            <div class="footer">APEX HUB · Protection System v8</div>
+        </div>
+    </div>
+</body>
+</html>`;
+    }
+
+    // ============================================================
+    // WELCOME PAGE - LUXURY DARK THEME
+    // ============================================================
+
+    function getWelcomePage(host) {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX HUB | Raw API Service</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #080808;
+            --bg-card: #111111;
+            --border-subtle: rgba(255, 255, 255, 0.04);
+            --border-medium: rgba(255, 255, 255, 0.08);
+            --text-primary: #f5f5f5;
+            --text-secondary: #999999;
+            --text-muted: #555555;
+            --accent-gold: #c8a45c;
+            --accent-gold-light: #d4b06a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 56px 48px;
+            border: 1px solid var(--border-medium);
+            text-align: center;
+            max-width: 540px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 200;
+            letter-spacing: 0.12em;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .accent {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 44px;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            font-weight: 300;
+        }
+
+        .endpoints {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.78rem;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .endpoint:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--border-subtle);
+        }
+
+        .method {
+            font-weight: 600;
+            min-width: 52px;
+            font-size: 0.65rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+            text-align: center;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .post { background: rgba(200, 164, 92, 0.08); color: #c8a45c; }
+        .put { background: rgba(180, 180, 180, 0.08); color: #b0b0b0; }
+        .get { background: rgba(180, 180, 180, 0.05); color: #d4b06a; }
+        .del { background: rgba(180, 180, 180, 0.04); color: #999999; }
+
+        .path { color: #cccccc; font-weight: 400; letter-spacing: 0.02em; }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.58rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background: rgba(200, 164, 92, 0.3);
+            margin: 0 auto 36px;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 40px 24px; }
+            h1 { font-size: 1.8rem; }
+            .endpoint { padding: 12px 14px; font-size: 0.7rem; gap: 12px; }
+            .method { min-width: 44px; font-size: 0.58rem; padding: 4px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1><span class="accent">Apex</span> Hub</h1>
+        <p class="subtitle">Professional Raw API Service for Script Execution</p>
+        
+        <div class="divider"></div>
+        
+        <div class="endpoints">
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/raw</span>
+            </div>
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="path">/api/raw</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/raw?name=script</span>
+            </div>
+            <div class="endpoint">
+                <span class="method del">DEL</span>
+                <span class="path">/api/raw?name=script</span>
+            </div>
+        </div>
+        
+        <div class="footer">APEX HUB · Production Ready</div>
+    </div>
+</body>
+</html>`;
+    }
+
+    // ============================================================
+    // ERROR PAGE - LUXURY DARK THEME
+    // ============================================================
+
+    function getErrorPage(name) {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | APEX HUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #080808;
+            --bg-card: #111111;
+            --border-subtle: rgba(255, 255, 255, 0.04);
+            --border-medium: rgba(255, 255, 255, 0.08);
+            --text-primary: #f5f5f5;
+            --text-secondary: #999999;
+            --text-muted: #555555;
+            --accent-gold: #c8a45c;
+            --error-color: #a0a0a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 56px 48px;
+            border: 1px solid var(--border-medium);
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 100;
+            letter-spacing: -0.02em;
+            color: var(--text-secondary);
+            line-height: 1;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
+
+        .error-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .error-message {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            font-weight: 300;
+            letter-spacing: 0.03em;
+        }
+
+        .script-name {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            color: var(--accent-gold);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+        }
+
+        .divider {
+            width: 30px;
+            height: 1px;
+            background: rgba(200, 164, 92, 0.2);
+            margin: 24px auto;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 40px 24px; }
+            .error-code { font-size: 6rem; }
+            .error-title { font-size: 1rem; }
+            .error-message { font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="error-code">404</div>
+        <div class="error-title">Script Not Found</div>
+        <div class="divider"></div>
+        <p class="error-message">The requested script does not exist or has been removed from the system.</p>
+        <div class="script-name">${name}</div>
+    </div>
+</body>
+</html>`;
+    }
+
+    // ============================================================
+    // BANNED PAGE - LUXURY DARK THEME
+    // ============================================================
+
+    function getBannedPage() {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | APEX HUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #080808;
+            --bg-card: #111111;
+            --border-subtle: rgba(255, 255, 255, 0.04);
+            --border-medium: rgba(255, 255, 255, 0.08);
+            --text-primary: #f5f5f5;
+            --text-secondary: #999999;
+            --text-muted: #555555;
+            --accent-gold: #c8a45c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 56px 48px;
+            border: 1px solid var(--border-medium);
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--text-secondary);
+        }
+
+        .title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .message {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            line-height: 1.8;
+            font-weight: 300;
+            letter-spacing: 0.04em;
+        }
+
+        .divider {
+            width: 30px;
+            height: 1px;
+            background: rgba(200, 164, 92, 0.2);
+            margin: 24px auto;
+        }
+
+        .footer-text {
+            font-size: 0.58rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="status-icon">—</div>
+        <div class="title">Access Denied</div>
+        <div class="divider"></div>
+        <p class="message">Suspicious activity has been detected from your connection. Access has been temporarily restricted.</p>
+        <div style="margin-top: 28px;" class="footer-text">APEX HUB Security</div>
+    </div>
+</body>
+</html>`;
+    }
+
+    // ============================================================
+    // RATE LIMIT PAGE - LUXURY DARK THEME
+    // ============================================================
+
+    function getRateLimitPage() {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limited | APEX HUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #080808;
+            --bg-card: #111111;
+            --border-subtle: rgba(255, 255, 255, 0.04);
+            --border-medium: rgba(255, 255, 255, 0.08);
+            --text-primary: #f5f5f5;
+            --text-secondary: #999999;
+            --text-muted: #555555;
+            --accent-gold: #c8a45c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 56px 48px;
+            border: 1px solid var(--border-medium);
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--text-secondary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+            50% { border-color: rgba(200, 164, 92, 0.2); }
+        }
+
+        .title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .message {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            line-height: 1.8;
+            font-weight: 300;
+            letter-spacing: 0.04em;
+        }
+
+        .divider {
+            width: 30px;
+            height: 1px;
+            background: rgba(200, 164, 92, 0.2);
+            margin: 24px auto;
+        }
+
+        .footer-text {
+            font-size: 0.58rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="status-icon">—</div>
+        <div class="title">Rate Limited</div>
+        <div class="divider"></div>
+        <p class="message">Too many requests have been made. Please wait a moment before trying again.</p>
+        <div style="margin-top: 28px;" class="footer-text">APEX HUB Security</div>
+    </div>
+</body>
+</html>`;
+    }
+
+    // Return handler function trực tiếp từ IIFE
+    return async function handler(req, res) {
+        // CORS headers
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Challenge-Token, X-Challenge-Answer, X-Auth-Key');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'DENY');
+
+        if (req.method === 'OPTIONS') {
+            return res.status(200).end();
+        }
+
+        try {
+            if (req.method === 'GET') return await handleGet(req, res);
+            if (req.method === 'POST') return await handleCreate(req, res);
+            if (req.method === 'PUT') return await handleUpdate(req, res);
+            if (req.method === 'DELETE') return await handleDelete(req, res);
+            
+            return res.status(405).json({ error: 'Method not allowed' });
+        } catch (error) {
+            console.error('Handler error:', error);
+            return res.status(500).json({ success: false, error: 'Internal server error' });
+        }
+    };
+})();
