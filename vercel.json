@@ -1,5 +1,4 @@
 {
-    "version": 2,
     "functions": {
         "api/load.js": {
             "memory": 1024,
@@ -28,10 +27,6 @@
         "api/challenge.js": {
             "memory": 256,
             "maxDuration": 5
-        },
-        "api/ai.js": {
-            "memory": 1024,
-            "maxDuration": 60
         }
     },
     "rewrites": [
@@ -91,38 +86,8 @@
                 {
                     "key": "Access-Control-Allow-Headers",
                     "value": "Content-Type, X-Session-Token, X-Challenge-Token, X-Challenge-Answer"
-                },
-                {
-                    "key": "Access-Control-Max-Age",
-                    "value": "86400"
-                }
-            ]
-        },
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                },
-                {
-                    "key": "Referrer-Policy",
-                    "value": "strict-origin-when-cross-origin"
-                },
-                {
-                    "key": "Permissions-Policy",
-                    "value": "camera=(), microphone=(), geolocation=()"
                 }
             ]
         }
-    ],
-    "env": {
-        "GROQ_API_KEY": "@groq-api-key",
-        "FIREBASE_API_KEY": "@firebase-api-key",
-        "PLATOBOOST_SECRET": "@platoboost-secret"
-    }
+    ]
 }
