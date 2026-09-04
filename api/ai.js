@@ -1,17 +1,15 @@
 // api/ai.js
 export default async function handler(req, res) {
-  // Set CORS headers
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Handle OPTIONS request
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // Only allow POST
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
@@ -20,24 +18,23 @@ export default async function handler(req, res) {
   try {
     const { messages, model } = req.body;
     
-    console.log('AI API called with model:', model);
+    console.log('AI API called');
+    console.log('Model:', model);
+    console.log('Messages:', messages?.length);
 
-    // Kiểm tra messages
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      res.status(400).json({ error: 'Messages are required' });
-      return;
-    }
-
-    // Lấy API key từ environment
+    // Kiểm tra GROQ_API_KEY
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
     
     if (!GROQ_API_KEY) {
-      console.error('GROQ_API_KEY is not set');
-      res.status(500).json({ error: 'API key not configured' });
-      return;
+      console.log('GROQ_API_KEY not set, returning fallback response');
+      // Trả về response mẫu khi chưa có API key
+      return res.status(200).json({
+        success: true,
+        content: "Tôi là APEX AI. Để sử dụng tính năng AI đầy đủ, admin cần cấu hình GROQ_API_KEY trong Vercel Environment Variables.\n\nBạn có thể hỏi tôi về Lua/Luau, Roblox scripting, hoặc bất kỳ vấn đề lập trình nào khác."
+      });
     }
 
-    // Map model names
+    // Gọi Groq API
     const modelMap = {
       'openai/gpt-oss-120b': 'llama-3.3-70b-versatile',
       'openai/gpt-oss-20b': 'llama-3.1-8b-instant',
@@ -46,15 +43,15 @@ export default async function handler(req, res) {
     
     const selectedModel = modelMap[model] || 'llama-3.3-70b-versatile';
 
-    // Add system prompt
     const systemPrompt = {
       role: 'system',
-      content: 'You are APEX AI, a Roblox Lua/Luau expert. Help with scripting, debugging, and optimization.'
+      content: 'You are APEX AI, a Roblox Lua/Luau expert.'
     };
 
     const allMessages = [systemPrompt, ...messages.slice(-10)];
 
-    // Call Groq API
+    console.log('Calling Groq with model:', selectedModel);
+
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -64,31 +61,40 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: selectedModel,
         messages: allMessages,
-        max_tokens: 4000,
+        max_tokens: 2000,
         temperature: 0.3
       })
     });
 
+    console.log('Groq response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Groq API error:', response.status, errorText);
-      res.status(500).json({ error: 'AI service error' });
-      return;
+      console.error('Groq error:', errorText);
+      
+      // Trả về lỗi chi tiết
+      return res.status(500).json({ 
+        error: `Groq API error: ${response.status}`,
+        details: errorText.substring(0, 500)
+      });
     }
 
     const data = await response.json();
     
     if (data.choices && data.choices[0]?.message?.content) {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         content: data.choices[0].message.content
       });
-    } else {
-      res.status(500).json({ error: 'Invalid response' });
     }
 
+    return res.status(500).json({ error: 'Invalid response from Groq' });
+
   } catch (error) {
-    console.error('API handler error:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Handler error:', error);
+    return res.status(500).json({ 
+      error: error.message,
+      stack: error.stack
+    });
   }
 }
