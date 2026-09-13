@@ -792,7 +792,7 @@
 <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ==================== APEX/HUB - COMPLETE APPLICATION V12 FINAL ====================
+// ==================== APEX/HUB - COMPLETE APPLICATION V13 FINAL (SEARCH FIXED) ====================
 (function(){
 'use strict';
 
@@ -1498,7 +1498,15 @@ window.updateEditor = function(){
       ln.innerHTML = h; updateEditorTexts();
     }
     if(window.innerWidth > 768) updateHighlightLayer();
-    if(lastSearchTerm) performSearch();
+    // Chỉ chạy lại search nếu người dùng đang thực sự nhập vào search input
+    var searchInput = document.getElementById('searchInput');
+    var searchBar = document.getElementById('editorSearchBar');
+    if(lastSearchTerm && searchBar && searchBar.style.display !== 'none' && document.activeElement === searchInput){
+      performSearch();
+    } else if(lastSearchTerm && searchBar && searchBar.style.display !== 'none'){
+      // Cập nhật highlight khi code thay đổi nhưng không đổi search term
+      performSearch();
+    }
   }, 50);
 };
 
@@ -1514,7 +1522,19 @@ window.syncScroll = function(){
 };
 
 window.handleTab = function(e){
-  if(e.key === 'Tab'){ e.preventDefault(); var ed = document.getElementById('codeEditor'); var s = ed.selectionStart; ed.value = ed.value.substring(0, s) + '    ' + ed.value.substring(ed.selectionEnd); ed.selectionStart = ed.selectionEnd = s + 4; updateEditor(); }
+  // FIX: Nếu thanh search đang mở và focus không nằm ở editor thì bỏ qua
+  var searchBar = document.getElementById('editorSearchBar');
+  var ed = document.getElementById('codeEditor');
+  if(searchBar && searchBar.style.display !== 'none' && document.activeElement !== ed){
+    return;
+  }
+  if(e.key === 'Tab'){
+    e.preventDefault();
+    var s = ed.selectionStart;
+    ed.value = ed.value.substring(0, s) + '    ' + ed.value.substring(ed.selectionEnd);
+    ed.selectionStart = ed.selectionEnd = s + 4;
+    updateEditor();
+  }
 };
 
 window.copyRawUrl = function(){ if(currentRawUrl) navigator.clipboard.writeText(currentRawUrl).then(function(){showToast(t('copied'),'success');}); else showToast(t('noRawUrl'),'warning'); };
@@ -1535,53 +1555,167 @@ function updateSaveBtnState(){
 
 function resetRawState(){ currentRawId = null; currentRawUrl = null; if(currentUser) localStorage.removeItem(getUK('apex_cr')); updateSaveBtnState(); }
 
-// ============ SEARCH ============
+// ============ SEARCH (ĐÃ FIX TOÀN BỘ) ============
 window.toggleSearchBar = function(){
-  var b = document.getElementById('editorSearchBar'); var i = document.getElementById('searchInput');
-  if(b.style.display === 'none' || !b.style.display){ b.style.display = 'flex'; setTimeout(function(){ i.focus(); if(i.value){ i.select(); performSearch(); } }, 50); }
-  else{ b.style.display = 'none'; clearSearch(); }
+  var b = document.getElementById('editorSearchBar');
+  var i = document.getElementById('searchInput');
+  var ed = document.getElementById('codeEditor');
+  if(!b || !i) return;
+  if(b.style.display === 'none' || !b.style.display){
+    b.style.display = 'flex';
+    // FIX: Focus vào search input, đặt con trỏ ở CUỐI text, KHÔNG select all
+    setTimeout(function(){
+      i.focus();
+      var len = i.value.length;
+      try { i.setSelectionRange(len, len); } catch(e) {}
+      if(i.value) performSearch();
+    }, 30);
+  } else {
+    b.style.display = 'none';
+    clearSearch();
+    // FIX: Trả focus về editor để tiếp tục gõ code
+    if(ed) ed.focus();
+  }
 };
 
 var _searchTimer = null;
 window.performSearch = function(){
   clearTimeout(_searchTimer);
   _searchTimer = setTimeout(function(){
-    var t = document.getElementById('searchInput').value; var ed = document.getElementById('codeEditor'); var ce = document.getElementById('searchCount');
-    if(!t || !t.trim()){ clearSearch(); return; }
-    lastSearchTerm = t; var lc = ed.value.toLowerCase(); var lt = t.toLowerCase();
-    searchResults = []; var idx = 0;
-    while((idx = lc.indexOf(lt, idx)) !== -1){ searchResults.push(idx); idx += lt.length; }
-    if(searchResults.length > 0){ currentSearchIndex = 0; ce.textContent = '1/' + searchResults.length; scrollToCurrentResult(); }
-    else{ currentSearchIndex = -1; ce.textContent = '0/0'; }
+    var si = document.getElementById('searchInput');
+    var ed = document.getElementById('codeEditor');
+    var ce = document.getElementById('searchCount');
+    if(!si || !ed) return;
+    var term = si.value;
+    if(!term || !term.trim()){ clearSearch(); return; }
+    lastSearchTerm = term;
+    var lc = ed.value.toLowerCase();
+    var lt = term.toLowerCase();
+    searchResults = [];
+    var idx = 0;
+    while((idx = lc.indexOf(lt, idx)) !== -1){
+      searchResults.push(idx);
+      idx += lt.length;
+      if(searchResults.length > 5000) break; // safety
+    }
+    if(searchResults.length > 0){
+      // Giữ nguyên currentSearchIndex nếu có thể, ngược lại reset về 0
+      if(currentSearchIndex < 0 || currentSearchIndex >= searchResults.length) currentSearchIndex = 0;
+      if(ce) ce.textContent = (currentSearchIndex + 1) + '/' + searchResults.length;
+      scrollToCurrentResult();
+    } else {
+      currentSearchIndex = -1;
+      if(ce) ce.textContent = '0/0';
+    }
     if(window.innerWidth > 768) updateHighlightLayer();
   }, 100);
 };
 
-window.findNext = function(){ if(!searchResults.length) return; currentSearchIndex = (currentSearchIndex + 1) % searchResults.length; scrollToCurrentResult(); updateSearchCount(); if(window.innerWidth > 768) updateHighlightLayer(); };
-window.findPrev = function(){ if(!searchResults.length) return; currentSearchIndex = (currentSearchIndex - 1 + searchResults.length) % searchResults.length; scrollToCurrentResult(); updateSearchCount(); if(window.innerWidth > 768) updateHighlightLayer(); };
-window.handleSearchKey = function(e){ if(e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); e.shiftKey ? findPrev() : findNext(); } if(e.key === 'Escape'){ e.preventDefault(); document.getElementById('editorSearchBar').style.display = 'none'; clearSearch(); } };
+window.findNext = function(){
+  if(!searchResults.length) return;
+  currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
+  scrollToCurrentResult();
+  updateSearchCount();
+  if(window.innerWidth > 768) updateHighlightLayer();
+  // FIX: Đảm bảo focus vẫn ở search input
+  var si = document.getElementById('searchInput');
+  if(si) si.focus();
+};
 
+window.findPrev = function(){
+  if(!searchResults.length) return;
+  currentSearchIndex = (currentSearchIndex - 1 + searchResults.length) % searchResults.length;
+  scrollToCurrentResult();
+  updateSearchCount();
+  if(window.innerWidth > 768) updateHighlightLayer();
+  // FIX: Đảm bảo focus vẫn ở search input
+  var si = document.getElementById('searchInput');
+  if(si) si.focus();
+};
+
+window.handleSearchKey = function(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.shiftKey) findPrev(); else findNext();
+    return;
+  }
+  if(e.key === 'Escape'){
+    e.preventDefault();
+    var b = document.getElementById('editorSearchBar');
+    if(b) b.style.display = 'none';
+    clearSearch();
+    var ed = document.getElementById('codeEditor');
+    if(ed) ed.focus();
+    return;
+  }
+  // FIX: Chặn Tab trong search để tránh nhảy focus
+  if(e.key === 'Tab'){
+    e.preventDefault();
+    if(e.shiftKey) findPrev(); else findNext();
+    return;
+  }
+};
+
+// FIX QUAN TRỌNG: KHÔNG focus editor, KHÔNG setSelectionRange để tránh làm hỏng code
 function scrollToCurrentResult(){
-  var ed = document.getElementById('codeEditor'); var t = lastSearchTerm;
-  if(!t || !searchResults.length || currentSearchIndex < 0) return;
-  var p = searchResults[currentSearchIndex]; ed.focus(); ed.setSelectionRange(p, p + t.length);
-  var ln = ed.value.substring(0, p).split('\n').length; var lh = parseFloat(getComputedStyle(ed).lineHeight) || 19.8;
-  ed.scrollTop = (ln - 1) * lh - ed.clientHeight / 3; syncScroll();
+  var ed = document.getElementById('codeEditor');
+  var term = lastSearchTerm;
+  if(!ed || !term || !searchResults.length || currentSearchIndex < 0) return;
+
+  var p = searchResults[currentSearchIndex];
+
+  // Chỉ scroll để xem, KHÔNG đặt con trỏ vào editor
+  var ln = ed.value.substring(0, p).split('\n').length;
+  var lh = parseFloat(getComputedStyle(ed).lineHeight) || 19.8;
+  ed.scrollTop = (ln - 1) * lh - ed.clientHeight / 3;
+  syncScroll();
+
+  // FIX: Giữ focus ở search input, KHÔNG focus editor
+  var si = document.getElementById('searchInput');
+  var sb = document.getElementById('editorSearchBar');
+  if(si && sb && sb.style.display !== 'none' && document.activeElement !== si){
+    si.focus();
+  }
 }
 
-function updateSearchCount(){ var ce = document.getElementById('searchCount'); if(ce && searchResults.length) ce.textContent = (currentSearchIndex + 1) + '/' + searchResults.length; }
-function clearSearch(){ searchResults = []; currentSearchIndex = -1; lastSearchTerm = ''; var ce = document.getElementById('searchCount'); if(ce) ce.textContent = ''; var si = document.getElementById('searchInput'); if(si) si.value = ''; if(window.innerWidth > 768) updateHighlightLayer(); }
+function updateSearchCount(){
+  var ce = document.getElementById('searchCount');
+  if(ce && searchResults.length) ce.textContent = (currentSearchIndex + 1) + '/' + searchResults.length;
+}
+
+function clearSearch(){
+  searchResults = [];
+  currentSearchIndex = -1;
+  lastSearchTerm = '';
+  var ce = document.getElementById('searchCount');
+  if(ce) ce.textContent = '';
+  var si = document.getElementById('searchInput');
+  if(si) si.value = '';
+  if(window.innerWidth > 768) updateHighlightLayer();
+}
 
 function updateHighlightLayer(){
   if(window.innerWidth <= 768) return;
-  var ed = document.getElementById('codeEditor'); var hl = document.getElementById('codeHighlightLayer');
+  var ed = document.getElementById('codeEditor');
+  var hl = document.getElementById('codeHighlightLayer');
   if(!ed || !hl) return;
   var hc = escapeHtml(ed.value);
   if(searchResults.length > 0 && lastSearchTerm){
-    var t = lastSearchTerm.trim(); var esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    try{ var re = new RegExp('(' + esc + ')', 'gi'); var mi = 0; hc = hc.replace(re, function(m){ var ic = mi === currentSearchIndex; mi++; return '<span class="' + (ic ? 'search-highlight-current' : 'search-highlight') + '">' + m + '</span>'; }); } catch(e){}
+    var term = lastSearchTerm.trim();
+    var esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try{
+      var re = new RegExp('(' + esc + ')', 'gi');
+      var mi = 0;
+      hc = hc.replace(re, function(m){
+        var ic = mi === currentSearchIndex;
+        mi++;
+        return '<span class="' + (ic ? 'search-highlight-current' : 'search-highlight') + '">' + m + '</span>';
+      });
+    } catch(e){}
   }
-  hl.innerHTML = hc; hl.scrollTop = ed.scrollTop;
+  hl.innerHTML = hc;
+  hl.scrollTop = ed.scrollTop;
 }
 
 // ============ FIRESTORE HELPERS ============
