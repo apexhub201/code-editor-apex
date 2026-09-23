@@ -1,1 +1,1033 @@
-const _0x8b46a7=_0x44d6;(function(_0x33b69a,_0x2bbbc9){const _0x3f5d30=_0x44d6,_0x4054b2=_0x33b69a();while(!![]){try{const _0x3134e7=parseInt(_0x3f5d30(0x169))/0x1*(parseInt(_0x3f5d30(0x15c))/0x2)+-parseInt(_0x3f5d30(0x166))/0x3+-parseInt(_0x3f5d30(0x1e5))/0x4*(-parseInt(_0x3f5d30(0x191))/0x5)+-parseInt(_0x3f5d30(0x175))/0x6*(parseInt(_0x3f5d30(0x1ab))/0x7)+-parseInt(_0x3f5d30(0x1c6))/0x8*(-parseInt(_0x3f5d30(0x1f4))/0x9)+parseInt(_0x3f5d30(0x1b3))/0xa*(-parseInt(_0x3f5d30(0x1f5))/0xb)+-parseInt(_0x3f5d30(0x1cd))/0xc*(-parseInt(_0x3f5d30(0x177))/0xd);if(_0x3134e7===_0x2bbbc9)break;else _0x4054b2['push'](_0x4054b2['shift']());}catch(_0x220341){_0x4054b2['push'](_0x4054b2['shift']());}}}(_0x18d3,0xc77d4));import{initializeApp,getApps,cert}from'firebase-admin/app';import{getFirestore}from'firebase-admin/firestore';let db=null,firebaseReady=![],firebaseQuotaCooldownUntil=0x0;function initFirebase(){const _0x5466cf=_0x44d6;if(firebaseReady)return!![];try{if(!getApps()[_0x5466cf(0x1e4)]){const _0x5a39c7=process.env.FIREBASE_PROJECT_ID,_0x396414=process.env.FIREBASE_CLIENT_EMAIL,_0x42a718=process.env.FIREBASE_PRIVATE_KEY?.[_0x5466cf(0x1fa)](/\\n/g,'\x0a');console[_0x5466cf(0x204)]('[APEX\x20FIREBASE]\x20INIT\x20CHECK:'),console[_0x5466cf(0x204)](_0x5466cf(0x174),_0x5a39c7?_0x5466cf(0x1ed):_0x5466cf(0x19e)),console[_0x5466cf(0x204)]('\x20\x20Client\x20Email:',_0x396414?_0x5466cf(0x1ed):'MISSING'),console['log']('\x20\x20Private\x20Key:',_0x42a718?'SET':'MISSING');if(!_0x5a39c7||!_0x396414||!_0x42a718)return console[_0x5466cf(0x1a9)](_0x5466cf(0x1c0)),console['error'](_0x5466cf(0x1a3)),![];initializeApp({'credential':cert({'projectId':_0x5a39c7,'clientEmail':_0x396414,'privateKey':_0x42a718})}),console[_0x5466cf(0x204)](_0x5466cf(0x1ac));}else console[_0x5466cf(0x204)]('[APEX\x20FIREBASE]\x20APP\x20ALREADY\x20EXISTS');return db=getFirestore(),firebaseReady=!![],console[_0x5466cf(0x204)](_0x5466cf(0x18a)),!![];}catch(_0x1626e2){return console[_0x5466cf(0x1a9)](_0x5466cf(0x1d7),_0x1626e2[_0x5466cf(0x178)]),![];}}initFirebase();const CONFIG={'SCRIPTS_COLLECTION':_0x8b46a7(0x1ff),'CACHE_TTL':0x5*0x3c*0x3e8,'CACHE_STALE_GRACE':0x3c*0x3c*0x3e8,'MAX_CACHE_ENTRIES':0x1f4,'CACHE_CLEANUP_INTERVAL':0x3c*0x3e8,'QUOTA_COOLDOWN':0x3c*0x3e8,'RATE_LIMIT_MAX':0x1e,'RATE_LIMIT_WINDOW':0x3c*0x3e8,'BURST_MAX':0xa,'BURST_WINDOW':0xa*0x3e8,'BAN_DURATION':0x2*0x3c*0x3e8,'MAX_IPS_TRACKED':0x3e8,'IP_CLEANUP_INTERVAL':0x3c*0x3e8,'VALID_KEYS':(process.env.APEX_MASTER_KEYS||_0x8b46a7(0x187))['split'](','),'EXECUTOR_PATTERNS':[_0x8b46a7(0x1aa),'synapse',_0x8b46a7(0x188),_0x8b46a7(0x17f),_0x8b46a7(0x18d),_0x8b46a7(0x163),_0x8b46a7(0x170),_0x8b46a7(0x1fb),_0x8b46a7(0x168),_0x8b46a7(0x1f7),_0x8b46a7(0x1fc),_0x8b46a7(0x1d9),_0x8b46a7(0x164),'trigon','nexus',_0x8b46a7(0x1f1),_0x8b46a7(0x180),_0x8b46a7(0x1ea),_0x8b46a7(0x19b),_0x8b46a7(0x1d5)]};!global[_0x8b46a7(0x1f2)]&&(global['__APEX_CACHE__']={'data':new Map(),'pendingReads':new Map(),'lastCleanup':Date[_0x8b46a7(0x1e8)]()},console[_0x8b46a7(0x204)](_0x8b46a7(0x1fe)));const cacheState=global['__APEX_CACHE__'];function cacheGet(_0x425e95){const _0x1de273=_0x8b46a7,_0xe4a6a1=Date[_0x1de273(0x1e8)](),_0x55b187=cacheState['data'][_0x1de273(0x1f9)](_0x425e95);if(!_0x55b187)return null;if(_0xe4a6a1<_0x55b187[_0x1de273(0x1c2)])return _0x55b187[_0x1de273(0x1b7)]=_0xe4a6a1,console[_0x1de273(0x204)]('[APEX\x20CACHE]\x20HIT\x20'+_0x425e95),{..._0x55b187[_0x1de273(0x208)],'fromCache':!![]};return null;}function cacheGetStale(_0x5247a3){const _0x2926b7=_0x8b46a7,_0x492ed1=Date['now'](),_0x1b7350=cacheState[_0x2926b7(0x1ae)][_0x2926b7(0x1f9)](_0x5247a3);if(!_0x1b7350)return null;if(_0x492ed1<_0x1b7350[_0x2926b7(0x1cf)])return _0x1b7350[_0x2926b7(0x1b7)]=_0x492ed1,console[_0x2926b7(0x204)]('[APEX\x20CACHE]\x20STALE_HIT\x20'+_0x5247a3),{..._0x1b7350[_0x2926b7(0x208)],'fromCache':!![],'stale':!![]};return cacheState[_0x2926b7(0x1ae)][_0x2926b7(0x1b5)](_0x5247a3),null;}function cacheSet(_0x31281f,_0x185ccf,_0x1a2399=CONFIG[_0x8b46a7(0x1ef)]){const _0x17c5ad=_0x8b46a7,_0x4c614b=Date[_0x17c5ad(0x1e8)]();cacheState['data']['set'](_0x31281f,{'value':_0x185ccf,'createdAt':_0x4c614b,'lastAccess':_0x4c614b,'expiresAt':_0x4c614b+_0x1a2399,'staleUntil':_0x4c614b+_0x1a2399+CONFIG['CACHE_STALE_GRACE']}),cleanupCache(),console[_0x17c5ad(0x204)](_0x17c5ad(0x159)+_0x31281f);}function cacheDelete(_0x480f86){const _0x98ca03=_0x8b46a7;cacheState[_0x98ca03(0x1ae)]['delete'](_0x480f86),cacheState[_0x98ca03(0x1e1)][_0x98ca03(0x1b5)](_0x480f86),console[_0x98ca03(0x204)](_0x98ca03(0x213)+_0x480f86);}function cleanupCache(){const _0x124722=_0x8b46a7,_0x4f7aa2=Date['now']();if(_0x4f7aa2-cacheState['lastCleanup']<CONFIG['CACHE_CLEANUP_INTERVAL'])return;cacheState[_0x124722(0x1e7)]=_0x4f7aa2;for(const [_0x39fd21,_0x3d74ee]of cacheState['data'][_0x124722(0x1a1)]()){_0x4f7aa2>=_0x3d74ee['staleUntil']&&cacheState[_0x124722(0x1ae)][_0x124722(0x1b5)](_0x39fd21);}if(cacheState['data'][_0x124722(0x1a2)]>CONFIG[_0x124722(0x197)]){const _0x4fb56c=Array[_0x124722(0x207)](cacheState['data']['entries']());_0x4fb56c['sort']((_0x16dfea,_0x2d4ad9)=>_0x16dfea[0x1][_0x124722(0x1b7)]-_0x2d4ad9[0x1][_0x124722(0x1b7)]);const _0x1fb5ef=_0x4fb56c[_0x124722(0x152)](0x0,_0x4fb56c[_0x124722(0x1e4)]-CONFIG['MAX_CACHE_ENTRIES']);for(const [_0xae4e4a]of _0x1fb5ef){cacheState['data']['delete'](_0xae4e4a);}}}!global[_0x8b46a7(0x20f)]&&(global[_0x8b46a7(0x20f)]={'requests':new Map(),'banned':new Map(),'lastCleanup':Date['now']()},console[_0x8b46a7(0x204)]('[APEX\x20RATE]\x20INITIALIZED'));const rateState=global['__APEX_RATE_LIMIT__'];function generateRandomKey(_0x4db581=0x20){const _0x471dce=_0x8b46a7,_0x582461=_0x471dce(0x1dd);let _0x18ac51='';for(let _0x3a5769=0x0;_0x3a5769<_0x4db581;_0x3a5769++){_0x18ac51+=_0x582461[_0x471dce(0x194)](Math[_0x471dce(0x1b6)](Math[_0x471dce(0x1cb)]()*_0x582461[_0x471dce(0x1e4)]));}return _0x18ac51;}function encryptPayload(_0x33b23d){const _0x1c312f=_0x8b46a7,_0x1dc5a4=generateRandomKey(0x10),_0x5957c1=Buffer['from'](_0x33b23d,_0x1c312f(0x173)),_0x3467d0=Buffer[_0x1c312f(0x215)](_0x5957c1[_0x1c312f(0x1e4)]);for(let _0x5a0433=0x0;_0x5a0433<_0x5957c1['length'];_0x5a0433++){const _0x29421a=_0x1dc5a4[_0x1c312f(0x179)](_0x5a0433%_0x1dc5a4['length']);_0x3467d0[_0x5a0433]=_0x5957c1[_0x5a0433]^_0x29421a;}return{'data':_0x3467d0[_0x1c312f(0x1c1)]('hex'),'key':_0x1dc5a4};}function normalizeName(_0xa53d6){const _0x3a9682=_0x8b46a7;return _0xa53d6['trim']()[_0x3a9682(0x19d)]()[_0x3a9682(0x1fa)](/[^a-z0-9\s-]/g,'')[_0x3a9682(0x1fa)](/\s+/g,'-')[_0x3a9682(0x1fa)](/-+/g,'-')['replace'](/^-|-$/g,'')||_0x3a9682(0x214);}function buildRawUrl(_0x35ff53,_0x52799e,_0x21a7dd=null){const _0x10fc31=_0x8b46a7,_0x3e2263=(_0x35ff53||_0x10fc31(0x1d0))[_0x10fc31(0x1fa)](/^https?:\/\//,'')[_0x10fc31(0x1fa)](/\/$/,''),_0x306ecd=_0x10fc31(0x186)+_0x3e2263+_0x10fc31(0x153)+encodeURIComponent(_0x52799e);return _0x21a7dd?_0x306ecd+_0x10fc31(0x154)+_0x21a7dd:_0x306ecd;}function getClientIP(_0x141623){const _0x477282=_0x8b46a7;return _0x141623['headers'][_0x477282(0x1da)]?.[_0x477282(0x1d1)](',')[0x0]?.[_0x477282(0x1e6)]()||_0x141623[_0x477282(0x1bb)]['x-real-ip']||_0x141623[_0x477282(0x1a8)]?.['remoteAddress']||'unknown';}function isValidName(_0x3924ed){const _0x216906=_0x8b46a7;if(!_0x3924ed||typeof _0x3924ed!==_0x216906(0x1f0))return![];if(_0x3924ed[_0x216906(0x1e4)]>0xc8)return![];if(!/^[a-zA-Z0-9_\-]+$/['test'](_0x3924ed))return![];return!![];}function cleanupRateState(){const _0x10bbb2=_0x8b46a7,_0x226709=Date[_0x10bbb2(0x1e8)]();if(_0x226709-rateState[_0x10bbb2(0x1e7)]<CONFIG['IP_CLEANUP_INTERVAL'])return;rateState[_0x10bbb2(0x1e7)]=_0x226709;for(const [_0x29c263,_0x1acd93]of rateState[_0x10bbb2(0x1d4)][_0x10bbb2(0x1a1)]()){if(_0x226709>_0x1acd93)rateState[_0x10bbb2(0x1d4)]['delete'](_0x29c263);}for(const [_0x2eb2a5,_0x280f96]of rateState[_0x10bbb2(0x1db)][_0x10bbb2(0x1a1)]()){_0x226709-_0x280f96[_0x10bbb2(0x15b)]>CONFIG[_0x10bbb2(0x1df)]*0x2&&rateState[_0x10bbb2(0x1db)][_0x10bbb2(0x1b5)](_0x2eb2a5);}if(rateState[_0x10bbb2(0x1db)]['size']>CONFIG[_0x10bbb2(0x1ec)]){const _0x29db2f=Array['from'](rateState[_0x10bbb2(0x1db)][_0x10bbb2(0x1a1)]());_0x29db2f['sort']((_0x14ed51,_0x9ec5e1)=>_0x14ed51[0x1][_0x10bbb2(0x15b)]-_0x9ec5e1[0x1][_0x10bbb2(0x15b)]);const _0x2df18b=_0x29db2f['slice'](0x0,_0x29db2f[_0x10bbb2(0x1e4)]-CONFIG['MAX_IPS_TRACKED']);for(const [_0x239471]of _0x2df18b)rateState[_0x10bbb2(0x1db)][_0x10bbb2(0x1b5)](_0x239471);}}function isIPBanned(_0x398905){const _0x18f361=_0x8b46a7,_0x35aece=Date[_0x18f361(0x1e8)](),_0x7f0b3d=rateState[_0x18f361(0x1d4)][_0x18f361(0x1f9)](_0x398905);if(!_0x7f0b3d)return![];if(_0x35aece>_0x7f0b3d)return rateState[_0x18f361(0x1d4)][_0x18f361(0x1b5)](_0x398905),![];return!![];}function banIP(_0x52b07b){const _0x1f7aa4=_0x8b46a7;rateState[_0x1f7aa4(0x1d4)][_0x1f7aa4(0x1fd)](_0x52b07b,Date['now']()+CONFIG['BAN_DURATION']),rateState[_0x1f7aa4(0x1db)][_0x1f7aa4(0x1b5)](_0x52b07b),console[_0x1f7aa4(0x204)](_0x1f7aa4(0x15d)+_0x52b07b);}function _0x44d6(_0x168c79,_0x4d5066){_0x168c79=_0x168c79-0x152;const _0x18d3db=_0x18d3();let _0x44d609=_0x18d3db[_0x168c79];return _0x44d609;}function checkRateLimit(_0xdcc1c6){const _0x35467c=_0x8b46a7,_0x502e7d=Date[_0x35467c(0x1e8)]();cleanupRateState();if(isIPBanned(_0xdcc1c6))return{'allowed':![],'reason':_0x35467c(0x1d4)};let _0x4a30a2=rateState['requests'][_0x35467c(0x1f9)](_0xdcc1c6);(!_0x4a30a2||_0x502e7d-_0x4a30a2[_0x35467c(0x15b)]>CONFIG[_0x35467c(0x1df)])&&(_0x4a30a2={'start':_0x502e7d,'count':0x0,'burstStart':_0x502e7d,'burstCount':0x0},rateState[_0x35467c(0x1db)][_0x35467c(0x1fd)](_0xdcc1c6,_0x4a30a2));_0x502e7d-_0x4a30a2['burstStart']>CONFIG[_0x35467c(0x172)]&&(_0x4a30a2[_0x35467c(0x171)]=_0x502e7d,_0x4a30a2[_0x35467c(0x19c)]=0x0);_0x4a30a2[_0x35467c(0x1ad)]++,_0x4a30a2[_0x35467c(0x19c)]++;if(_0x4a30a2[_0x35467c(0x19c)]>CONFIG['BURST_MAX'])return banIP(_0xdcc1c6),console[_0x35467c(0x204)]('[APEX\x20RATE]\x20BURST\x20LIMIT\x20EXCEEDED:\x20'+_0xdcc1c6),{'allowed':![],'reason':'burst'};if(_0x4a30a2[_0x35467c(0x1ad)]>CONFIG[_0x35467c(0x1c4)])return console[_0x35467c(0x204)](_0x35467c(0x183)+_0xdcc1c6),{'allowed':![],'reason':_0x35467c(0x17c)};return{'allowed':!![],'remaining':CONFIG[_0x35467c(0x1c4)]-_0x4a30a2['count']};}function isQuotaCooldown(){const _0x4567d4=_0x8b46a7;return Date[_0x4567d4(0x1e8)]()<firebaseQuotaCooldownUntil;}function triggerQuotaCooldown(){const _0x1d1b67=_0x8b46a7;firebaseQuotaCooldownUntil=Date['now']()+CONFIG[_0x1d1b67(0x1a4)],console['log'](_0x1d1b67(0x1ca)+CONFIG['QUOTA_COOLDOWN']/0x3e8+'s');}function isQuotaError(_0x168031){const _0x4d4cf3=_0x8b46a7,_0x13858b=(_0x168031?.[_0x4d4cf3(0x178)]||'')[_0x4d4cf3(0x19d)]();return _0x13858b['includes'](_0x4d4cf3(0x1a0))||_0x13858b[_0x4d4cf3(0x1b0)](_0x4d4cf3(0x162))||_0x13858b['includes'](_0x4d4cf3(0x1b9));}async function getScript(_0x54737a){const _0x14f49c=_0x8b46a7,_0x3bbc68=_0x14f49c(0x16b)+_0x54737a,_0x2632dd=cacheGet(_0x3bbc68);if(_0x2632dd)return{..._0x2632dd,'fromCache':!![]};if(cacheState[_0x14f49c(0x1e1)][_0x14f49c(0x156)](_0x3bbc68))return console[_0x14f49c(0x204)](_0x14f49c(0x1bf)+_0x54737a),await cacheState[_0x14f49c(0x1e1)][_0x14f49c(0x1f9)](_0x3bbc68);if(!firebaseReady||!db){if(!initFirebase()){const _0x58b112=cacheGetStale(_0x3bbc68);if(_0x58b112)return{..._0x58b112,'fromCache':!![],'stale':!![]};throw new Error(_0x14f49c(0x184));}}if(isQuotaCooldown()){console[_0x14f49c(0x204)](_0x14f49c(0x1cc)+_0x54737a);const _0xb33af5=cacheGetStale(_0x3bbc68);if(_0xb33af5)return{..._0xb33af5,'fromCache':!![],'stale':!![]};throw new Error('Firebase\x20quota\x20cooldown');}const _0x22fd05=((async()=>{const _0xd6d626=_0x14f49c;try{console[_0xd6d626(0x204)](_0xd6d626(0x1c3)+_0x54737a);const _0x190a54=await db[_0xd6d626(0x1dc)](CONFIG['SCRIPTS_COLLECTION'])[_0xd6d626(0x1be)](_0x54737a)['get']();if(!_0x190a54[_0xd6d626(0x1a7)])return null;const _0x17b1bf=_0x190a54[_0xd6d626(0x1ae)]();return cacheSet(_0x3bbc68,_0x17b1bf,CONFIG[_0xd6d626(0x1ef)]),_0x17b1bf;}catch(_0x52d685){console[_0xd6d626(0x1a9)](_0xd6d626(0x1b2)+_0x54737a+':',_0x52d685[_0xd6d626(0x178)]);isQuotaError(_0x52d685)&&triggerQuotaCooldown();const _0x1b27c0=cacheGetStale(_0x3bbc68);if(_0x1b27c0)return console['log'](_0xd6d626(0x1eb)+_0x54737a),{..._0x1b27c0,'fromCache':!![],'stale':!![]};throw _0x52d685;}finally{cacheState[_0xd6d626(0x1e1)]['delete'](_0x3bbc68);}})());return cacheState[_0x14f49c(0x1e1)]['set'](_0x3bbc68,_0x22fd05),await _0x22fd05;}async function saveScript(_0x4f83a5,_0x205fb2){const _0x10328a=_0x8b46a7;if(!firebaseReady||!db){if(!initFirebase())throw new Error('Firebase\x20not\x20available');}try{return console[_0x10328a(0x204)](_0x10328a(0x190)+_0x4f83a5),await db['collection'](CONFIG['SCRIPTS_COLLECTION'])['doc'](_0x4f83a5)[_0x10328a(0x1fd)]({..._0x205fb2,'updatedAt':Date[_0x10328a(0x1e8)]()},{'merge':!![]}),cacheSet('script:'+_0x4f83a5,_0x205fb2,CONFIG[_0x10328a(0x1ef)]),!![];}catch(_0x94d4bf){console['error'](_0x10328a(0x181)+_0x4f83a5+':',_0x94d4bf[_0x10328a(0x178)]);isQuotaError(_0x94d4bf)&&triggerQuotaCooldown();throw _0x94d4bf;}}async function deleteScript(_0x348299){const _0x2ec110=_0x8b46a7;if(!firebaseReady||!db){if(!initFirebase())throw new Error('Firebase\x20not\x20available');}try{return console[_0x2ec110(0x204)](_0x2ec110(0x1e0)+_0x348299),await db['collection'](CONFIG[_0x2ec110(0x1b8)])['doc'](_0x348299)[_0x2ec110(0x1b5)](),cacheDelete('script:'+_0x348299),!![];}catch(_0x82ba7){console[_0x2ec110(0x1a9)]('[APEX\x20FIREBASE]\x20DELETE\x20ERROR\x20'+_0x348299+':',_0x82ba7[_0x2ec110(0x178)]);isQuotaError(_0x82ba7)&&triggerQuotaCooldown();throw _0x82ba7;}}function generateLoader(_0x4b9fd8,_0x4ce4e4){const _0x215544=_0x8b46a7,_0x4480b9=_0x4b9fd8[_0x215544(0x1ae)],_0x12962c=_0x4b9fd8[_0x215544(0x15a)],_0x13b588=[];return _0x13b588[_0x215544(0x15e)]('--\x20APEX\x20HUB\x20Loader\x20v9\x20(Professional\x20Edition)'),_0x13b588['push'](_0x215544(0x1ba)),_0x13b588[_0x215544(0x15e)]('local\x20_key\x20=\x20\x22'+_0x12962c+'\x22'),_0x13b588[_0x215544(0x15e)](_0x215544(0x200)+_0x4480b9+'\x22\x0a'),_0x13b588['push'](_0x215544(0x165)),_0x13b588[_0x215544(0x15e)]('local\x20_char\x20=\x20string.char'),_0x13b588['push'](_0x215544(0x211)),_0x13b588[_0x215544(0x15e)](_0x215544(0x210)),_0x13b588[_0x215544(0x15e)](_0x215544(0x17d)),_0x13b588[_0x215544(0x15e)](_0x215544(0x1ee)),_0x13b588[_0x215544(0x15e)](_0x215544(0x1e3)),_0x13b588[_0x215544(0x15e)](_0x215544(0x19a)),_0x13b588['push'](_0x215544(0x1a6)),_0x13b588[_0x215544(0x15e)](_0x215544(0x196)),_0x13b588[_0x215544(0x15e)](_0x215544(0x1c8)),_0x13b588[_0x215544(0x15e)]('end)\x0a'),_0x13b588['push'](_0x215544(0x1f8)),_0x13b588['push']('_key\x20=\x20nil\x0a'),_0x13b588['push'](_0x215544(0x1af)),_0x13b588[_0x215544(0x15e)](_0x215544(0x17b)),_0x13b588[_0x215544(0x15e)](_0x215544(0x20c)),_0x13b588[_0x215544(0x15e)](_0x215544(0x1e2)),_0x13b588['push'](_0x215544(0x161)),_0x13b588[_0x215544(0x15e)]('\x20\x20\x20\x20warn(\x22Received\x20Payload\x20Size:\x20\x22\x20..\x20#_code\x20..\x20\x22\x20bytes\x22)'),_0x13b588[_0x215544(0x15e)]('\x20\x20\x20\x20error(\x22APEX\x20Hub\x20Compile\x20Error:\x20\x22\x20..\x20tostring(_e))'),_0x13b588[_0x215544(0x15e)](_0x215544(0x16e)),_0x13b588[_0x215544(0x15e)](_0x215544(0x209)),_0x13b588[_0x215544(0x15e)]('_f()'),_0x13b588[_0x215544(0x15e)]('_f\x20=\x20nil'),_0x13b588[_0x215544(0x15e)](_0x215544(0x1f6)),_0x13b588[_0x215544(0x17a)]('\x0a');}function getProtectionPage(){const _0x9df92e=_0x8b46a7;return _0x9df92e(0x216);}function getWelcomePage(){const _0x30dfff=_0x8b46a7;return _0x30dfff(0x189);}function getErrorPage(_0x52f585){const _0x2035da=_0x8b46a7;return _0x2035da(0x182)+_0x52f585+'</div><br><a\x20href=\x22https://apexhubeditor.vercel.app/\x22>←\x20Return\x20to\x20Gateway</a></div></body></html>';}function getBannedPage(){return'<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>Access\x20Denied\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px\x20solid\x20rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0\x20auto\x2024px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:24px}.panel{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:10px;padding:16px\x2020px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px\x200;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22icon\x22>—</div><div\x20class=\x22title\x22>Access\x20Denied</div><p\x20class=\x22msg\x22>This\x20request\x20has\x20been\x20temporarily\x20blocked\x20by\x20the\x20APEX\x20security\x20gateway.</p><div\x20class=\x22panel\x22><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Event</span><span\x20class=\x22val\x22>ACCESS\x20POLICY\x20VIOLATION</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Status</span><span\x20class=\x22val\x22>TEMPORARILY\x20BLOCKED</span></div></div><div\x20class=\x22ft\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div></div></body></html>';}function _0x18d3(){const _0x58b753=['__APEX_RATE_LIMIT__','local\x20_bxor\x20=\x20bit32\x20and\x20bit32.bxor\x20or\x20bit\x20and\x20bit.bxor','local\x20_tonumber\x20=\x20tonumber','host','[APEX\x20CACHE]\x20DELETE\x20','script','alloc','<!DOCTYPE\x20html>\x0a<html\x20lang=\x22en\x22>\x0a<head>\x0a\x20\x20\x20\x20<meta\x20charset=\x22UTF-8\x22>\x0a\x20\x20\x20\x20<meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22>\x0a\x20\x20\x20\x20<title>Access\x20Denied\x20|\x20APEX\x20HUB</title>\x0a\x20\x20\x20\x20<style>\x0a\x20\x20\x20\x20\x20\x20\x20\x20:root\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--bg:\x20#050508;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--card-bg:\x20rgba(12,\x2012,\x2017,\x200.78);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--card-border:\x20rgba(255,\x20255,\x20255,\x200.055);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--text-primary:\x20#e6e6ea;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--text-secondary:\x20#6b6b76;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--text-tertiary:\x20#40404a;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--accent:\x20#ffffff;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-primary-bg:\x20rgba(255,\x20255,\x20255,\x200.035);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-primary-border:\x20rgba(255,\x20255,\x20255,\x200.07);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-secondary-bg:\x20transparent;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-secondary-border:\x20rgba(255,\x20255,\x20255,\x200.045);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-hover-bg:\x20rgba(255,\x20255,\x20255,\x200.06);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--button-hover-border:\x20rgba(255,\x20255,\x20255,\x200.12);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20--icon-color:\x20rgba(255,\x20255,\x20255,\x200.16);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20*\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-sizing:\x20border-box;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20body\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-family:\x20\x27Inter\x27,\x20-apple-system,\x20BlinkMacSystemFont,\x20\x27Segoe\x20UI\x27,\x20Roboto,\x20\x27Helvetica\x20Neue\x27,\x20sans-serif;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background-color:\x20var(--bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-primary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20min-height:\x20100vh;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2024px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20-webkit-font-smoothing:\x20antialiased;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20-moz-osx-font-smoothing:\x20grayscale;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.card\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--card-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20backdrop-filter:\x20blur(48px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20-webkit-backdrop-filter:\x20blur(48px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2056px\x2052px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20var(--card-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20max-width:\x20520px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-align:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x2020px\x2060px\x20rgba(0,\x200,\x200,\x200.55),\x200\x200\x200\x201px\x20rgba(255,\x20255,\x20255,\x200.02)\x20inset;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20animation:\x20cardFadeIn\x200.8s\x20cubic-bezier(0.22,\x201,\x200.36,\x201);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20@keyframes\x20cardFadeIn\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20from\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(28px)\x20scale(0.97);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20to\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x201;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(0)\x20scale(1);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2052px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2052px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20rgba(255,\x20255,\x20255,\x200.08);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2050%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200\x20auto\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--icon-color);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20svg\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x200.7;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.title\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20620;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x20-0.03em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-primary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20line-height:\x201.2;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.subtitle\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2014px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20450;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-secondary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2036px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20line-height:\x201.6;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.subtitle\x20strong\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20600;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20#d4d4d8;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x20-0.01em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.separator\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x201px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20rgba(255,\x20255,\x20255,\x200.045);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200\x200\x2032px\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.description\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2013.5px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-secondary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20line-height:\x201.7;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2036px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200\x208px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.actions\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20flex-direction:\x20column;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20gap:\x2012px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2036px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20inline-flex;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20align-items:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20justify-content:\x20center;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20gap:\x208px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2014px\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2014px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20500;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-decoration:\x20none;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transition:\x20all\x200.28s\x20cubic-bezier(0.22,\x201,\x200.36,\x201);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20cursor:\x20pointer;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x20-0.01em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x20100%;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-sizing:\x20border-box;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-primary\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-primary-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20var(--button-primary-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-primary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-primary:hover\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-hover-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-color:\x20var(--button-hover-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(-1px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x204px\x2014px\x20rgba(0,\x200,\x200,\x200.3);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-secondary\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-secondary-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20var(--button-secondary-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-secondary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.btn-secondary:hover\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20var(--button-hover-bg);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-color:\x20var(--button-hover-border);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20#c4c4cc;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20transform:\x20translateY(-1px);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20box-shadow:\x200\x204px\x2014px\x20rgba(0,\x200,\x200,\x200.2);\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20.footer\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2010px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20text-transform:\x20uppercase;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20letter-spacing:\x200.08em;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20color:\x20var(--text-tertiary);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-weight:\x20500;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20@media\x20(max-width:\x20600px)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.card\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2044px\x2028px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x2018px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.title\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2024px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.subtitle\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2013px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.description\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2012.5px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.btn\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x2013px\x2022px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20font-size:\x2013.5px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2044px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2044px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin-bottom:\x2024px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20.icon-lock\x20svg\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20width:\x2019px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20height:\x2019px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20</style>\x0a</head>\x0a<body>\x0a\x20\x20\x20\x20<div\x20class=\x22card\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22icon-lock\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20xmlns=\x22http://www.w3.org/2000/svg\x22\x20viewBox=\x220\x200\x2024\x2024\x22\x20fill=\x22none\x22\x20stroke=\x22currentColor\x22\x20stroke-width=\x221.8\x22\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<rect\x20x=\x223\x22\x20y=\x2211\x22\x20width=\x2218\x22\x20height=\x2211\x22\x20rx=\x222\x22\x20ry=\x222\x22></rect>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<path\x20d=\x22M7\x2011V7a5\x205\x200\x200\x201\x2010\x200v4\x22></path>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<circle\x20cx=\x2212\x22\x20cy=\x2216\x22\x20r=\x221\x22></circle>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<h1\x20class=\x22title\x22>Access\x20Denied</h1>\x0a\x20\x20\x20\x20\x20\x20\x20\x20<p\x20class=\x22subtitle\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20This\x20Lua\x20script\x20is\x20protected\x20by\x20<strong>APEX\x20HUB</strong>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22separator\x22></div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<p\x20class=\x22description\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20You\x20don\x27t\x20have\x20permission\x20to\x20access\x20these\x20files.<br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20This\x20script\x20has\x20been\x20protected\x20against\x20unauthorized\x20access,\x20reverse\x20engineering,\x20and\x20tampering.\x0a\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22actions\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<a\x20href=\x22https://apexhubeditor.vercel.app/\x22\x20class=\x22btn\x20btn-primary\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Return\x20Home\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</a>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<a\x20href=\x22https://discord.gg/9wdU3rrGGw\x22\x20target=\x22_blank\x22\x20rel=\x22noopener\x20noreferrer\x22\x20class=\x22btn\x20btn-secondary\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Discord\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</a>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22footer\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div>\x0a\x20\x20\x20\x20</div>\x0a</body>\x0a</html>','slice','/api/raw?name=','&key=','[APEX\x20POST]\x20SAVE\x20ERROR:','has','Updated\x20successfully','true','[APEX\x20CACHE]\x20SET\x20','key','start','1166FzHCOM','[APEX\x20RATE]\x20BANNED\x20IP:\x20','push','method','Access-Control-Allow-Origin','\x20\x20\x20\x20warn(\x22===\x20APEX\x20HUB\x20CLIENT\x20DEBUG\x20===\x22)','quota\x20exceeded','fluxus','vega','local\x20_byte\x20=\x20string.byte','4794486GcmxZP','setHeader','oxygen','461uNaKxf','send','script:','POST','Cache-Control','end','Name\x20is\x20required','electron','burstStart','BURST_WINDOW','utf8','\x20\x20Project\x20ID:','12VmFpRV','N/A','9756331iPjRMy','message','charCodeAt','join','assert(#_code\x20>\x200,\x20\x22APEX\x20Error:\x20Decoded\x20script\x20content\x20is\x20empty\x22)\x0a','limit','local\x20_keyLen\x20=\x20#_key','some','script-ware','jjsploit','[APEX\x20FIREBASE]\x20WRITE\x20ERROR\x20','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>404\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5)}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.ref{display:inline-block;padding:8px\x2018px;background:rgba(255,255,255,0.02);border:1px\x20solid\x20var(--border);border-radius:8px;font-family:monospace;font-size:12px;color:var(--t2)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22code\x22>404</div><div\x20class=\x22title\x22>Resource\x20not\x20found</div><p\x20class=\x22msg\x22>The\x20requested\x20script\x20could\x20not\x20be\x20located.</p><div\x20class=\x22ref\x22>','[APEX\x20RATE]\x20RATE\x20LIMIT\x20EXCEEDED:\x20','Firebase\x20not\x20available','code','https://','d0egkw6en9eusrjje5vn70p2tvkngkkn,apex-master-key-2024','krnl','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>APEX\x20HUB\x20|\x20API\x20Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0\x2016px\x2048px\x20rgba(0,0,0,0.5)}.brand{font-size:28px;font-weight:600;letter-spacing:-0.03em}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin:6px\x200\x2032px}.desc{font-size:14px;color:var(--t2);margin-bottom:32px}.sep{height:1px;background:var(--border);margin-bottom:28px}.ep{display:flex;align-items:center;gap:14px;padding:12px\x2016px;font-size:13px;font-family:monospace;border-radius:8px;transition:0.2s}.ep:hover{background:rgba(255,255,255,0.02)}.method{font-size:10px;text-transform:uppercase;padding:4px\x2010px;border-radius:6px;min-width:50px;text-align:center;background:rgba(255,255,255,0.03);border:1px\x20solid\x20rgba(255,255,255,0.05);color:var(--t2)}.footer{margin-top:32px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><h1\x20class=\x22brand\x22>APEX\x20HUB</h1><div\x20class=\x22sub\x22>API\x20Gateway</div><p\x20class=\x22desc\x22>Production\x20infrastructure\x20for\x20secure\x20script\x20delivery\x20and\x20API\x20access.</p><div\x20class=\x22sep\x22></div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>POST</span>/api/raw</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>PUT</span>/api/raw</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>GET</span>/api/raw?name=script</div><div\x20class=\x22ep\x22><span\x20class=\x22method\x22>DEL</span>/api/raw?name=script</div><div\x20class=\x22footer\x22>APEX\x20HUB\x20·\x20API\x20Infrastructure\x20·\x20V9</div></div></body></html>','[APEX\x20FIREBASE]\x20FIRESTORE\x20READY','Invalid\x20script\x20name','reason','sentinel','[APEX\x20HANDLER]\x20ERROR:','[APEX\x20GET]\x20Name:\x20','[APEX\x20FIREBASE]\x20WRITE\x20','292190QQHBbR','\x20from\x20','public','charAt','Code\x20is\x20required','\x20\x20\x20\x20_idx\x20=\x20_idx\x20+\x201','MAX_CACHE_ENTRIES','json','[APEX\x20REQUEST]\x20','\x20\x20\x20\x20local\x20b\x20=\x20_tonumber(cc,\x2016)','evon','burstCount','toLowerCase','MISSING','OPTIONS','resource_exhausted','entries','size','Required:\x20FIREBASE_PROJECT_ID,\x20FIREBASE_CLIENT_EMAIL,\x20FIREBASE_PRIVATE_KEY','QUOTA_COOLDOWN','DELETE','\x20\x20\x20\x20local\x20kb\x20=\x20_byte(_key,\x20(_idx\x20-\x201)\x20%\x20_keyLen\x20+\x201)','exists','socket','error','roblox','9611zGjEUM','[APEX\x20FIREBASE]\x20APP\x20INITIALIZED','count','data','assert(type(_code)\x20==\x20\x22string\x22,\x20\x22APEX\x20Error:\x20Decoded\x20data\x20corrupted\x22)','includes','query','[APEX\x20FIREBASE]\x20ERROR\x20','76310jjhYNy','Unable\x20to\x20delete','delete','floor','lastAccess','SCRIPTS_COLLECTION','quota','--\x20Protected\x20by\x20APEX\x20Security\x20System','headers','Service\x20unavailable','Access-Control-Allow-Methods','doc','[APEX\x20CACHE]\x20PENDING\x20','[APEX\x20FIREBASE]\x20INIT\x20ERROR:\x20Missing\x20env\x20vars','toString','expiresAt','[APEX\x20FIREBASE]\x20READ\x20','RATE_LIMIT_MAX','Script\x20not\x20found','715216dyBcho','[APEX\x20PUT]\x20Name:\x20','\x20\x20\x20\x20return\x20_char(_bxor(b,\x20kb))','Internal\x20server\x20error','[APEX\x20FIREBASE]\x20QUOTA\x20COOLDOWN\x20-\x20','random','[APEX\x20FIREBASE]\x20COOLDOWN\x20-\x20Serving\x20stale:\x20','24YkJNWf','status','staleUntil','localhost:3000','split','X-Content-Type-Options','body','banned','aris','Not\x20your\x20script','[APEX\x20FIREBASE]\x20INIT\x20ERROR:','x-auth-key','codex','x-forwarded-for','requests','collection','ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789','Content-Type','RATE_LIMIT_WINDOW','[APEX\x20FIREBASE]\x20DELETE\x20','pendingReads','if\x20not\x20_f\x20then','local\x20_code\x20=\x20_hex:gsub(\x22..\x22,\x20function(cc)','length','44VzQxhl','trim','lastCleanup','now','<!DOCTYPE\x20html><html\x20lang=\x22en\x22><head><meta\x20charset=\x22UTF-8\x22><meta\x20name=\x22viewport\x22\x20content=\x22width=device-width,\x20initial-scale=1.0\x22><title>Rate\x20Limited\x20|\x20APEX\x20HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:\x27Inter\x27,system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px\x2048px;border:1px\x20solid\x20var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px\x20solid\x20rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0\x20auto\x2024px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.bar{width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:24px}.fill{width:100%;height:100%;background:rgba(255,255,255,0.15);animation:progress\x2060s\x20linear}@keyframes\x20progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}.panel{background:rgba(255,255,255,0.015);border:1px\x20solid\x20var(--border);border-radius:10px;padding:16px\x2020px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px\x200;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div\x20class=\x22card\x22><div\x20class=\x22icon\x22>—</div><div\x20class=\x22title\x22>Request\x20Throttled</div><p\x20class=\x22msg\x22>Too\x20many\x20requests\x20from\x20this\x20client.</p><div\x20class=\x22bar\x22><div\x20class=\x22fill\x22></div></div><div\x20class=\x22panel\x22><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Policy</span><span\x20class=\x22val\x22>RATE\x20LIMIT</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Status</span><span\x20class=\x22val\x22>THROTTLED</span></div><div\x20class=\x22row\x22><span\x20class=\x22lbl\x22>Retry</span><span\x20class=\x22val\x22>AUTOMATIC</span></div></div><div\x20class=\x22ft\x22>APEX\x20HUB\x20·\x20Security\x20Infrastructure</div></div></body></html>','celestial','[APEX\x20CACHE]\x20STALE\x20FALLBACK\x20','MAX_IPS_TRACKED','SET','local\x20_idx\x20=\x201\x0a','CACHE_TTL','string','solara','__APEX_CACHE__','nosniff','9JChiHl','121lqINAU','collectgarbage(\x22collect\x22)','valyse','_hex\x20=\x20nil','get','replace','comet','hydrogen','set','[APEX\x20CACHE]\x20INITIALIZED','scripts','local\x20_hex\x20=\x20\x22','text/plain;\x20charset=utf-8','Unable\x20to\x20save','text/html;\x20charset=utf-8','log','Access-Control-Allow-Headers','Unable\x20to\x20update','from','value','_code\x20=\x20nil','VALID_KEYS','owner','local\x20_f,\x20_e\x20=\x20loadstring(_code)','Deleted\x20successfully','DENY'];_0x18d3=function(){return _0x58b753;};return _0x18d3();}function getRateLimitPage(){const _0x1b6f3d=_0x8b46a7;return _0x1b6f3d(0x1e9);}function getServiceUnavailablePage(){return getProtectionPage();}export default async function handler(_0x5c7896,_0x2183ae){const _0x21b00d=_0x8b46a7;_0x2183ae[_0x21b00d(0x167)](_0x21b00d(0x160),'*'),_0x2183ae['setHeader'](_0x21b00d(0x1bd),'GET,\x20POST,\x20PUT,\x20DELETE,\x20OPTIONS'),_0x2183ae['setHeader'](_0x21b00d(0x205),'Content-Type,\x20X-Auth-Key'),_0x2183ae[_0x21b00d(0x167)](_0x21b00d(0x1d2),_0x21b00d(0x1f3)),_0x2183ae['setHeader']('X-Frame-Options',_0x21b00d(0x20e)),_0x2183ae['setHeader'](_0x21b00d(0x16d),'no-store,\x20no-cache,\x20must-revalidate');if(_0x5c7896[_0x21b00d(0x15f)]===_0x21b00d(0x19f))return _0x2183ae['status'](0xc8)[_0x21b00d(0x16e)]();const _0x3e2f3c=getClientIP(_0x5c7896);console['log'](_0x21b00d(0x199)+_0x5c7896[_0x21b00d(0x15f)]+_0x21b00d(0x192)+_0x3e2f3c);const _0x302842=checkRateLimit(_0x3e2f3c);if(!_0x302842['allowed']){if(_0x302842[_0x21b00d(0x18c)]===_0x21b00d(0x1d4))return _0x2183ae[_0x21b00d(0x167)](_0x21b00d(0x1de),'text/html;\x20charset=utf-8'),_0x2183ae[_0x21b00d(0x1ce)](0x193)[_0x21b00d(0x16a)](getBannedPage());return _0x2183ae[_0x21b00d(0x167)](_0x21b00d(0x1de),_0x21b00d(0x203)),_0x2183ae[_0x21b00d(0x1ce)](0x1ad)[_0x21b00d(0x16a)](getRateLimitPage());}try{if(_0x5c7896[_0x21b00d(0x15f)]==='GET'){const {name:_0x4ccff0,key:_0x3b5582,raw:_0xa1cc25}=_0x5c7896[_0x21b00d(0x1b1)],_0x3f7019=(_0x5c7896['headers']['user-agent']||'')[_0x21b00d(0x19d)](),_0x4c052c=_0x5c7896[_0x21b00d(0x1bb)][_0x21b00d(0x1d8)]||'';console[_0x21b00d(0x204)](_0x21b00d(0x18f)+(_0x4ccff0||_0x21b00d(0x176)));if(!_0x4ccff0)return _0x2183ae['setHeader'](_0x21b00d(0x1de),_0x21b00d(0x203)),_0x2183ae[_0x21b00d(0x16a)](getWelcomePage());if(!isValidName(_0x4ccff0))return _0x2183ae[_0x21b00d(0x1ce)](0x190)['json']({'error':_0x21b00d(0x18b)});const _0x150342=CONFIG[_0x21b00d(0x20a)]['includes'](_0x3b5582)||CONFIG[_0x21b00d(0x20a)][_0x21b00d(0x1b0)](_0x4c052c),_0xca0587=_0xa1cc25===_0x21b00d(0x158),_0x1ad7b5=CONFIG['EXECUTOR_PATTERNS'][_0x21b00d(0x17e)](_0x433717=>_0x3f7019[_0x21b00d(0x1b0)](_0x433717));if(!_0x150342&&!_0xca0587&&!_0x1ad7b5)return _0x2183ae[_0x21b00d(0x167)]('Content-Type',_0x21b00d(0x203)),_0x2183ae[_0x21b00d(0x16a)](getProtectionPage());let _0x213e85;try{_0x213e85=await getScript(_0x4ccff0);}catch(_0x3e55b0){return console['error']('[APEX\x20GET]\x20ERROR:',_0x3e55b0['message']),_0x2183ae['setHeader'](_0x21b00d(0x1de),_0x21b00d(0x203)),_0x2183ae[_0x21b00d(0x1ce)](0x1f7)['send'](getServiceUnavailablePage());}if(!_0x213e85)return console[_0x21b00d(0x204)]('[APEX\x20GET]\x20NOT\x20FOUND:\x20'+_0x4ccff0),_0x2183ae[_0x21b00d(0x167)](_0x21b00d(0x1de),_0x21b00d(0x203)),_0x2183ae[_0x21b00d(0x1ce)](0x194)[_0x21b00d(0x16a)](getErrorPage(_0x4ccff0));if(_0x150342||_0xca0587){const _0x23e24d=encryptPayload(_0x213e85[_0x21b00d(0x185)]);return _0x2183ae['json']({'success':!![],'payload':_0x23e24d['data'],'decryptKey':_0x23e24d[_0x21b00d(0x15a)]});}if(_0x1ad7b5){const _0x13fb54=encryptPayload(_0x213e85[_0x21b00d(0x185)]);return _0x2183ae[_0x21b00d(0x167)](_0x21b00d(0x1de),_0x21b00d(0x201)),_0x2183ae[_0x21b00d(0x16a)](generateLoader(_0x13fb54,_0x5c7896[_0x21b00d(0x1bb)][_0x21b00d(0x212)]));}return _0x2183ae[_0x21b00d(0x198)]({'success':!![],'protected':!![]});}if(_0x5c7896[_0x21b00d(0x15f)]===_0x21b00d(0x16c)){const {code:_0x294b1c,name:_0x51a5fd,uid:_0x4e2ef8}=_0x5c7896[_0x21b00d(0x1d3)];console[_0x21b00d(0x204)]('[APEX\x20POST]\x20Name:\x20'+(_0x51a5fd||_0x21b00d(0x176)));if(!_0x294b1c||!_0x294b1c['trim']())return _0x2183ae[_0x21b00d(0x1ce)](0x190)['json']({'success':![],'error':_0x21b00d(0x195)});if(!_0x51a5fd||!_0x51a5fd['trim']())return _0x2183ae[_0x21b00d(0x1ce)](0x190)['json']({'success':![],'error':_0x21b00d(0x16f)});const _0x358169=(_0x4e2ef8||_0x21b00d(0x193))+'_'+normalizeName(_0x51a5fd),_0x5ec0f9={'code':_0x294b1c,'name':_0x51a5fd[_0x21b00d(0x1e6)](),'owner':_0x4e2ef8||_0x21b00d(0x193),'created':Date[_0x21b00d(0x1e8)]()};try{await saveScript(_0x358169,_0x5ec0f9);}catch(_0x120d3d){return console[_0x21b00d(0x1a9)](_0x21b00d(0x155),_0x120d3d[_0x21b00d(0x178)]),_0x2183ae[_0x21b00d(0x1ce)](0x1f7)['json']({'success':![],'error':_0x21b00d(0x202)});}const _0x15294b=buildRawUrl(_0x5c7896['headers'][_0x21b00d(0x212)],_0x358169),_0x44c648=buildRawUrl(_0x5c7896['headers'][_0x21b00d(0x212)],_0x358169,CONFIG[_0x21b00d(0x20a)][0x0]);return _0x2183ae[_0x21b00d(0x1ce)](0xc8)['json']({'success':!![],'raw':_0x15294b,'rawWithKey':_0x44c648,'name':_0x358169});}if(_0x5c7896[_0x21b00d(0x15f)]==='PUT'){const {name:_0xe59a3b,code:_0x5cb5cc,uid:_0x548fbd}=_0x5c7896['body'];console[_0x21b00d(0x204)](_0x21b00d(0x1c7)+(_0xe59a3b||_0x21b00d(0x176)));if(!_0xe59a3b)return _0x2183ae[_0x21b00d(0x1ce)](0x190)[_0x21b00d(0x198)]({'success':![],'error':_0x21b00d(0x16f)});if(!_0x5cb5cc||!_0x5cb5cc[_0x21b00d(0x1e6)]())return _0x2183ae['status'](0x190)[_0x21b00d(0x198)]({'success':![],'error':'Code\x20is\x20required'});let _0x57d3d4;try{_0x57d3d4=await getScript(_0xe59a3b);}catch(_0x100ff1){return _0x2183ae[_0x21b00d(0x1ce)](0x1f7)['json']({'success':![],'error':_0x21b00d(0x1bc)});}if(!_0x57d3d4)return _0x2183ae[_0x21b00d(0x1ce)](0x194)[_0x21b00d(0x198)]({'success':![],'error':'Script\x20not\x20found'});if(_0x548fbd&&_0x57d3d4[_0x21b00d(0x20b)]&&_0x57d3d4[_0x21b00d(0x20b)]!==_0x548fbd)return _0x2183ae[_0x21b00d(0x1ce)](0x193)[_0x21b00d(0x198)]({'success':![],'error':_0x21b00d(0x1d6)});_0x57d3d4[_0x21b00d(0x185)]=_0x5cb5cc,_0x57d3d4['updated']=Date['now']();try{await saveScript(_0xe59a3b,_0x57d3d4);}catch(_0x1ee19d){return _0x2183ae[_0x21b00d(0x1ce)](0x1f7)[_0x21b00d(0x198)]({'success':![],'error':_0x21b00d(0x206)});}const _0x5ee3b1=buildRawUrl(_0x5c7896['headers'][_0x21b00d(0x212)],_0xe59a3b);return _0x2183ae['status'](0xc8)[_0x21b00d(0x198)]({'success':!![],'message':_0x21b00d(0x157),'raw':_0x5ee3b1,'name':_0xe59a3b});}if(_0x5c7896[_0x21b00d(0x15f)]===_0x21b00d(0x1a5)){const {name:_0x532719,uid:_0x56e7b9}=_0x5c7896[_0x21b00d(0x1b1)];console['log']('[APEX\x20DELETE]\x20Name:\x20'+(_0x532719||_0x21b00d(0x176)));if(!_0x532719)return _0x2183ae['status'](0x190)['json']({'success':![],'error':_0x21b00d(0x16f)});let _0x5a15e6;try{_0x5a15e6=await getScript(_0x532719);}catch(_0x1b4c2a){return _0x2183ae[_0x21b00d(0x1ce)](0x1f7)['json']({'success':![],'error':_0x21b00d(0x1bc)});}if(!_0x5a15e6)return _0x2183ae[_0x21b00d(0x1ce)](0x194)[_0x21b00d(0x198)]({'success':![],'error':_0x21b00d(0x1c5)});if(_0x56e7b9&&_0x5a15e6['owner']&&_0x5a15e6[_0x21b00d(0x20b)]!==_0x56e7b9)return _0x2183ae[_0x21b00d(0x1ce)](0x193)[_0x21b00d(0x198)]({'success':![],'error':_0x21b00d(0x1d6)});try{await deleteScript(_0x532719);}catch(_0xda1e3f){return _0x2183ae[_0x21b00d(0x1ce)](0x1f7)['json']({'success':![],'error':_0x21b00d(0x1b4)});}return _0x2183ae[_0x21b00d(0x1ce)](0xc8)[_0x21b00d(0x198)]({'success':!![],'message':_0x21b00d(0x20d)});}return _0x2183ae[_0x21b00d(0x1ce)](0x195)[_0x21b00d(0x198)]({'error':'Method\x20not\x20allowed'});}catch(_0x249c5c){return console[_0x21b00d(0x1a9)](_0x21b00d(0x18e),_0x249c5c[_0x21b00d(0x178)]),_0x2183ae[_0x21b00d(0x1ce)](0x1f4)[_0x21b00d(0x198)]({'success':![],'error':_0x21b00d(0x1c9)});}}
+// ============================================================
+// api/raw.js - APEX HUB V10 (Keyforge + Firebase + Cache)
+// ============================================================
+
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const CONFIG = {
+    SCRIPTS_COLLECTION: 'scripts',
+    
+    // Keyforge MCP
+    KEYFORGE_URL: process.env.KEYFORGE_URL || 'https://www.keyforge.win/mcp',
+    KEYFORGE_TOKEN: process.env.KEYFORGE_TOKEN || 'kf_pat_L_Q3Z7jLEulOx3biuoW8aGrYzvnHlGUl',
+    KEYFORGE_TIMEOUT: 30000, // 30s timeout
+    KEYFORGE_RETRY: 2,       // retry 2 lần nếu fail
+    KEYFORGE_TOOL: process.env.KEYFORGE_TOOL || 'obfuscate', // tool name
+    
+    // Cache
+    CACHE_TTL: 5 * 60 * 1000,           // 5 phút fresh
+    CACHE_STALE_GRACE: 60 * 60 * 1000,  // 1 giờ stale grace
+    MAX_CACHE_ENTRIES: 500,
+    CACHE_CLEANUP_INTERVAL: 60 * 1000,
+    
+    // Quota Protection
+    QUOTA_COOLDOWN: 60 * 1000,          // 60 giây cooldown
+    
+    // Rate Limit
+    RATE_LIMIT_MAX: 30,
+    RATE_LIMIT_WINDOW: 60 * 1000,
+    BURST_MAX: 10,
+    BURST_WINDOW: 10 * 1000,
+    BAN_DURATION: 2 * 60 * 1000,
+    
+    // IP Tracking
+    MAX_IPS_TRACKED: 1000,
+    IP_CLEANUP_INTERVAL: 60 * 1000,
+    
+    // Valid Keys
+    VALID_KEYS: (process.env.APEX_MASTER_KEYS || 'd0egkw6en9eusrjje5vn70p2tvkngkkn,apex-master-key-2024').split(','),
+    
+    // Executor Patterns
+    EXECUTOR_PATTERNS: [
+        'roblox', 'synapse', 'krnl', 'script-ware', 'sentinel',
+        'fluxus', 'electron', 'comet', 'oxygen', 'valyse',
+        'hydrogen', 'codex', 'vega', 'trigon', 'nexus',
+        'solara', 'jjsploit', 'celestial', 'evon', 'aris'
+    ]
+};
+
+// ============================================================
+// FIREBASE INITIALIZATION
+// ============================================================
+let db = null;
+let firebaseReady = false;
+let firebaseQuotaCooldownUntil = 0;
+
+function initFirebase() {
+    if (firebaseReady) return true;
+    
+    try {
+        if (!getApps().length) {
+            const projectId = process.env.FIREBASE_PROJECT_ID;
+            const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+            const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+            console.log('[APEX FIREBASE] INIT CHECK:');
+            console.log('  Project ID:', projectId ? 'SET' : 'MISSING');
+            console.log('  Client Email:', clientEmail ? 'SET' : 'MISSING');
+            console.log('  Private Key:', privateKey ? 'SET' : 'MISSING');
+
+            if (!projectId || !clientEmail || !privateKey) {
+                console.error('[APEX FIREBASE] INIT ERROR: Missing env vars');
+                return false;
+            }
+
+            initializeApp({
+                credential: cert({ projectId, clientEmail, privateKey })
+            });
+            console.log('[APEX FIREBASE] APP INITIALIZED');
+        }
+        
+        db = getFirestore();
+        firebaseReady = true;
+        console.log('[APEX FIREBASE] FIRESTORE READY');
+        return true;
+    } catch (error) {
+        console.error('[APEX FIREBASE] INIT ERROR:', error.message);
+        return false;
+    }
+}
+
+initFirebase();
+
+// ============================================================
+// KEYFORGE MCP CLIENT
+// ============================================================
+let keyforgeCooldownUntil = 0;
+let keyforgeFailCount = 0;
+
+function isKeyforgeCooldown() {
+    return Date.now() < keyforgeCooldownUntil;
+}
+
+function triggerKeyforgeCooldown(ms = 60000) {
+    keyforgeCooldownUntil = Date.now() + ms;
+    console.log(`[KEYFORGE] COOLDOWN ${ms / 1000}s`);
+}
+
+/**
+ * Gọi Keyforge MCP qua JSON-RPC 2.0
+ * @param {string} method - MCP method (vd: 'tools/call')
+ * @param {object} params - params cho method
+ * @returns {Promise<object>}
+ */
+async function keyforgeRequest(method, params = {}) {
+    const body = {
+        jsonrpc: '2.0',
+        id: Date.now(),
+        method: method,
+        params: params
+    };
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), CONFIG.KEYFORGE_TIMEOUT);
+    
+    try {
+        const response = await fetch(CONFIG.KEYFORGE_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${CONFIG.KEYFORGE_TOKEN}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/event-stream'
+            },
+            body: JSON.stringify(body),
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            const text = await response.text().catch(() => '');
+            throw new Error(`Keyforge HTTP ${response.status}: ${text.slice(0, 200)}`);
+        }
+        
+        const contentType = response.headers.get('content-type') || '';
+        
+        // MCP có thể trả SSE (text/event-stream) hoặc JSON
+        if (contentType.includes('text/event-stream')) {
+            return await parseSSEResponse(response);
+        }
+        
+        const json = await response.json();
+        
+        if (json.error) {
+            throw new Error(`Keyforge RPC error: ${JSON.stringify(json.error)}`);
+        }
+        
+        return json.result;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+    }
+}
+
+/**
+ * Parse SSE response từ MCP server
+ */
+async function parseSSEResponse(response) {
+    const text = await response.text();
+    const lines = text.split('\n');
+    let lastData = null;
+    
+    for (const line of lines) {
+        if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+            try {
+                const parsed = JSON.parse(data);
+                if (parsed.result) lastData = parsed.result;
+                else if (parsed.error) throw new Error(JSON.stringify(parsed.error));
+            } catch (e) {
+                // skip non-JSON lines
+            }
+        }
+    }
+    
+    if (!lastData) throw new Error('Keyforge: no result in SSE stream');
+    return lastData;
+}
+
+/**
+ * Obfuscate Lua code qua Keyforge
+ * @param {string} code - Lua source
+ * @param {object} options - tùy chọn obfuscation
+ * @returns {Promise<string>} obfuscated code
+ */
+async function keyforgeObfuscate(code, options = {}) {
+    // Kiểm tra cooldown
+    if (isKeyforgeCooldown()) {
+        throw new Error('Keyforge cooldown active');
+    }
+    
+    const defaultOptions = {
+        preset: 'Medium',        // Light | Medium | Strong | Extreme
+        antiTamper: true,
+        antiDump: true,
+        watermark: 'APEX HUB',
+        ...options
+    };
+    
+    let lastError = null;
+    
+    for (let attempt = 0; attempt <= CONFIG.KEYFORGE_RETRY; attempt++) {
+        try {
+            console.log(`[KEYFORGE] Obfuscate attempt ${attempt + 1}/${CONFIG.KEYFORGE_RETRY + 1}, size=${code.length}`);
+            
+            // Bước 1: Kiểm tra tool có tồn tại không (chỉ lần đầu)
+            if (keyforgeFailCount === 0 && attempt === 0) {
+                try {
+                    const tools = await keyforgeRequest('tools/list', {});
+                    console.log('[KEYFORGE] Available tools:', 
+                        tools?.tools?.map(t => t.name).join(', ') || 'unknown');
+                } catch (e) {
+                    console.warn('[KEYFORGE] tools/list failed:', e.message);
+                }
+            }
+            
+            // Bước 2: Gọi tool obfuscate
+            const result = await keyforgeRequest('tools/call', {
+                name: CONFIG.KEYFORGE_TOOL,
+                arguments: {
+                    code: code,
+                    lua: code,
+                    source: code,
+                    ...defaultOptions
+                }
+            });
+            
+            // Bước 3: Extract obfuscated code từ result
+            const obfuscated = extractObfuscatedCode(result);
+            
+            if (!obfuscated || typeof obfuscated !== 'string') {
+                throw new Error('Keyforge returned empty result');
+            }
+            
+            // Reset fail count khi thành công
+            keyforgeFailCount = 0;
+            
+            console.log(`[KEYFORGE] SUCCESS: ${code.length} -> ${obfuscated.length} bytes`);
+            return obfuscated;
+            
+        } catch (error) {
+            lastError = error;
+            keyforgeFailCount++;
+            console.error(`[KEYFORGE] Attempt ${attempt + 1} failed:`, error.message);
+            
+            // Nếu là lỗi quota/auth → cooldown dài
+            if (isKeyforgeQuotaError(error)) {
+                triggerKeyforgeCooldown(5 * 60 * 1000); // 5 phút
+                break;
+            }
+            
+            // Nếu là lỗi auth → cooldown vĩnh viễn cho session
+            if (isKeyforgeAuthError(error)) {
+                triggerKeyforgeCooldown(60 * 60 * 1000); // 1 giờ
+                break;
+            }
+            
+            // Retry với backoff
+            if (attempt < CONFIG.KEYFORGE_RETRY) {
+                await sleep(1000 * Math.pow(2, attempt));
+            }
+        }
+    }
+    
+    // Nếu fail quá nhiều → cooldown
+    if (keyforgeFailCount >= 5) {
+        triggerKeyforgeCooldown(5 * 60 * 1000);
+    }
+    
+    throw lastError || new Error('Keyforge obfuscation failed');
+}
+
+/**
+ * Extract obfuscated code từ nhiều format response khác nhau
+ */
+function extractObfuscatedCode(result) {
+    if (!result) return null;
+    if (typeof result === 'string') return result;
+    
+    // MCP tools/call thường trả về: { content: [{ type: 'text', text: '...' }] }
+    if (result.content && Array.isArray(result.content)) {
+        const textPart = result.content.find(c => c.type === 'text');
+        if (textPart?.text) return textPart.text;
+    }
+    
+    // Fallback các field phổ biến
+    return result.obfuscated 
+        || result.output 
+        || result.result 
+        || result.code 
+        || result.data 
+        || null;
+}
+
+function isKeyforgeQuotaError(error) {
+    const msg = (error?.message || '').toLowerCase();
+    return msg.includes('quota') 
+        || msg.includes('rate limit') 
+        || msg.includes('429')
+        || msg.includes('too many');
+}
+
+function isKeyforgeAuthError(error) {
+    const msg = (error?.message || '').toLowerCase();
+    return msg.includes('401') 
+        || msg.includes('403') 
+        || msg.includes('unauthorized')
+        || msg.includes('forbidden')
+        || msg.includes('invalid token');
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ============================================================
+// GLOBAL CACHE STATE
+// ============================================================
+if (!global.__APEX_CACHE__) {
+    global.__APEX_CACHE__ = {
+        data: new Map(),
+        pendingReads: new Map(),
+        lastCleanup: Date.now()
+    };
+    console.log('[APEX CACHE] INITIALIZED');
+}
+
+const cacheState = global.__APEX_CACHE__;
+
+// ============================================================
+// CACHE FUNCTIONS
+// ============================================================
+function cacheGet(key) {
+    const now = Date.now();
+    const entry = cacheState.data.get(key);
+    if (!entry) return null;
+    
+    if (now < entry.expiresAt) {
+        entry.lastAccess = now;
+        console.log(`[APEX CACHE] HIT ${key}`);
+        return { ...entry.value, fromCache: true };
+    }
+    return null;
+}
+
+function cacheGetStale(key) {
+    const now = Date.now();
+    const entry = cacheState.data.get(key);
+    if (!entry) return null;
+    
+    if (now < entry.staleUntil) {
+        entry.lastAccess = now;
+        console.log(`[APEX CACHE] STALE_HIT ${key}`);
+        return { ...entry.value, fromCache: true, stale: true };
+    }
+    
+    cacheState.data.delete(key);
+    return null;
+}
+
+function cacheSet(key, value, ttl = CONFIG.CACHE_TTL) {
+    const now = Date.now();
+    cacheState.data.set(key, {
+        value: value,
+        createdAt: now,
+        lastAccess: now,
+        expiresAt: now + ttl,
+        staleUntil: now + ttl + CONFIG.CACHE_STALE_GRACE
+    });
+    cleanupCache();
+    console.log(`[APEX CACHE] SET ${key}`);
+}
+
+function cacheDelete(key) {
+    cacheState.data.delete(key);
+    cacheState.pendingReads.delete(key);
+    console.log(`[APEX CACHE] DELETE ${key}`);
+}
+
+function cleanupCache() {
+    const now = Date.now();
+    if (now - cacheState.lastCleanup < CONFIG.CACHE_CLEANUP_INTERVAL) return;
+    cacheState.lastCleanup = now;
+    
+    for (const [key, entry] of cacheState.data.entries()) {
+        if (now >= entry.staleUntil) cacheState.data.delete(key);
+    }
+    
+    if (cacheState.data.size > CONFIG.MAX_CACHE_ENTRIES) {
+        const entries = Array.from(cacheState.data.entries());
+        entries.sort((a, b) => a[1].lastAccess - b[1].lastAccess);
+        for (const [key] of entries.slice(0, entries.length - CONFIG.MAX_CACHE_ENTRIES)) {
+            cacheState.data.delete(key);
+        }
+    }
+}
+
+// ============================================================
+// RATE LIMIT STATE
+// ============================================================
+if (!global.__APEX_RATE_LIMIT__) {
+    global.__APEX_RATE_LIMIT__ = {
+        requests: new Map(),
+        banned: new Map(),
+        lastCleanup: Date.now()
+    };
+    console.log('[APEX RATE] INITIALIZED');
+}
+
+const rateState = global.__APEX_RATE_LIMIT__;
+
+// ============================================================
+// HELPERS
+// ============================================================
+function normalizeName(name) {
+    return name.trim().toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'script';
+}
+
+function buildRawUrl(host, name, key = null) {
+    const cleanHost = (host || 'localhost:3000').replace(/^https?:\/\//, '').replace(/\/$/, '');
+    const baseUrl = `https://${cleanHost}/api/raw?name=${encodeURIComponent(name)}`;
+    return key ? `${baseUrl}&key=${key}` : baseUrl;
+}
+
+function getClientIP(req) {
+    return (
+        req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+        req.headers['x-real-ip'] ||
+        req.socket?.remoteAddress ||
+        'unknown'
+    );
+}
+
+function isValidName(name) {
+    if (!name || typeof name !== 'string') return false;
+    if (name.length > 200) return false;
+    if (!/^[a-zA-Z0-9_\-]+$/.test(name)) return false;
+    return true;
+}
+
+// ============================================================
+// RATE LIMIT FUNCTIONS
+// ============================================================
+function cleanupRateState() {
+    const now = Date.now();
+    if (now - rateState.lastCleanup < CONFIG.IP_CLEANUP_INTERVAL) return;
+    rateState.lastCleanup = now;
+    
+    for (const [ip, bannedUntil] of rateState.banned.entries()) {
+        if (now > bannedUntil) rateState.banned.delete(ip);
+    }
+    for (const [ip, data] of rateState.requests.entries()) {
+        if (now - data.start > CONFIG.RATE_LIMIT_WINDOW * 2) {
+            rateState.requests.delete(ip);
+        }
+    }
+    if (rateState.requests.size > CONFIG.MAX_IPS_TRACKED) {
+        const entries = Array.from(rateState.requests.entries());
+        entries.sort((a, b) => a[1].start - b[1].start);
+        for (const [ip] of entries.slice(0, entries.length - CONFIG.MAX_IPS_TRACKED)) {
+            rateState.requests.delete(ip);
+        }
+    }
+}
+
+function isIPBanned(ip) {
+    const now = Date.now();
+    const bannedUntil = rateState.banned.get(ip);
+    if (!bannedUntil) return false;
+    if (now > bannedUntil) {
+        rateState.banned.delete(ip);
+        return false;
+    }
+    return true;
+}
+
+function banIP(ip) {
+    rateState.banned.set(ip, Date.now() + CONFIG.BAN_DURATION);
+    rateState.requests.delete(ip);
+    console.log(`[APEX RATE] BANNED IP: ${ip}`);
+}
+
+function checkRateLimit(ip) {
+    const now = Date.now();
+    cleanupRateState();
+    
+    if (isIPBanned(ip)) return { allowed: false, reason: 'banned' };
+    
+    let data = rateState.requests.get(ip);
+    if (!data || now - data.start > CONFIG.RATE_LIMIT_WINDOW) {
+        data = { start: now, count: 0, burstStart: now, burstCount: 0 };
+        rateState.requests.set(ip, data);
+    }
+    
+    if (now - data.burstStart > CONFIG.BURST_WINDOW) {
+        data.burstStart = now;
+        data.burstCount = 0;
+    }
+    
+    data.count++;
+    data.burstCount++;
+    
+    if (data.burstCount > CONFIG.BURST_MAX) {
+        banIP(ip);
+        return { allowed: false, reason: 'burst' };
+    }
+    if (data.count > CONFIG.RATE_LIMIT_MAX) {
+        return { allowed: false, reason: 'limit' };
+    }
+    
+    return { allowed: true, remaining: CONFIG.RATE_LIMIT_MAX - data.count };
+}
+
+// ============================================================
+// FIREBASE QUOTA
+// ============================================================
+function isQuotaCooldown() {
+    return Date.now() < firebaseQuotaCooldownUntil;
+}
+
+function triggerQuotaCooldown() {
+    firebaseQuotaCooldownUntil = Date.now() + CONFIG.QUOTA_COOLDOWN;
+    console.log(`[APEX FIREBASE] QUOTA COOLDOWN`);
+}
+
+function isQuotaError(error) {
+    const msg = (error?.message || '').toLowerCase();
+    return msg.includes('resource_exhausted') || msg.includes('quota exceeded') || msg.includes('quota');
+}
+
+// ============================================================
+// SCRIPT STORAGE (Firebase)
+// ============================================================
+
+/**
+ * Lấy script từ Firebase (cache-first)
+ * Trả về { code, obfuscated, name, owner, created, updatedAt }
+ */
+async function getScript(name) {
+    const cacheKey = `script:${name}`;
+    
+    const fresh = cacheGet(cacheKey);
+    if (fresh) return { ...fresh, fromCache: true };
+    
+    if (cacheState.pendingReads.has(cacheKey)) {
+        return await cacheState.pendingReads.get(cacheKey);
+    }
+    
+    if (!firebaseReady || !db) {
+        if (!initFirebase()) {
+            const stale = cacheGetStale(cacheKey);
+            if (stale) return { ...stale, fromCache: true, stale: true };
+            throw new Error('Firebase not available');
+        }
+    }
+    
+    if (isQuotaCooldown()) {
+        const stale = cacheGetStale(cacheKey);
+        if (stale) return { ...stale, fromCache: true, stale: true };
+        throw new Error('Firebase quota cooldown');
+    }
+    
+    const readPromise = (async () => {
+        try {
+            console.log(`[APEX FIREBASE] READ ${name}`);
+            const doc = await db.collection(CONFIG.SCRIPTS_COLLECTION).doc(name).get();
+            if (!doc.exists) return null;
+            
+            const data = doc.data();
+            cacheSet(cacheKey, data, CONFIG.CACHE_TTL);
+            return data;
+        } catch (error) {
+            console.error(`[APEX FIREBASE] ERROR ${name}:`, error.message);
+            if (isQuotaError(error)) triggerQuotaCooldown();
+            
+            const stale = cacheGetStale(cacheKey);
+            if (stale) return { ...stale, fromCache: true, stale: true };
+            throw error;
+        } finally {
+            cacheState.pendingReads.delete(cacheKey);
+        }
+    })();
+    
+    cacheState.pendingReads.set(cacheKey, readPromise);
+    return await readPromise;
+}
+
+/**
+ * Lưu script lên Firebase
+ * data: { code, obfuscated, name, owner, created, updatedAt }
+ */
+async function saveScript(name, data) {
+    if (!firebaseReady || !db) {
+        if (!initFirebase()) throw new Error('Firebase not available');
+    }
+    
+    try {
+        console.log(`[APEX FIREBASE] WRITE ${name}`);
+        await db.collection(CONFIG.SCRIPTS_COLLECTION).doc(name).set({
+            ...data,
+            updatedAt: Date.now()
+        }, { merge: true });
+        
+        cacheSet(`script:${name}`, data, CONFIG.CACHE_TTL);
+        return true;
+    } catch (error) {
+        console.error(`[APEX FIREBASE] WRITE ERROR ${name}:`, error.message);
+        if (isQuotaError(error)) triggerQuotaCooldown();
+        throw error;
+    }
+}
+
+async function deleteScript(name) {
+    if (!firebaseReady || !db) {
+        if (!initFirebase()) throw new Error('Firebase not available');
+    }
+    
+    try {
+        console.log(`[APEX FIREBASE] DELETE ${name}`);
+        await db.collection(CONFIG.SCRIPTS_COLLECTION).doc(name).delete();
+        cacheDelete(`script:${name}`);
+        return true;
+    } catch (error) {
+        console.error(`[APEX FIREBASE] DELETE ERROR ${name}:`, error.message);
+        if (isQuotaError(error)) triggerQuotaCooldown();
+        throw error;
+    }
+}
+
+// ============================================================
+// OBFUSCATION PIPELINE
+// ============================================================
+
+/**
+ * Obfuscate + cache kết quả vào Firebase
+ * Pipeline: code gốc → Keyforge obfuscate → lưu obfuscated vào Firebase
+ */
+async function obfuscateAndCache(fullName, code, options = {}) {
+    console.log(`[APEX OBF] Start: ${fullName} (${code.length} bytes)`);
+    
+    // 1. Gọi Keyforge
+    let obfuscated;
+    try {
+        obfuscated = await keyforgeObfuscate(code, options);
+    } catch (error) {
+        console.error(`[APEX OBF] Keyforge failed:`, error.message);
+        throw new Error(`Obfuscation failed: ${error.message}`);
+    }
+    
+    if (!obfuscated || obfuscated.length < 10) {
+        throw new Error('Obfuscation returned invalid result');
+    }
+    
+    // 2. Lưu obfuscated code vào Firebase (không lưu code gốc để bảo mật)
+    const scriptData = {
+        obfuscated: obfuscated,
+        obfuscator: 'keyforge',
+        obfuscatedAt: Date.now(),
+        originalSize: code.length,
+        obfuscatedSize: obfuscated.length
+    };
+    
+    return scriptData;
+}
+
+// ============================================================
+// LOADER GENERATOR (cho executor — load code đã obfuscated)
+// ============================================================
+function generateLoader(obfuscatedCode, host, name) {
+    const escaped = obfuscatedCode
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\r/g, '')
+        .replace(/\n/g, '\\n');
+    
+    return `-- APEX HUB V10 Loader (Keyforge Protected)
+-- Script: ${name}
+-- Delivered by APEX HUB
+
+local _src = "${escaped}"
+local _f, _e = loadstring(_src)
+if not _f then
+    warn("=== APEX HUB LOADER ERROR ===")
+    warn("Script: ${name}")
+    warn("Error: " .. tostring(_e))
+    error("Failed to compile protected script")
+end
+_src = nil
+_f()
+_f = nil
+collectgarbage("collect")
+`;
+}
+
+// ============================================================
+// HTML PAGES
+// ============================================================
+function getProtectionPage() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Denied | APEX HUB</title>
+<style>
+:root{--bg:#050508;--card-bg:rgba(12,12,17,0.78);--card-border:rgba(255,255,255,0.055);--text-primary:#e6e6ea;--text-secondary:#6b6b76;--text-tertiary:#40404a;--button-primary-bg:rgba(255,255,255,0.035);--button-primary-border:rgba(255,255,255,0.07);--button-secondary-bg:transparent;--button-secondary-border:rgba(255,255,255,0.045);--button-hover-bg:rgba(255,255,255,0.06);--button-hover-border:rgba(255,255,255,0.12);--icon-color:rgba(255,255,255,0.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:24px;-webkit-font-smoothing:antialiased}
+.card{background:var(--card-bg);backdrop-filter:blur(48px);-webkit-backdrop-filter:blur(48px);border-radius:22px;padding:56px 52px;border:1px solid var(--card-border);max-width:520px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.55);animation:cardFadeIn 0.8s cubic-bezier(0.22,1,0.36,1)}
+@keyframes cardFadeIn{from{opacity:0;transform:translateY(28px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.icon-lock{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border:1px solid rgba(255,255,255,0.08);border-radius:50%;margin:0 auto 28px;color:var(--icon-color)}
+.icon-lock svg{width:22px;height:22px;opacity:0.7}
+.title{font-size:28px;font-weight:620;letter-spacing:-0.03em;color:var(--text-primary);margin-bottom:10px;line-height:1.2}
+.subtitle{font-size:14px;font-weight:450;color:var(--text-secondary);margin-bottom:36px;line-height:1.6}
+.subtitle strong{font-weight:600;color:#d4d4d8}
+.separator{width:100%;height:1px;background:rgba(255,255,255,0.045);margin:0 0 32px 0}
+.description{font-size:13.5px;color:var(--text-secondary);line-height:1.7;margin-bottom:36px;padding:0 8px}
+.actions{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.28s cubic-bezier(0.22,1,0.36,1);cursor:pointer;width:100%;box-sizing:border-box}
+.btn-primary{background:var(--button-primary-bg);border:1px solid var(--button-primary-border);color:var(--text-primary)}
+.btn-primary:hover{background:var(--button-hover-bg);border-color:var(--button-hover-border);transform:translateY(-1px)}
+.btn-secondary{background:var(--button-secondary-bg);border:1px solid var(--button-secondary-border);color:var(--text-secondary)}
+.btn-secondary:hover{background:var(--button-hover-bg);border-color:var(--button-hover-border);color:#c4c4cc;transform:translateY(-1px)}
+.footer{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);font-weight:500}
+@media (max-width:600px){.card{padding:44px 28px;border-radius:18px}.title{font-size:24px}.subtitle{font-size:13px}.description{font-size:12.5px;padding:0}.btn{padding:13px 22px;font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="icon-lock">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+<circle cx="12" cy="16" r="1"></circle>
+</svg>
+</div>
+<h1 class="title">Access Denied</h1>
+<p class="subtitle">This Lua script is protected by <strong>APEX HUB</strong></p>
+<div class="separator"></div>
+<p class="description">You don't have permission to access these files.<br>Protected by Keyforge obfuscation against reverse engineering.</p>
+<div class="actions">
+<a href="https://apexhubeditor.vercel.app/" class="btn btn-primary">Return Home</a>
+<a href="https://discord.gg/9wdU3rrGGw" target="_blank" class="btn btn-secondary">Discord</a>
+</div>
+<div class="footer">APEX HUB · Security Infrastructure · V10</div>
+</div>
+</body>
+</html>`;
+}
+
+function getWelcomePage() {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>APEX HUB | API Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:52px 48px;border:1px solid var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)}.brand{font-size:28px;font-weight:600;letter-spacing:-0.03em}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin:6px 0 32px}.desc{font-size:14px;color:var(--t2);margin-bottom:32px}.sep{height:1px;background:var(--border);margin-bottom:28px}.ep{display:flex;align-items:center;gap:14px;padding:12px 16px;font-size:13px;font-family:monospace;border-radius:8px;transition:0.2s}.ep:hover{background:rgba(255,255,255,0.02)}.method{font-size:10px;text-transform:uppercase;padding:4px 10px;border-radius:6px;min-width:50px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:var(--t2)}.footer{margin-top:32px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}</style></head><body><div class="card"><h1 class="brand">APEX HUB</h1><div class="sub">API Gateway · V10</div><p class="desc">Production infrastructure with Keyforge obfuscation.</p><div class="sep"></div><div class="ep"><span class="method">POST</span>/api/raw — Save + Obfuscate</div><div class="ep"><span class="method">PUT</span>/api/raw — Update + Re-obfuscate</div><div class="ep"><span class="method">GET</span>/api/raw?name=script</div><div class="ep"><span class="method">DEL</span>/api/raw?name=script</div><div class="footer">APEX HUB · API Infrastructure · V10</div></div></body></html>`;
+}
+
+function getErrorPage(name) {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>404 | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.ref{display:inline-block;padding:8px 18px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:12px;color:var(--t2)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div class="card"><div class="code">404</div><div class="title">Resource not found</div><p class="msg">The requested script could not be located.</p><div class="ref">${name}</div><br><a href="https://apexhubeditor.vercel.app/">← Return to Gateway</a></div></body></html>`;
+}
+
+function getBannedPage() {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Access Denied | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:24px}.panel{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div class="card"><div class="icon">—</div><div class="title">Access Denied</div><p class="msg">This request has been temporarily blocked.</p><div class="panel"><div class="row"><span class="lbl">Event</span><span class="val">ACCESS POLICY VIOLATION</span></div><div class="row"><span class="lbl">Status</span><span class="val">TEMPORARILY BLOCKED</span></div></div><div class="ft">APEX HUB · Security Infrastructure</div></div></body></html>`;
+}
+
+function getRateLimitPage() {
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rate Limited | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.panel{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div class="card"><div class="icon">—</div><div class="title">Request Throttled</div><p class="msg">Too many requests from this client.</p><div class="panel"><div class="row"><span class="lbl">Policy</span><span class="val">RATE LIMIT</span></div><div class="row"><span class="lbl">Status</span><span class="val">THROTTLED</span></div></div><div class="ft">APEX HUB · Security Infrastructure</div></div></body></html>`;
+}
+
+// ============================================================
+// MAIN HANDLER
+// ============================================================
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Key');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+    if (req.method === 'OPTIONS') return res.status(200).end();
+
+    const ip = getClientIP(req);
+    console.log(`[APEX REQUEST] ${req.method} from ${ip}`);
+
+    const limitResult = checkRateLimit(ip);
+    if (!limitResult.allowed) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        if (limitResult.reason === 'banned') return res.status(403).send(getBannedPage());
+        return res.status(429).send(getRateLimitPage());
+    }
+
+    try {
+        // ============================================================
+        // GET — Fetch + serve obfuscated script
+        // ============================================================
+        if (req.method === 'GET') {
+            const { name, key, raw } = req.query;
+            const ua = (req.headers['user-agent'] || '').toLowerCase();
+            const authKey = req.headers['x-auth-key'] || '';
+            
+            if (!name) {
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.send(getWelcomePage());
+            }
+            if (!isValidName(name)) {
+                return res.status(400).json({ error: 'Invalid script name' });
+            }
+            
+            const hasValidKey = CONFIG.VALID_KEYS.includes(key) || CONFIG.VALID_KEYS.includes(authKey);
+            const wantsRaw = raw === 'true';
+            const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
+            
+            if (!hasValidKey && !wantsRaw && !isExecutor) {
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.send(getProtectionPage());
+            }
+            
+            let scriptData;
+            try {
+                scriptData = await getScript(name);
+            } catch (error) {
+                console.error(`[APEX GET] ERROR:`, error.message);
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.status(503).send(getProtectionPage());
+            }
+            
+            if (!scriptData) {
+                res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                return res.status(404).send(getErrorPage(name));
+            }
+            
+            // Ưu tiên obfuscated code
+            const codeToServe = scriptData.obfuscated || scriptData.code;
+            
+            if (!codeToServe) {
+                return res.status(500).json({ error: 'Script content is empty' });
+            }
+            
+            // API mode: trả JSON với obfuscated code
+            if (hasValidKey || wantsRaw) {
+                return res.json({
+                    success: true,
+                    name: scriptData.name || name,
+                    obfuscated: codeToServe,
+                    obfuscator: scriptData.obfuscator || 'keyforge',
+                    size: codeToServe.length
+                });
+            }
+            
+            // Executor mode: trả loader
+            if (isExecutor) {
+                res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+                return res.send(generateLoader(codeToServe, req.headers.host, name));
+            }
+            
+            return res.json({ success: true, protected: true });
+        }
+        
+        // ============================================================
+        // POST — Save + Obfuscate
+        // ============================================================
+        if (req.method === 'POST') {
+            const { code, name, uid, options } = req.body;
+            
+            console.log(`[APEX POST] Name: ${name || 'N/A'}`);
+            
+            if (!code || !code.trim()) {
+                return res.status(400).json({ success: false, error: 'Code is required' });
+            }
+            if (!name || !name.trim()) {
+                return res.status(400).json({ success: false, error: 'Name is required' });
+            }
+            
+            const fullName = (uid || 'public') + '_' + normalizeName(name);
+            
+            // Obfuscate qua Keyforge
+            let obfData;
+            try {
+                obfData = await obfuscateAndCache(fullName, code, options || {});
+            } catch (error) {
+                console.error('[APEX POST] Obfuscation failed:', error.message);
+                return res.status(503).json({
+                    success: false,
+                    error: 'Obfuscation service unavailable',
+                    detail: error.message
+                });
+            }
+            
+            const scriptData = {
+                obfuscated: obfData.obfuscated,
+                obfuscator: 'keyforge',
+                obfuscatedAt: obfData.obfuscatedAt,
+                originalSize: obfData.originalSize,
+                obfuscatedSize: obfData.obfuscatedSize,
+                name: name.trim(),
+                owner: uid || 'public',
+                created: Date.now()
+            };
+            
+            try {
+                await saveScript(fullName, scriptData);
+            } catch (error) {
+                console.error('[APEX POST] SAVE ERROR:', error.message);
+                return res.status(503).json({ success: false, error: 'Unable to save' });
+            }
+            
+            const rawUrl = buildRawUrl(req.headers.host, fullName);
+            const rawUrlWithKey = buildRawUrl(req.headers.host, fullName, CONFIG.VALID_KEYS[0]);
+            
+            return res.status(200).json({
+                success: true,
+                raw: rawUrl,
+                rawWithKey: rawUrlWithKey,
+                name: fullName,
+                obfuscator: 'keyforge',
+                originalSize: obfData.originalSize,
+                obfuscatedSize: obfData.obfuscatedSize
+            });
+        }
+        
+        // ============================================================
+        // PUT — Update + Re-obfuscate
+        // ============================================================
+        if (req.method === 'PUT') {
+            const { name, code, uid, options } = req.body;
+            
+            console.log(`[APEX PUT] Name: ${name || 'N/A'}`);
+            
+            if (!name) return res.status(400).json({ success: false, error: 'Name is required' });
+            if (!code || !code.trim()) return res.status(400).json({ success: false, error: 'Code is required' });
+            
+            let scriptData;
+            try {
+                scriptData = await getScript(name);
+            } catch (error) {
+                return res.status(503).json({ success: false, error: 'Service unavailable' });
+            }
+            
+            if (!scriptData) return res.status(404).json({ success: false, error: 'Script not found' });
+            
+            if (uid && scriptData.owner && scriptData.owner !== uid) {
+                return res.status(403).json({ success: false, error: 'Not your script' });
+            }
+            
+            // Re-obfuscate
+            let obfData;
+            try {
+                obfData = await obfuscateAndCache(name, code, options || {});
+            } catch (error) {
+                return res.status(503).json({
+                    success: false,
+                    error: 'Obfuscation failed',
+                    detail: error.message
+                });
+            }
+            
+            const updatedData = {
+                ...scriptData,
+                obfuscated: obfData.obfuscated,
+                obfuscator: 'keyforge',
+                obfuscatedAt: obfData.obfuscatedAt,
+                originalSize: obfData.originalSize,
+                obfuscatedSize: obfData.obfuscatedSize,
+                updated: Date.now()
+            };
+            
+            try {
+                await saveScript(name, updatedData);
+            } catch (error) {
+                return res.status(503).json({ success: false, error: 'Unable to update' });
+            }
+            
+            return res.status(200).json({
+                success: true,
+                message: 'Updated + re-obfuscated',
+                raw: buildRawUrl(req.headers.host, name),
+                name: name
+            });
+        }
+        
+        // ============================================================
+        // DELETE
+        // ============================================================
+        if (req.method === 'DELETE') {
+            const { name, uid } = req.query;
+            
+            if (!name) return res.status(400).json({ success: false, error: 'Name is required' });
+            
+            let scriptData;
+            try {
+                scriptData = await getScript(name);
+            } catch (error) {
+                return res.status(503).json({ success: false, error: 'Service unavailable' });
+            }
+            
+            if (!scriptData) return res.status(404).json({ success: false, error: 'Script not found' });
+            
+            if (uid && scriptData.owner && scriptData.owner !== uid) {
+                return res.status(403).json({ success: false, error: 'Not your script' });
+            }
+            
+            try {
+                await deleteScript(name);
+            } catch (error) {
+                return res.status(503).json({ success: false, error: 'Unable to delete' });
+            }
+            
+            return res.status(200).json({ success: true, message: 'Deleted successfully' });
+        }
+        
+        return res.status(405).json({ error: 'Method not allowed' });
+        
+    } catch (error) {
+        console.error('[APEX HANDLER] ERROR:', error.message);
+        return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+}
