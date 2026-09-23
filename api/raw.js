@@ -1,5 +1,7 @@
 // ============================================================
-// api/raw.js - APEX HUB V9 (Firebase + Cache + Quota Protection)
+// api/raw.js - APEX HUB V10 (Firebase + Cache + Keyforge Obf)
+// Chỉ thay obfuscation: XOR → Keyforge
+// Giữ nguyên: Firebase, Cache, Rate Limit, Response format, HTML
 // ============================================================
 
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
@@ -28,7 +30,6 @@ function initFirebase() {
 
             if (!projectId || !clientEmail || !privateKey) {
                 console.error('[APEX FIREBASE] INIT ERROR: Missing env vars');
-                console.error('Required: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY');
                 return false;
             }
 
@@ -58,27 +59,35 @@ initFirebase();
 const CONFIG = {
     SCRIPTS_COLLECTION: 'scripts',
     
+    // Keyforge
+    KEYFORGE_URL: process.env.KEYFORGE_URL || 'https://www.keyforge.win/mcp',
+    KEYFORGE_TOKEN: process.env.KEYFORGE_TOKEN || 'kf_pat_L_Q3Z7jLEulOx3biuoW8aGrYzvnHlGUl',
+    KEYFORGE_TOOL: process.env.KEYFORGE_TOOL || 'obfuscate',
+    KEYFORGE_TIMEOUT: 30000,
+    KEYFORGE_RETRY: 2,
+    KEYFORGE_COOLDOWN: 5 * 60 * 1000,
+    
     // Cache
-    CACHE_TTL: 5 * 60 * 1000,           // 5 phút fresh
-    CACHE_STALE_GRACE: 60 * 60 * 1000,  // 1 giờ stale grace
+    CACHE_TTL: 5 * 60 * 1000,
+    CACHE_STALE_GRACE: 60 * 60 * 1000,
     MAX_CACHE_ENTRIES: 500,
     CACHE_CLEANUP_INTERVAL: 60 * 1000,
     
     // Quota Protection
-    QUOTA_COOLDOWN: 60 * 1000,          // 60 giây cooldown
+    QUOTA_COOLDOWN: 60 * 1000,
     
-    // Rate Limit - Thông thoáng cho client hợp lệ
-    RATE_LIMIT_MAX: 30,                 // 30 requests/phút
+    // Rate Limit
+    RATE_LIMIT_MAX: 30,
     RATE_LIMIT_WINDOW: 60 * 1000,
-    BURST_MAX: 10,                      // 10 requests/10 giây
+    BURST_MAX: 10,
     BURST_WINDOW: 10 * 1000,
-    BAN_DURATION: 2 * 60 * 1000,        // Ban 2 phút
+    BAN_DURATION: 2 * 60 * 1000,
     
     // IP Tracking
     MAX_IPS_TRACKED: 1000,
     IP_CLEANUP_INTERVAL: 60 * 1000,
     
-    // Valid Keys (env vars hoặc default)
+    // Valid Keys
     VALID_KEYS: (process.env.APEX_MASTER_KEYS || 'd0egkw6en9eusrjje5vn70p2tvkngkkn,apex-master-key-2024').split(','),
     
     // Executor Patterns
@@ -91,12 +100,178 @@ const CONFIG = {
 };
 
 // ============================================================
-// GLOBAL CACHE STATE
+// KEYFORGE CLIENT (thay cho XOR cũ)
+// ============================================================
+let keyforgeCooldownUntil = 0;
+
+function isKeyforgeCooldown() {
+    return Date.now() < keyforgeCooldownUntil;
+}
+
+function triggerKeyforgeCooldown(ms = CONFIG.KEYFORGE_COOLDOWN) {
+    keyforgeCooldownUntil = Date.now() + ms;
+    console.log(`[KEYFORGE] COOLDOWN ${ms / 1000}s`);
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+async function keyforgeRequest(method, params = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), CONFIG.KEYFORGE_TIMEOUT);
+    
+    try {
+        const response = await fetch(CONFIG.KEYFORGE_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${CONFIG.KEYFORGE_TOKEN}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/event-stream'
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                id: Date.now(),
+                method: method,
+                params: params
+            }),
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            const text = await response.text().catch(() => '');
+            throw new Error(`Keyforge HTTP ${response.status}: ${text.slice(0, 200)}`);
+        }
+        
+        const contentType = response.headers.get('content-type') || '';
+        
+        // SSE stream (MCP thường dùng)
+        if (contentType.includes('text/event-stream')) {
+            const text = await response.text();
+            let lastResult = null;
+            for (const line of text.split('\n')) {
+                if (line.startsWith('data: ')) {
+                    const data = line.slice(6).trim();
+                    if (data === '[DONE]') continue;
+                    try {
+                        const parsed = JSON.parse(data);
+                        if (parsed.result) lastResult = parsed.result;
+                        else if (parsed.error) throw new Error(JSON.stringify(parsed.error));
+                    } catch (e) {}
+                }
+            }
+            if (!lastResult) throw new Error('Keyforge: no result in SSE');
+            return lastResult;
+        }
+        
+        const json = await response.json();
+        if (json.error) throw new Error(`Keyforge RPC: ${JSON.stringify(json.error)}`);
+        return json.result;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+    }
+}
+
+/**
+ * Extract obfuscated code từ response (nhiều format)
+ */
+function extractObfuscated(result) {
+    if (!result) return null;
+    if (typeof result === 'string') return result;
+    
+    // MCP tools/call format
+    if (result.content && Array.isArray(result.content)) {
+        const textPart = result.content.find(c => c.type === 'text');
+        if (textPart?.text) return textPart.text;
+    }
+    
+    return result.obfuscated || result.output || result.result 
+        || result.code || result.data || null;
+}
+
+function isKeyforgeQuotaError(error) {
+    const msg = (error?.message || '').toLowerCase();
+    return msg.includes('quota') || msg.includes('rate limit') 
+        || msg.includes('429') || msg.includes('too many');
+}
+
+function isKeyforgeAuthError(error) {
+    const msg = (error?.message || '').toLowerCase();
+    return msg.includes('401') || msg.includes('403') 
+        || msg.includes('unauthorized') || msg.includes('forbidden');
+}
+
+/**
+ * Obfuscate Lua qua Keyforge (thay thế encryptPayload cũ)
+ * @param {string} code - Lua source
+ * @returns {Promise<{data: string, key: string}>} - giữ format V9
+ */
+async function keyforgeObfuscate(code) {
+    if (isKeyforgeCooldown()) {
+        throw new Error('Keyforge cooldown active');
+    }
+    
+    let lastError = null;
+    
+    for (let attempt = 0; attempt <= CONFIG.KEYFORGE_RETRY; attempt++) {
+        try {
+            console.log(`[KEYFORGE] Obfuscate attempt ${attempt + 1}, size=${code.length}`);
+            
+            const result = await keyforgeRequest('tools/call', {
+                name: CONFIG.KEYFORGE_TOOL,
+                arguments: {
+                    code: code,
+                    lua: code,
+                    source: code,
+                    preset: 'Medium',
+                    antiTamper: true,
+                    antiDump: true,
+                    watermark: 'APEX HUB'
+                }
+            });
+            
+            const obfuscated = extractObfuscated(result);
+            
+            if (!obfuscated || typeof obfuscated !== 'string' || obfuscated.length < 10) {
+                throw new Error('Keyforge returned invalid result');
+            }
+            
+            console.log(`[KEYFORGE] SUCCESS: ${code.length} -> ${obfuscated.length} bytes`);
+            
+            // Giữ format V9: { data, key } nhưng data = obfuscated Lua, key = null
+            return { data: obfuscated, key: null };
+            
+        } catch (error) {
+            lastError = error;
+            console.error(`[KEYFORGE] Attempt ${attempt + 1} failed:`, error.message);
+            
+            if (isKeyforgeQuotaError(error)) {
+                triggerKeyforgeCooldown(5 * 60 * 1000);
+                break;
+            }
+            if (isKeyforgeAuthError(error)) {
+                triggerKeyforgeCooldown(60 * 60 * 1000);
+                break;
+            }
+            if (attempt < CONFIG.KEYFORGE_RETRY) {
+                await sleep(1000 * Math.pow(2, attempt));
+            }
+        }
+    }
+    
+    throw lastError || new Error('Keyforge obfuscation failed');
+}
+
+// ============================================================
+// GLOBAL CACHE STATE (giữ nguyên V9)
 // ============================================================
 if (!global.__APEX_CACHE__) {
     global.__APEX_CACHE__ = {
-        data: new Map(),        // key -> { value, createdAt, lastAccess, expiresAt, staleUntil }
-        pendingReads: new Map(), // key -> Promise
+        data: new Map(),
+        pendingReads: new Map(),
         lastCleanup: Date.now()
     };
     console.log('[APEX CACHE] INITIALIZED');
@@ -105,43 +280,35 @@ if (!global.__APEX_CACHE__) {
 const cacheState = global.__APEX_CACHE__;
 
 // ============================================================
-// CACHE FUNCTIONS
+// CACHE FUNCTIONS (giữ nguyên V9)
 // ============================================================
-
 function cacheGet(key) {
     const now = Date.now();
     const entry = cacheState.data.get(key);
-    
     if (!entry) return null;
-    
     if (now < entry.expiresAt) {
         entry.lastAccess = now;
         console.log(`[APEX CACHE] HIT ${key}`);
         return { ...entry.value, fromCache: true };
     }
-    
     return null;
 }
 
 function cacheGetStale(key) {
     const now = Date.now();
     const entry = cacheState.data.get(key);
-    
     if (!entry) return null;
-    
     if (now < entry.staleUntil) {
         entry.lastAccess = now;
         console.log(`[APEX CACHE] STALE_HIT ${key}`);
         return { ...entry.value, fromCache: true, stale: true };
     }
-    
     cacheState.data.delete(key);
     return null;
 }
 
 function cacheSet(key, value, ttl = CONFIG.CACHE_TTL) {
     const now = Date.now();
-    
     cacheState.data.set(key, {
         value: value,
         createdAt: now,
@@ -149,7 +316,6 @@ function cacheSet(key, value, ttl = CONFIG.CACHE_TTL) {
         expiresAt: now + ttl,
         staleUntil: now + ttl + CONFIG.CACHE_STALE_GRACE
     });
-    
     cleanupCache();
     console.log(`[APEX CACHE] SET ${key}`);
 }
@@ -162,29 +328,22 @@ function cacheDelete(key) {
 
 function cleanupCache() {
     const now = Date.now();
-    
     if (now - cacheState.lastCleanup < CONFIG.CACHE_CLEANUP_INTERVAL) return;
-    
     cacheState.lastCleanup = now;
-    
     for (const [key, entry] of cacheState.data.entries()) {
-        if (now >= entry.staleUntil) {
-            cacheState.data.delete(key);
-        }
+        if (now >= entry.staleUntil) cacheState.data.delete(key);
     }
-    
     if (cacheState.data.size > CONFIG.MAX_CACHE_ENTRIES) {
         const entries = Array.from(cacheState.data.entries());
         entries.sort((a, b) => a[1].lastAccess - b[1].lastAccess);
-        const toDelete = entries.slice(0, entries.length - CONFIG.MAX_CACHE_ENTRIES);
-        for (const [key] of toDelete) {
+        for (const [key] of entries.slice(0, entries.length - CONFIG.MAX_CACHE_ENTRIES)) {
             cacheState.data.delete(key);
         }
     }
 }
 
 // ============================================================
-// GLOBAL RATE LIMIT STATE
+// RATE LIMIT STATE (giữ nguyên V9)
 // ============================================================
 if (!global.__APEX_RATE_LIMIT__) {
     global.__APEX_RATE_LIMIT__ = {
@@ -198,31 +357,8 @@ if (!global.__APEX_RATE_LIMIT__) {
 const rateState = global.__APEX_RATE_LIMIT__;
 
 // ============================================================
-// HELPERS
+// HELPERS (giữ nguyên V9)
 // ============================================================
-
-function generateRandomKey(length = 32) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
-
-function encryptPayload(code) {
-    const key = generateRandomKey(16);
-    const bytes = Buffer.from(code, 'utf8');
-    const encrypted = Buffer.alloc(bytes.length);
-    
-    for (let i = 0; i < bytes.length; i++) {
-        const keyChar = key.charCodeAt(i % key.length);
-        encrypted[i] = bytes[i] ^ keyChar;
-    }
-    
-    return { data: encrypted.toString('hex'), key: key };
-}
-
 function normalizeName(name) {
     return name.trim().toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')
@@ -254,45 +390,37 @@ function isValidName(name) {
 }
 
 // ============================================================
-// RATE LIMIT FUNCTIONS
+// RATE LIMIT FUNCTIONS (giữ nguyên V9)
 // ============================================================
-
 function cleanupRateState() {
     const now = Date.now();
-    
     if (now - rateState.lastCleanup < CONFIG.IP_CLEANUP_INTERVAL) return;
-    
     rateState.lastCleanup = now;
-    
     for (const [ip, bannedUntil] of rateState.banned.entries()) {
         if (now > bannedUntil) rateState.banned.delete(ip);
     }
-    
     for (const [ip, data] of rateState.requests.entries()) {
         if (now - data.start > CONFIG.RATE_LIMIT_WINDOW * 2) {
             rateState.requests.delete(ip);
         }
     }
-    
     if (rateState.requests.size > CONFIG.MAX_IPS_TRACKED) {
         const entries = Array.from(rateState.requests.entries());
         entries.sort((a, b) => a[1].start - b[1].start);
-        const toDelete = entries.slice(0, entries.length - CONFIG.MAX_IPS_TRACKED);
-        for (const [ip] of toDelete) rateState.requests.delete(ip);
+        for (const [ip] of entries.slice(0, entries.length - CONFIG.MAX_IPS_TRACKED)) {
+            rateState.requests.delete(ip);
+        }
     }
 }
 
 function isIPBanned(ip) {
     const now = Date.now();
     const bannedUntil = rateState.banned.get(ip);
-    
     if (!bannedUntil) return false;
-    
     if (now > bannedUntil) {
         rateState.banned.delete(ip);
         return false;
     }
-    
     return true;
 }
 
@@ -304,82 +432,58 @@ function banIP(ip) {
 
 function checkRateLimit(ip) {
     const now = Date.now();
-    
     cleanupRateState();
-    
-    if (isIPBanned(ip)) {
-        return { allowed: false, reason: 'banned' };
-    }
-    
+    if (isIPBanned(ip)) return { allowed: false, reason: 'banned' };
     let data = rateState.requests.get(ip);
-    
     if (!data || now - data.start > CONFIG.RATE_LIMIT_WINDOW) {
         data = { start: now, count: 0, burstStart: now, burstCount: 0 };
         rateState.requests.set(ip, data);
     }
-    
     if (now - data.burstStart > CONFIG.BURST_WINDOW) {
         data.burstStart = now;
         data.burstCount = 0;
     }
-    
     data.count++;
     data.burstCount++;
-    
     if (data.burstCount > CONFIG.BURST_MAX) {
         banIP(ip);
-        console.log(`[APEX RATE] BURST LIMIT EXCEEDED: ${ip}`);
         return { allowed: false, reason: 'burst' };
     }
-    
     if (data.count > CONFIG.RATE_LIMIT_MAX) {
-        console.log(`[APEX RATE] RATE LIMIT EXCEEDED: ${ip}`);
         return { allowed: false, reason: 'limit' };
     }
-    
     return { allowed: true, remaining: CONFIG.RATE_LIMIT_MAX - data.count };
 }
 
 // ============================================================
-// FIREBASE QUOTA COOLDOWN
+// FIREBASE QUOTA (giữ nguyên V9)
 // ============================================================
-
 function isQuotaCooldown() {
     return Date.now() < firebaseQuotaCooldownUntil;
 }
 
 function triggerQuotaCooldown() {
     firebaseQuotaCooldownUntil = Date.now() + CONFIG.QUOTA_COOLDOWN;
-    console.log(`[APEX FIREBASE] QUOTA COOLDOWN - ${CONFIG.QUOTA_COOLDOWN / 1000}s`);
+    console.log(`[APEX FIREBASE] QUOTA COOLDOWN`);
 }
 
 function isQuotaError(error) {
     const msg = (error?.message || '').toLowerCase();
-    return msg.includes('resource_exhausted') || 
-           msg.includes('quota exceeded') || 
-           msg.includes('quota');
+    return msg.includes('resource_exhausted') || msg.includes('quota exceeded') || msg.includes('quota');
 }
 
 // ============================================================
-// SCRIPT FUNCTIONS
+// SCRIPT FUNCTIONS (giữ nguyên V9)
 // ============================================================
-
 async function getScript(name) {
     const cacheKey = `script:${name}`;
-    
-    // 1. Check fresh cache
     const fresh = cacheGet(cacheKey);
-    if (fresh) {
-        return { ...fresh, fromCache: true };
-    }
+    if (fresh) return { ...fresh, fromCache: true };
     
-    // 2. Check pending reads (deduplication)
     if (cacheState.pendingReads.has(cacheKey)) {
-        console.log(`[APEX CACHE] PENDING ${name}`);
         return await cacheState.pendingReads.get(cacheKey);
     }
     
-    // 3. Check Firebase availability
     if (!firebaseReady || !db) {
         if (!initFirebase()) {
             const stale = cacheGetStale(cacheKey);
@@ -388,42 +492,25 @@ async function getScript(name) {
         }
     }
     
-    // 4. Check quota cooldown
     if (isQuotaCooldown()) {
-        console.log(`[APEX FIREBASE] COOLDOWN - Serving stale: ${name}`);
         const stale = cacheGetStale(cacheKey);
         if (stale) return { ...stale, fromCache: true, stale: true };
         throw new Error('Firebase quota cooldown');
     }
     
-    // 5. Create read promise
     const readPromise = (async () => {
         try {
             console.log(`[APEX FIREBASE] READ ${name}`);
             const doc = await db.collection(CONFIG.SCRIPTS_COLLECTION).doc(name).get();
-            
-            if (!doc.exists) {
-                return null;
-            }
-            
+            if (!doc.exists) return null;
             const data = doc.data();
-            
             cacheSet(cacheKey, data, CONFIG.CACHE_TTL);
-            
             return data;
         } catch (error) {
             console.error(`[APEX FIREBASE] ERROR ${name}:`, error.message);
-            
-            if (isQuotaError(error)) {
-                triggerQuotaCooldown();
-            }
-            
+            if (isQuotaError(error)) triggerQuotaCooldown();
             const stale = cacheGetStale(cacheKey);
-            if (stale) {
-                console.log(`[APEX CACHE] STALE FALLBACK ${name}`);
-                return { ...stale, fromCache: true, stale: true };
-            }
-            
+            if (stale) return { ...stale, fromCache: true, stale: true };
             throw error;
         } finally {
             cacheState.pendingReads.delete(cacheKey);
@@ -438,24 +525,17 @@ async function saveScript(name, data) {
     if (!firebaseReady || !db) {
         if (!initFirebase()) throw new Error('Firebase not available');
     }
-    
     try {
         console.log(`[APEX FIREBASE] WRITE ${name}`);
         await db.collection(CONFIG.SCRIPTS_COLLECTION).doc(name).set({
             ...data,
             updatedAt: Date.now()
         }, { merge: true });
-        
         cacheSet(`script:${name}`, data, CONFIG.CACHE_TTL);
-        
         return true;
     } catch (error) {
         console.error(`[APEX FIREBASE] WRITE ERROR ${name}:`, error.message);
-        
-        if (isQuotaError(error)) {
-            triggerQuotaCooldown();
-        }
-        
+        if (isQuotaError(error)) triggerQuotaCooldown();
         throw error;
     }
 }
@@ -464,66 +544,44 @@ async function deleteScript(name) {
     if (!firebaseReady || !db) {
         if (!initFirebase()) throw new Error('Firebase not available');
     }
-    
     try {
         console.log(`[APEX FIREBASE] DELETE ${name}`);
         await db.collection(CONFIG.SCRIPTS_COLLECTION).doc(name).delete();
-        
         cacheDelete(`script:${name}`);
-        
         return true;
     } catch (error) {
         console.error(`[APEX FIREBASE] DELETE ERROR ${name}:`, error.message);
-        
-        if (isQuotaError(error)) {
-            triggerQuotaCooldown();
-        }
-        
+        if (isQuotaError(error)) triggerQuotaCooldown();
         throw error;
     }
 }
 
 // ============================================================
-// LOADER GENERATOR
+// LOADER GENERATOR (V10 — Keyforge: không XOR, chỉ loadstring)
 // ============================================================
-
 function generateLoader(encryptedPayload, host) {
-    const hexData = encryptedPayload.data;
-    const key = encryptedPayload.key;
+    // V10: encryptedPayload.data = obfuscated Lua (đã obf sẵn)
+    //       encryptedPayload.key = null (không dùng)
+    const obfuscated = encryptedPayload.data;
+    
     const out = [];
     
-    out.push(`-- APEX HUB Loader v9 (Professional Edition)`);
+    out.push(`-- APEX HUB Loader v10 (Keyforge Protected)`);
     out.push(`-- Protected by APEX Security System`);
-    out.push(`local _key = "${key}"`);
-    out.push(`local _hex = "${hexData}"\n`);
+    out.push(`local _payload = [==[`);
+    out.push(obfuscated);
+    out.push(`]==]\n`);
     
-    out.push(`local _byte = string.byte`);
-    out.push(`local _char = string.char`);
-    out.push(`local _tonumber = tonumber`);
-    out.push(`local _bxor = bit32 and bit32.bxor or bit and bit.bxor`);
-    out.push(`local _keyLen = #_key`);
-    out.push(`local _idx = 1\n`);
+    out.push(`assert(type(_payload) == "string", "APEX Error: Payload corrupted")`);
+    out.push(`assert(#_payload > 0, "APEX Error: Payload empty")\n`);
     
-    out.push(`local _code = _hex:gsub("..", function(cc)`);
-    out.push(`    local b = _tonumber(cc, 16)`);
-    out.push(`    local kb = _byte(_key, (_idx - 1) % _keyLen + 1)`);
-    out.push(`    _idx = _idx + 1`);
-    out.push(`    return _char(_bxor(b, kb))`);
-    out.push(`end)\n`);
-    
-    out.push(`_hex = nil`);
-    out.push(`_key = nil\n`);
-    
-    out.push(`assert(type(_code) == "string", "APEX Error: Decoded data corrupted")`);
-    out.push(`assert(#_code > 0, "APEX Error: Decoded script content is empty")\n`);
-    
-    out.push(`local _f, _e = loadstring(_code)`);
+    out.push(`local _f, _e = loadstring(_payload)`);
     out.push(`if not _f then`);
     out.push(`    warn("=== APEX HUB CLIENT DEBUG ===")`);
-    out.push(`    warn("Received Payload Size: " .. #_code .. " bytes")`);
+    out.push(`    warn("Received Payload Size: " .. #_payload .. " bytes")`);
     out.push(`    error("APEX Hub Compile Error: " .. tostring(_e))`);
     out.push(`end`);
-    out.push(`_code = nil`);
+    out.push(`_payload = nil`);
     out.push(`_f()`);
     out.push(`_f = nil`);
     out.push(`collectgarbage("collect")`);
@@ -532,9 +590,8 @@ function generateLoader(encryptedPayload, host) {
 }
 
 // ============================================================
-// HTML PAGES (V9 - Redesigned)
+// HTML PAGES (giữ nguyên V9 — copy từ file gốc của bạn)
 // ============================================================
-
 function getProtectionPage() {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -559,13 +616,7 @@ function getProtectionPage() {
             --button-hover-border: rgba(255, 255, 255, 0.12);
             --icon-color: rgba(255, 255, 255, 0.16);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background-color: var(--bg);
@@ -578,7 +629,6 @@ function getProtectionPage() {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(48px);
@@ -592,18 +642,10 @@ function getProtectionPage() {
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
             animation: cardFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
-
         @keyframes cardFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(28px) scale(0.97);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(28px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
         .icon-lock {
             display: flex;
             align-items: center;
@@ -615,13 +657,7 @@ function getProtectionPage() {
             margin: 0 auto 28px;
             color: var(--icon-color);
         }
-
-        .icon-lock svg {
-            width: 22px;
-            height: 22px;
-            opacity: 0.7;
-        }
-
+        .icon-lock svg { width: 22px; height: 22px; opacity: 0.7; }
         .title {
             font-size: 28px;
             font-weight: 620;
@@ -630,7 +666,6 @@ function getProtectionPage() {
             margin-bottom: 10px;
             line-height: 1.2;
         }
-
         .subtitle {
             font-size: 14px;
             font-weight: 450;
@@ -638,20 +673,13 @@ function getProtectionPage() {
             margin-bottom: 36px;
             line-height: 1.6;
         }
-
-        .subtitle strong {
-            font-weight: 600;
-            color: #d4d4d8;
-            letter-spacing: -0.01em;
-        }
-
+        .subtitle strong { font-weight: 600; color: #d4d4d8; letter-spacing: -0.01em; }
         .separator {
             width: 100%;
             height: 1px;
             background: rgba(255, 255, 255, 0.045);
             margin: 0 0 32px 0;
         }
-
         .description {
             font-size: 13.5px;
             color: var(--text-secondary);
@@ -659,14 +687,7 @@ function getProtectionPage() {
             margin-bottom: 36px;
             padding: 0 8px;
         }
-
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 36px;
-        }
-
+        .actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -683,26 +704,22 @@ function getProtectionPage() {
             width: 100%;
             box-sizing: border-box;
         }
-
         .btn-primary {
             background: var(--button-primary-bg);
             border: 1px solid var(--button-primary-border);
             color: var(--text-primary);
         }
-
         .btn-primary:hover {
             background: var(--button-hover-bg);
             border-color: var(--button-hover-border);
             transform: translateY(-1px);
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
         }
-
         .btn-secondary {
             background: var(--button-secondary-bg);
             border: 1px solid var(--button-secondary-border);
             color: var(--text-secondary);
         }
-
         .btn-secondary:hover {
             background: var(--button-hover-bg);
             border-color: var(--button-hover-border);
@@ -710,7 +727,6 @@ function getProtectionPage() {
             transform: translateY(-1px);
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
         }
-
         .footer {
             font-size: 10px;
             text-transform: uppercase;
@@ -718,35 +734,14 @@ function getProtectionPage() {
             color: var(--text-tertiary);
             font-weight: 500;
         }
-
         @media (max-width: 600px) {
-            .card {
-                padding: 44px 28px;
-                border-radius: 18px;
-            }
-            .title {
-                font-size: 24px;
-            }
-            .subtitle {
-                font-size: 13px;
-            }
-            .description {
-                font-size: 12.5px;
-                padding: 0;
-            }
-            .btn {
-                padding: 13px 22px;
-                font-size: 13.5px;
-            }
-            .icon-lock {
-                width: 44px;
-                height: 44px;
-                margin-bottom: 24px;
-            }
-            .icon-lock svg {
-                width: 19px;
-                height: 19px;
-            }
+            .card { padding: 44px 28px; border-radius: 18px; }
+            .title { font-size: 24px; }
+            .subtitle { font-size: 13px; }
+            .description { font-size: 12.5px; padding: 0; }
+            .btn { padding: 13px 22px; font-size: 13.5px; }
+            .icon-lock { width: 44px; height: 44px; margin-bottom: 24px; }
+            .icon-lock svg { width: 19px; height: 19px; }
         }
     </style>
 </head>
@@ -759,28 +754,17 @@ function getProtectionPage() {
                 <circle cx="12" cy="16" r="1"></circle>
             </svg>
         </div>
-
         <h1 class="title">Access Denied</h1>
-        <p class="subtitle">
-            This Lua script is protected by <strong>APEX HUB</strong>
-        </p>
-
+        <p class="subtitle">This Lua script is protected by <strong>APEX HUB</strong></p>
         <div class="separator"></div>
-
         <p class="description">
             You don't have permission to access these files.<br>
             This script has been protected against unauthorized access, reverse engineering, and tampering.
         </p>
-
         <div class="actions">
-            <a href="https://apexhubeditor.vercel.app/" class="btn btn-primary">
-                Return Home
-            </a>
-            <a href="https://discord.gg/9wdU3rrGGw" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                Discord
-            </a>
+            <a href="https://apexhubeditor.vercel.app/" class="btn btn-primary">Return Home</a>
+            <a href="https://discord.gg/9wdU3rrGGw" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Discord</a>
         </div>
-
         <div class="footer">APEX HUB · Security Infrastructure</div>
     </div>
 </body>
@@ -808,11 +792,9 @@ function getServiceUnavailablePage() {
 }
 
 // ============================================================
-// MAIN HANDLER
+// MAIN HANDLER (giữ nguyên cấu trúc V9, chỉ đổi chỗ gọi obf)
 // ============================================================
-
 export default async function handler(req, res) {
-    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Key');
@@ -827,7 +809,6 @@ export default async function handler(req, res) {
     const ip = getClientIP(req);
     console.log(`[APEX REQUEST] ${req.method} from ${ip}`);
 
-    // Rate limit check
     const limitResult = checkRateLimit(ip);
     
     if (!limitResult.allowed) {
@@ -841,7 +822,7 @@ export default async function handler(req, res) {
 
     try {
         // ============================================================
-        // GET HANDLER
+        // GET HANDLER (giữ nguyên V9, chỉ đổi encryptPayload → keyforgeObfuscate)
         // ============================================================
         if (req.method === 'GET') {
             const { name, key, raw } = req.query;
@@ -855,23 +836,19 @@ export default async function handler(req, res) {
                 return res.send(getWelcomePage());
             }
             
-            // Validate name
             if (!isValidName(name)) {
                 return res.status(400).json({ error: 'Invalid script name' });
             }
             
-            // Check access
             const hasValidKey = CONFIG.VALID_KEYS.includes(key) || CONFIG.VALID_KEYS.includes(authKey);
             const wantsRaw = raw === 'true';
             const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
             
-            // Nếu không có key, không raw, không executor → trả protection page
             if (!hasValidKey && !wantsRaw && !isExecutor) {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
                 return res.send(getProtectionPage());
             }
             
-            // Get script (cache first)
             let scriptData;
             try {
                 scriptData = await getScript(name);
@@ -887,19 +864,37 @@ export default async function handler(req, res) {
                 return res.status(404).send(getErrorPage(name));
             }
             
-            // Return raw payload
+            // V10: Dùng keyforgeObfuscate thay vì encryptPayload
+            let payload;
+            try {
+                payload = await keyforgeObfuscate(scriptData.code);
+            } catch (error) {
+                console.error(`[APEX GET] Obfuscation failed:`, error.message);
+                // Fallback: nếu Keyforge fail mà cache stale có → dùng
+                const stale = cacheGetStale(`script:${name}`);
+                if (stale?.code) {
+                    try {
+                        payload = await keyforgeObfuscate(stale.code);
+                    } catch (e) {
+                        return res.status(503).send(getServiceUnavailablePage());
+                    }
+                } else {
+                    return res.status(503).send(getServiceUnavailablePage());
+                }
+            }
+            
+            // V10: Trả về CÙNG format V9 (payload + decryptKey)
+            // Nhưng payload giờ là obfuscated Lua, decryptKey = null
             if (hasValidKey || wantsRaw) {
-                const payload = encryptPayload(scriptData.code);
                 return res.json({
                     success: true,
-                    payload: payload.data,
-                    decryptKey: payload.key
+                    payload: payload.data,      // obfuscated Lua
+                    decryptKey: payload.key     // null (Keyforge không cần key)
                 });
             }
             
-            // Return loader for executors
+            // V10: Loader cho executor (không XOR, chỉ loadstring)
             if (isExecutor) {
-                const payload = encryptPayload(scriptData.code);
                 res.setHeader('Content-Type', 'text/plain; charset=utf-8');
                 return res.send(generateLoader(payload, req.headers.host));
             }
@@ -908,7 +903,7 @@ export default async function handler(req, res) {
         }
         
         // ============================================================
-        // POST HANDLER
+        // POST HANDLER (giữ nguyên V9)
         // ============================================================
         if (req.method === 'POST') {
             const { code, name, uid } = req.body;
@@ -949,19 +944,15 @@ export default async function handler(req, res) {
         }
         
         // ============================================================
-        // PUT HANDLER
+        // PUT HANDLER (giữ nguyên V9)
         // ============================================================
         if (req.method === 'PUT') {
             const { name, code, uid } = req.body;
             
             console.log(`[APEX PUT] Name: ${name || 'N/A'}`);
             
-            if (!name) {
-                return res.status(400).json({ success: false, error: 'Name is required' });
-            }
-            if (!code || !code.trim()) {
-                return res.status(400).json({ success: false, error: 'Code is required' });
-            }
+            if (!name) return res.status(400).json({ success: false, error: 'Name is required' });
+            if (!code || !code.trim()) return res.status(400).json({ success: false, error: 'Code is required' });
             
             let scriptData;
             try {
@@ -970,9 +961,7 @@ export default async function handler(req, res) {
                 return res.status(503).json({ success: false, error: 'Service unavailable' });
             }
             
-            if (!scriptData) {
-                return res.status(404).json({ success: false, error: 'Script not found' });
-            }
+            if (!scriptData) return res.status(404).json({ success: false, error: 'Script not found' });
             
             if (uid && scriptData.owner && scriptData.owner !== uid) {
                 return res.status(403).json({ success: false, error: 'Not your script' });
@@ -998,16 +987,14 @@ export default async function handler(req, res) {
         }
         
         // ============================================================
-        // DELETE HANDLER
+        // DELETE HANDLER (giữ nguyên V9)
         // ============================================================
         if (req.method === 'DELETE') {
             const { name, uid } = req.query;
             
             console.log(`[APEX DELETE] Name: ${name || 'N/A'}`);
             
-            if (!name) {
-                return res.status(400).json({ success: false, error: 'Name is required' });
-            }
+            if (!name) return res.status(400).json({ success: false, error: 'Name is required' });
             
             let scriptData;
             try {
@@ -1016,9 +1003,7 @@ export default async function handler(req, res) {
                 return res.status(503).json({ success: false, error: 'Service unavailable' });
             }
             
-            if (!scriptData) {
-                return res.status(404).json({ success: false, error: 'Script not found' });
-            }
+            if (!scriptData) return res.status(404).json({ success: false, error: 'Script not found' });
             
             if (uid && scriptData.owner && scriptData.owner !== uid) {
                 return res.status(403).json({ success: false, error: 'Not your script' });
