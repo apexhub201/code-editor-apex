@@ -1,13 +1,12 @@
 // ============================================================
 // api/raw.js - APEX HUB V10 (Firebase + Cache + Quota + ANALYTICS)
-// Analytics tách sang Firebase Backup — CRUD giữ Firebase chính
 // ============================================================
 
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
 // ============================================================
-// FIREBASE MAIN INITIALIZATION (CRUD — scripts)
+// FIREBASE INITIALIZATION
 // ============================================================
 let db = null;
 let firebaseReady = false;
@@ -54,68 +53,6 @@ function initFirebase() {
 initFirebase();
 
 // ============================================================
-// FIREBASE BACKUP INITIALIZATION (ANALYTICS ONLY)
-// ============================================================
-const BACKUP_APP_NAME = 'apex-analytics-backup';
-const BACKUP_INIT_RETRY_DELAY = 60 * 1000; // 60s giữa các lần thử init lại
-
-let backupDb = null;
-let backupReady = false;
-let backupQuotaCooldownUntil = 0;
-let backupInitNextRetryAt = 0;
-
-function initBackupFirebase() {
-    if (backupReady) return true;
-
-    const now = Date.now();
-    if (now < backupInitNextRetryAt) {
-        // Chưa đến thời điểm thử lại
-        return false;
-    }
-
-    try {
-        const projectId = process.env.BACKUP_FIREBASE_PROJECT_ID;
-        const clientEmail = process.env.BACKUP_FIREBASE_CLIENT_EMAIL;
-        const privateKey = process.env.BACKUP_FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-
-        console.log('[APEX BACKUP FIREBASE] INIT CHECK:');
-        console.log('  Project ID:', projectId ? 'SET' : 'MISSING');
-        console.log('  Client Email:', clientEmail ? 'SET' : 'MISSING');
-        console.log('  Private Key:', privateKey ? 'SET' : 'MISSING');
-
-        if (!projectId || !clientEmail || !privateKey) {
-            console.warn('[APEX BACKUP FIREBASE] MISSING ENV — Analytics disabled (safe no-op)');
-            backupInitNextRetryAt = now + BACKUP_INIT_RETRY_DELAY;
-            return false;
-        }
-
-        let backupApp = getApps().find(a => a.name === BACKUP_APP_NAME);
-        if (!backupApp) {
-            backupApp = initializeApp(
-                {
-                    credential: cert({ projectId, clientEmail, privateKey })
-                },
-                BACKUP_APP_NAME
-            );
-            console.log('[APEX BACKUP FIREBASE] APP INITIALIZED');
-        } else {
-            console.log('[APEX BACKUP FIREBASE] APP ALREADY EXISTS');
-        }
-
-        backupDb = getFirestore(backupApp);
-        backupReady = true;
-        backupInitNextRetryAt = 0;
-        console.log('[APEX BACKUP FIREBASE] FIRESTORE READY');
-        return true;
-    } catch (error) {
-        console.error('[APEX BACKUP FIREBASE] INIT ERROR:', error.message);
-        backupReady = false;
-        backupInitNextRetryAt = now + BACKUP_INIT_RETRY_DELAY;
-        return false;
-    }
-}
-
-// ============================================================
 // CONFIGURATION
 // ============================================================
 const CONFIG = {
@@ -128,7 +65,7 @@ const CONFIG = {
     MAX_CACHE_ENTRIES: 500,
     CACHE_CLEANUP_INTERVAL: 60 * 1000,
 
-    // Quota Protection (MAIN Firebase)
+    // Quota Protection
     QUOTA_COOLDOWN: 60 * 1000,
 
     // Rate Limit
@@ -146,15 +83,12 @@ const CONFIG = {
     ANALYTICS_MIN_INTERVAL: 3000,
     ANALYTICS_CACHE_MAX: 2000,
 
-    // Analytics flush
-    ANALYTICS_FLUSH_INTERVAL: 30 * 1000,
-    ANALYTICS_FLUSH_MAX_KEYS: 50,
-    ANALYTICS_UNIQUE_TTL: 24 * 60 * 60 * 1000,
-    ANALYTICS_UNIQUE_MAX: 5000,
-    ANALYTICS_FLUSH_RETRY_MAX: 2,
-
-    // Firestore batch safety (dưới 500 cứng)
-    FIRESTORE_BATCH_MAX_OPS: 450,
+    // Analytics flush (NEW)
+    ANALYTICS_FLUSH_INTERVAL: 30 * 1000,     // flush mỗi 30s
+    ANALYTICS_FLUSH_MAX_KEYS: 50,             // flush tối đa 50 script+day mỗi lần
+    ANALYTICS_UNIQUE_TTL: 24 * 60 * 60 * 1000, // 1 ngày nhớ unique IP
+    ANALYTICS_UNIQUE_MAX: 5000,               // giới hạn unique cache
+    ANALYTICS_FLUSH_RETRY_MAX: 2,             // retry tối đa 2 lần
 
     // Valid Keys
     VALID_KEYS: (process.env.APEX_MASTER_KEYS || 'd0egkw6en9eusrjje5vn70p2tvkngkkn,apex-master-key-2024').split(','),
@@ -187,9 +121,16 @@ const cacheState = global.__APEX_CACHE__;
 // ============================================================
 if (!global.__APEX_ANALYTICS__) {
     global.__APEX_ANALYTICS__ = {
+        // Buffer: "scriptName|dayKey" → { scriptName, dayKey, monthKey, loads }
         buffer: new Map(),
+
+        // Unique IP tracking: "scriptName|dayKey|ipHash" → timestamp
         uniqueCache: new Map(),
+
+        // Throttle: "ip|scriptName" → timestamp
         throttle: new Map(),
+
+        // Flush state
         flushing: false,
         lastFlush: Date.now(),
         lastCleanup: Date.now()
@@ -207,6 +148,7 @@ function analyticsCleanup() {
     if (now - analyticsState.lastCleanup < 5 * 60 * 1000) return;
     analyticsState.lastCleanup = now;
 
+    // Clean throttle
     for (const [k, t] of analyticsState.throttle.entries()) {
         if (now - t > 10 * 60 * 1000) analyticsState.throttle.delete(k);
     }
@@ -217,6 +159,7 @@ function analyticsCleanup() {
         for (const [k] of toDel) analyticsState.throttle.delete(k);
     }
 
+    // Clean unique cache (expired after TTL)
     const uniqueTtl = CONFIG.ANALYTICS_UNIQUE_TTL;
     for (const [k, t] of analyticsState.uniqueCache.entries()) {
         if (now - t > uniqueTtl) analyticsState.uniqueCache.delete(k);
@@ -230,14 +173,15 @@ function analyticsCleanup() {
 }
 
 // ============================================================
-// TRACK SCRIPT LOAD (BUFFERED) — Analytics → BACKUP only
+// TRACK SCRIPT LOAD (BUFFERED)
 // ============================================================
 function trackScriptLoad(scriptName, ip, userAgent) {
-    if (!backupReady || !backupDb || !scriptName) return;
-    if (isBackupQuotaCooldown()) return;
+    if (!db || !firebaseReady || !scriptName) return;
+    if (isQuotaCooldown()) return;
 
     const now = Date.now();
 
+    // Throttle: 1 IP + 1 script ghi tối đa 1 lần / 3s
     const throttleKey = ip + '|' + scriptName;
     const last = analyticsState.throttle.get(throttleKey) || 0;
     if (now - last < CONFIG.ANALYTICS_MIN_INTERVAL) return;
@@ -245,15 +189,18 @@ function trackScriptLoad(scriptName, ip, userAgent) {
 
     analyticsCleanup();
 
+    // Ngày theo VN timezone (UTC+7)
     const vnTime = new Date(now + 7 * 60 * 60 * 1000);
-    const dayKey = vnTime.toISOString().split('T')[0];
-    const monthKey = dayKey.substring(0, 7);
+    const dayKey = vnTime.toISOString().split('T')[0];    // YYYY-MM-DD
+    const monthKey = dayKey.substring(0, 7);              // YYYY-MM
 
+    // Hash IP để đếm unique (không lưu IP thật)
     const ipHash = Buffer.from(ip).toString('base64')
         .replace(/[^a-zA-Z0-9]/g, '').substring(0, 24) || 'unknown';
 
     const bufferKey = scriptName + '|' + dayKey;
 
+    // --- Buffer loads counter ---
     let entry = analyticsState.buffer.get(bufferKey);
     if (!entry) {
         entry = { scriptName, dayKey, monthKey, loads: 0 };
@@ -261,6 +208,7 @@ function trackScriptLoad(scriptName, ip, userAgent) {
     }
     entry.loads += 1;
 
+    // --- Unique tracking (chỉ ghi 1 lần / IP / script / ngày) ---
     const uniqueKey = scriptName + '|' + dayKey + '|' + ipHash;
     if (!analyticsState.uniqueCache.has(uniqueKey)) {
         analyticsState.uniqueCache.set(uniqueKey, now);
@@ -268,193 +216,45 @@ function trackScriptLoad(scriptName, ip, userAgent) {
         entry._newUniques.push({ ipHash, ua: (userAgent || '').substring(0, 120) });
     }
 
+    // --- Trigger flush nếu buffer lớn ---
     if (analyticsState.buffer.size >= CONFIG.ANALYTICS_FLUSH_MAX_KEYS) {
         flushAnalytics();
     }
 }
 
 // ============================================================
-// BUILD BATCH CHUNKS (≤ FIRESTORE_BATCH_MAX_OPS mỗi chunk)
-// Trả về mảng chunk, mỗi chunk là { entries: [...], ops: number }
-// ============================================================
-function buildBatchChunks(entries) {
-    const MAX = CONFIG.FIRESTORE_BATCH_MAX_OPS;
-    const chunks = [];
-    let current = { entries: [], ops: 0 };
-
-    for (const [bufferKey, entry] of entries) {
-        const uniqueCount = (entry._newUniques && entry._newUniques.length) || 0;
-        const entryOps = 2 + uniqueCount; // 1 day + 1 main + N unique
-
-        // Entry đơn lẻ vượt MAX: đẩy current ra, tạo chunk riêng cho entry này.
-        // (Sẽ được xử lý đặc biệt khi commit — xem commitChunk)
-        if (entryOps > MAX) {
-            if (current.entries.length > 0) {
-                chunks.push(current);
-                current = { entries: [], ops: 0 };
-            }
-            chunks.push({ entries: [[bufferKey, entry]], ops: entryOps });
-            continue;
-        }
-
-        // Nếu thêm entry này vượt MAX → đóng chunk hiện tại
-        if (current.ops + entryOps > MAX) {
-            if (current.entries.length > 0) {
-                chunks.push(current);
-            }
-            current = { entries: [], ops: 0 };
-        }
-
-        current.entries.push([bufferKey, entry]);
-        current.ops += entryOps;
-    }
-
-    if (current.entries.length > 0) {
-        chunks.push(current);
-    }
-
-    return chunks;
-}
-
-// ============================================================
-// COMMIT MỘT CHUNK — trả về { ok: true } hoặc { ok: false, error, failedEntryKeys }
-// Với entry đơn lẻ vượt MAX: ghi day+main trước, rồi unique theo sub-chunk.
-// ============================================================
-async function commitChunk(chunk) {
-    const MAX = CONFIG.FIRESTORE_BATCH_MAX_OPS;
-
-    // Trường hợp đặc biệt: 1 entry với quá nhiều unique
-    if (chunk.entries.length === 1 && chunk.ops > MAX) {
-        const [bufferKey, entry] = chunk.entries[0];
-        const { scriptName, dayKey, monthKey, loads, _newUniques } = entry;
-
-        const mainRef = backupDb.collection(CONFIG.ANALYTICS_COLLECTION).doc(scriptName);
-        const dayRef = mainRef.collection('days').doc(dayKey);
-
-        try {
-            // 1) Ghi day + main (2 ops)
-            const headBatch = backupDb.batch();
-            headBatch.set(dayRef, {
-                date: dayKey,
-                month: monthKey,
-                loads: FieldValue.increment(loads),
-                lastLoadAt: FieldValue.serverTimestamp()
-            }, { merge: true });
-            headBatch.set(mainRef, {
-                rawName: scriptName,
-                totalLoads: FieldValue.increment(loads),
-                lastLoadAt: FieldValue.serverTimestamp()
-            }, { merge: true });
-            await headBatch.commit();
-
-            // 2) Ghi unique theo sub-chunk
-            const uniques = _newUniques || [];
-            let subBatch = backupDb.batch();
-            let subOps = 0;
-            for (const u of uniques) {
-                const uniqRef = dayRef.collection('unique').doc(u.ipHash);
-                subBatch.set(uniqRef, {
-                    at: FieldValue.serverTimestamp(),
-                    ua: u.ua
-                }, { merge: true });
-                subOps++;
-                if (subOps >= MAX) {
-                    await subBatch.commit();
-                    subBatch = backupDb.batch();
-                    subOps = 0;
-                }
-            }
-            if (subOps > 0) {
-                await subBatch.commit();
-            }
-
-            return { ok: true };
-        } catch (error) {
-            return { ok: false, error, failedEntryKeys: [bufferKey] };
-        }
-    }
-
-    // Trường hợp thường: 1 batch cho cả chunk
-    const batch = backupDb.batch();
-    for (const [bufferKey, entry] of chunk.entries) {
-        const { scriptName, dayKey, monthKey, loads, _newUniques } = entry;
-
-        const mainRef = backupDb.collection(CONFIG.ANALYTICS_COLLECTION).doc(scriptName);
-        const dayRef = mainRef.collection('days').doc(dayKey);
-
-        batch.set(dayRef, {
-            date: dayKey,
-            month: monthKey,
-            loads: FieldValue.increment(loads),
-            lastLoadAt: FieldValue.serverTimestamp()
-        }, { merge: true });
-
-        batch.set(mainRef, {
-            rawName: scriptName,
-            totalLoads: FieldValue.increment(loads),
-            lastLoadAt: FieldValue.serverTimestamp()
-        }, { merge: true });
-
-        if (_newUniques && _newUniques.length > 0) {
-            for (const u of _newUniques) {
-                const uniqRef = dayRef.collection('unique').doc(u.ipHash);
-                batch.set(uniqRef, {
-                    at: FieldValue.serverTimestamp(),
-                    ua: u.ua
-                }, { merge: true });
-            }
-        }
-    }
-
-    try {
-        await batch.commit();
-        return { ok: true };
-    } catch (error) {
-        return {
-            ok: false,
-            error,
-            failedEntryKeys: chunk.entries.map(([k]) => k)
-        };
-    }
-}
-
-// ============================================================
-// MERGE ENTRY VÀO BUFFER (dùng khi retry)
-// ============================================================
-function mergeEntryIntoBuffer(buffer, key, val) {
-    if (!buffer.has(key)) {
-        buffer.set(key, val);
-    } else {
-        const existing = buffer.get(key);
-        existing.loads += val.loads;
-        if (val._newUniques) {
-            existing._newUniques = existing._newUniques || [];
-            existing._newUniques.push(...val._newUniques);
-        }
-    }
-}
-
-// ============================================================
-// FLUSH ANALYTICS (BATCH) — writes to BACKUP Firestore only
+// FLUSH ANALYTICS (BATCH)
 // ============================================================
 async function flushAnalytics() {
     if (analyticsState.flushing) return;
-    if (!backupReady || !backupDb) return;
-    if (isBackupQuotaCooldown()) return;
+    if (!db || !firebaseReady) return;
+    if (isQuotaCooldown()) return;
 
     const buffer = analyticsState.buffer;
     if (buffer.size === 0) return;
 
     analyticsState.flushing = true;
 
+    // Snapshot và reset buffer ngay để không block request mới
     const entries = Array.from(buffer.entries());
     buffer.clear();
 
+    // Lấy tối đa FLUSH_MAX_KEYS
     const toFlush = entries.slice(0, CONFIG.ANALYTICS_FLUSH_MAX_KEYS);
     const remaining = entries.slice(CONFIG.ANALYTICS_FLUSH_MAX_KEYS);
 
+    // Đưa phần còn lại trở lại buffer
     for (const [key, val] of remaining) {
-        mergeEntryIntoBuffer(buffer, key, val);
+        if (!buffer.has(key)) {
+            buffer.set(key, val);
+        } else {
+            const existing = buffer.get(key);
+            existing.loads += val.loads;
+            if (val._newUniques) {
+                existing._newUniques = existing._newUniques || [];
+                existing._newUniques.push(...val._newUniques);
+            }
+        }
     }
 
     if (toFlush.length === 0) {
@@ -462,64 +262,78 @@ async function flushAnalytics() {
         return;
     }
 
-    console.log(`[APEX ANALYTICS] FLUSH ${toFlush.length} entries -> BACKUP`);
+    console.log(`[APEX ANALYTICS] FLUSH ${toFlush.length} entries`);
 
-    const chunks = buildBatchChunks(toFlush);
-    const allFailedKeys = new Set();
-    let quotaTriggered = false;
-    let committedChunks = 0;
-    let failedChunks = 0;
+    try {
+        const batch = db.batch();
+        let opCount = 0;
 
-    for (const chunk of chunks) {
-        const result = await commitChunk(chunk);
+        for (const [bufferKey, entry] of toFlush) {
+            const { scriptName, dayKey, monthKey, loads, _newUniques } = entry;
 
-        if (result.ok) {
-            committedChunks++;
-            continue;
-        }
+            const mainRef = db.collection(CONFIG.ANALYTICS_COLLECTION).doc(scriptName);
+            const dayRef = mainRef.collection('days').doc(dayKey);
 
-        failedChunks++;
-        console.error('[APEX ANALYTICS] CHUNK ERROR:', result.error?.message || result.error);
+            // 1. Day document: increment loads
+            batch.set(dayRef, {
+                date: dayKey,
+                month: monthKey,
+                loads: FieldValue.increment(loads),
+                lastLoadAt: FieldValue.serverTimestamp()
+            }, { merge: true });
+            opCount++;
 
-        if (isBackupQuotaError(result.error)) {
-            quotaTriggered = true;
-            // Với quota error: dừng flush, đẩy hết phần còn lại (kể cả chunk hiện tại) về buffer
-            for (const k of result.failedEntryKeys) allFailedKeys.add(k);
-            const idx = chunks.indexOf(chunk);
-            for (let i = idx + 1; i < chunks.length; i++) {
-                for (const [k] of chunks[i].entries) allFailedKeys.add(k);
+            // 2. Main document: increment totalLoads
+            batch.set(mainRef, {
+                rawName: scriptName,
+                totalLoads: FieldValue.increment(loads),
+                lastLoadAt: FieldValue.serverTimestamp()
+            }, { merge: true });
+            opCount++;
+
+            // 3. Unique IPs (chỉ những IP mới trong ngày)
+            if (_newUniques && _newUniques.length > 0) {
+                for (const u of _newUniques) {
+                    const uniqRef = dayRef.collection('unique').doc(u.ipHash);
+                    batch.set(uniqRef, {
+                        at: FieldValue.serverTimestamp(),
+                        ua: u.ua
+                    }, { merge: true });
+                    opCount++;
+                }
             }
-            break;
         }
 
-        // Lỗi khác: chỉ đẩy chunk hiện tại về buffer, tiếp tục các chunk sau
-        for (const k of result.failedEntryKeys) allFailedKeys.add(k);
-    }
+        await batch.commit();
+        console.log(`[APEX ANALYTICS] FLUSH OK: ${toFlush.length} entries, ${opCount} ops`);
+    } catch (error) {
+        console.error('[APEX ANALYTICS] FLUSH ERROR:', error.message);
 
-    // Đẩy lại buffer chỉ những entry thuộc chunk fail
-    if (allFailedKeys.size > 0) {
-        const entryMap = new Map(toFlush);
-        for (const k of allFailedKeys) {
-            const val = entryMap.get(k);
-            if (val) mergeEntryIntoBuffer(buffer, k, val);
+        if (isQuotaError(error)) {
+            triggerQuotaCooldown();
         }
+
+        // Retry: đưa entries trở lại buffer (merge)
+        for (const [key, val] of toFlush) {
+            if (!buffer.has(key)) {
+                buffer.set(key, val);
+            } else {
+                const existing = buffer.get(key);
+                existing.loads += val.loads;
+                if (val._newUniques) {
+                    existing._newUniques = existing._newUniques || [];
+                    existing._newUniques.push(...val._newUniques);
+                }
+            }
+        }
+    } finally {
+        analyticsState.flushing = false;
+        analyticsState.lastFlush = Date.now();
     }
-
-    if (quotaTriggered) {
-        triggerBackupQuotaCooldown();
-    }
-
-    console.log(
-        `[APEX ANALYTICS] FLUSH DONE: chunks=${chunks.length}, ok=${committedChunks}, failed=${failedChunks}, ` +
-        `requeued=${allFailedKeys.size}`
-    );
-
-    analyticsState.flushing = false;
-    analyticsState.lastFlush = Date.now();
 }
 
 // ============================================================
-// PERIODIC FLUSH CHECK
+// PERIODIC FLUSH CHECK (gọi trong handler, không dùng setInterval)
 // ============================================================
 function maybeFlushAnalytics() {
     const now = Date.now();
@@ -728,7 +542,7 @@ function checkRateLimit(ip) {
 }
 
 // ============================================================
-// FIREBASE MAIN QUOTA COOLDOWN
+// FIREBASE QUOTA COOLDOWN
 // ============================================================
 function isQuotaCooldown() {
     return Date.now() < firebaseQuotaCooldownUntil;
@@ -747,26 +561,7 @@ function isQuotaError(error) {
 }
 
 // ============================================================
-// FIREBASE BACKUP QUOTA COOLDOWN (isolated)
-// ============================================================
-function isBackupQuotaCooldown() {
-    return Date.now() < backupQuotaCooldownUntil;
-}
-
-function triggerBackupQuotaCooldown() {
-    backupQuotaCooldownUntil = Date.now() + CONFIG.QUOTA_COOLDOWN;
-    console.log(`[APEX BACKUP FIREBASE] QUOTA COOLDOWN - ${CONFIG.QUOTA_COOLDOWN / 1000}s`);
-}
-
-function isBackupQuotaError(error) {
-    const msg = (error?.message || '').toLowerCase();
-    return msg.includes('resource_exhausted') ||
-           msg.includes('quota exceeded') ||
-           msg.includes('quota');
-}
-
-// ============================================================
-// SCRIPT FUNCTIONS (MAIN Firebase only)
+// SCRIPT FUNCTIONS
 // ============================================================
 async function getScript(name) {
     const cacheKey = `script:${name}`;
@@ -1165,10 +960,7 @@ export default async function handler(req, res) {
         return res.status(429).send(getRateLimitPage());
     }
 
-    // Lazy init Backup Firebase (Analytics) — có retry giới hạn
-    initBackupFirebase();
-
-    // Periodic analytics flush (chỉ ghi vào Backup)
+    // Periodic analytics flush
     maybeFlushAnalytics();
 
     try {
@@ -1194,6 +986,7 @@ export default async function handler(req, res) {
             const wantsRaw = raw === 'true';
             const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
 
+            // Không có key, không raw, không executor → protection page (KHÔNG track)
             if (!hasValidKey && !wantsRaw && !isExecutor) {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
                 return res.send(getProtectionPage());
@@ -1217,6 +1010,7 @@ export default async function handler(req, res) {
             // ANALYTICS: track load (chỉ khi thực sự serve script)
             trackScriptLoad(name, ip, ua);
 
+            // Return raw payload
             if (hasValidKey || wantsRaw) {
                 const payload = encryptPayload(scriptData.code);
                 return res.json({
@@ -1226,6 +1020,7 @@ export default async function handler(req, res) {
                 });
             }
 
+            // Return loader for executors
             if (isExecutor) {
                 const payload = encryptPayload(scriptData.code);
                 res.setHeader('Content-Type', 'text/plain; charset=utf-8');
