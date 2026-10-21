@@ -1,7 +1,7 @@
 // ============================================================
-// api/raw.js - APEX HUB V10 (Firebase + Cache + Quota + ANALYTICS + CATPH OBF)
+// api/raw.js - APEX HUB V10 (Firebase + Cache + Quota + ANALYTICS + 100% CATPH OBF)
 // Analytics tách sang Firebase Backup — CRUD giữ Firebase chính
-// Obfuscation qua API: https://catph.onrender.com/api/obfuscate
+// Obfuscation: 100% qua API https://catph.onrender.com/api/obfuscate
 // ============================================================
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
@@ -107,11 +107,10 @@ function initBackupFirebase() {
 const CONFIG = {
     SCRIPTS_COLLECTION: 'scripts',
     ANALYTICS_COLLECTION: 'script_analytics',
-    // Obfuscator API (Catph)
+    // Catph Obfuscator API
     OBF_API_URL: process.env.CATPH_API_URL || 'https://catph.onrender.com/api/obfuscate',
     OBF_API_TOKEN: process.env.CATPH_TOKEN || 'TranTienThanhDepZai',
-    OBF_TIMEOUT_MS: 20000, // Timeout 20s phòng trường hợp Render cold-start
-    OBF_FALLBACK_XOR: true, // Tự động dùng XOR Loader dự phòng nếu API Catph sập/timeout
+    OBF_TIMEOUT_MS: 25000,
     // Cache
     CACHE_TTL: 5 * 60 * 1000,
     CACHE_STALE_GRACE: 60 * 60 * 1000,
@@ -528,14 +527,14 @@ if (!global.__APEX_RATE_LIMIT__) {
 const rateState = global.__APEX_RATE_LIMIT__;
 
 // ============================================================
-// OBFUSCATOR API & HELPERS
+// CATPH OBFUSCATOR API (100% API — ĐÃ XÓA HOÀN TOÀN XOR CŨ)
 // ============================================================
 async function obfuscateViaAPI(sourceCode) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), CONFIG.OBF_TIMEOUT_MS);
 
     try {
-        console.log('[APEX OBF] Requesting Catph Obfuscator API...');
+        console.log('[APEX OBF] Calling Catph Obfuscate API...');
         const response = await fetch(CONFIG.OBF_API_URL, {
             method: 'POST',
             headers: {
@@ -555,7 +554,7 @@ async function obfuscateViaAPI(sourceCode) {
 
         if (!response.ok) {
             const errBody = await response.text().catch(() => '');
-            throw new Error(`Obfuscator HTTP ${response.status}:${errBody.substring(0, 200)}`);
+            throw new Error(`Catph API HTTP ${response.status}: ${errBody.substring(0, 200)}`);
         }
 
         const contentType = (response.headers.get('content-type') || '').toLowerCase();
@@ -571,18 +570,18 @@ async function obfuscateViaAPI(sourceCode) {
                 (typeof data.data === 'string' ? data.data : null);
 
             if (!obfCode || typeof obfCode !== 'string') {
-                throw new Error('Obfuscator API returned JSON without valid script string');
+                throw new Error('Catph API returned JSON without obfuscated script field');
             }
             console.log(`[APEX OBF] SUCCESS (${obfCode.length} bytes)`);
             return obfCode;
-        } else {
-            const rawText = await response.text();
-            if (!rawText || !rawText.trim()) {
-                throw new Error('Obfuscator API returned empty text');
-            }
-            console.log(`[APEX OBF] SUCCESS TEXT (${rawText.length} bytes)`);
-            return rawText;
         }
+
+        const rawText = await response.text();
+        if (!rawText || !rawText.trim()) {
+            throw new Error('Catph API returned empty response');
+        }
+        console.log(`[APEX OBF] SUCCESS TEXT (${rawText.length} bytes)`);
+        return rawText;
     } catch (error) {
         clearTimeout(timeoutId);
         console.error('[APEX OBF] ERROR:', error.message);
@@ -590,26 +589,22 @@ async function obfuscateViaAPI(sourceCode) {
     }
 }
 
-function generateRandomKey(length = 32) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
+async function getOrObfuscateScript(name, scriptData) {
+    if (scriptData.obfuscatedCode && typeof scriptData.obfuscatedCode === 'string') {
+        return scriptData.obfuscatedCode;
     }
-    return result;
+    const obfCode = await obfuscateViaAPI(scriptData.code);
+    scriptData.obfuscatedCode = obfCode;
+    cacheSet(`script:${name}`, scriptData, CONFIG.CACHE_TTL);
+    saveScript(name, scriptData).catch(err =>
+        console.error(`[APEX OBF] Background save error for ${name}:`, err.message)
+    );
+    return obfCode;
 }
 
-function encryptPayload(code) {
-    const key = generateRandomKey(16);
-    const bytes = Buffer.from(code, 'utf8');
-    const encrypted = Buffer.alloc(bytes.length);
-    for (let i = 0; i < bytes.length; i++) {
-        const keyChar = key.charCodeAt(i % key.length);
-        encrypted[i] = bytes[i] ^ keyChar;
-    }
-    return { data: encrypted.toString('hex'), key: key };
-}
-
+// ============================================================
+// HELPERS
+// ============================================================
 function normalizeName(name) {
     return name.trim().toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')
@@ -638,6 +633,18 @@ function isValidName(name) {
     if (name.length > 200) return false;
     if (!/^[a-zA-Z0-9_\-]+$/.test(name)) return false;
     return true;
+}
+
+function isBrowserRequest(req, isExecutor) {
+    if (isExecutor) return false;
+    const accept = (req.headers['accept'] || '').toLowerCase();
+    const secFetchDest = (req.headers['sec-fetch-dest'] || '').toLowerCase();
+    const secFetchMode = (req.headers['sec-fetch-mode'] || '').toLowerCase();
+    return (
+        secFetchDest === 'document' ||
+        secFetchMode === 'navigate' ||
+        accept.includes('text/html')
+    );
 }
 
 // ============================================================
@@ -830,47 +837,7 @@ async function deleteScript(name) {
 }
 
 // ============================================================
-// FALLBACK LOADER GENERATOR (Dùng khi API Obfuscate bị lỗi/timeout)
-// ============================================================
-function generateLoader(encryptedPayload) {
-    const hexData = encryptedPayload.data;
-    const key = encryptedPayload.key;
-    const out = [];
-    out.push(`-- APEX HUB Loader v10 (Fallback Protection)`);
-    out.push(`-- Protected by APEX Security System`);
-    out.push(`local _key = "${key}"`);
-    out.push(`local _hex = "${hexData}"\n`);
-    out.push(`local _byte = string.byte`);
-    out.push(`local _char = string.char`);
-    out.push(`local _tonumber = tonumber`);
-    out.push(`local _bxor = bit32 and bit32.bxor or bit and bit.bxor`);
-    out.push(`local _keyLen = #_key`);
-    out.push(`local _idx = 1\n`);
-    out.push(`local _code = _hex:gsub("..", function(cc)`);
-    out.push(`    local b = _tonumber(cc, 16)`);
-    out.push(`    local kb = _byte(_key, (_idx - 1) % _keyLen + 1)`);
-    out.push(`    _idx = _idx + 1`);
-    out.push(`    return _char(_bxor(b, kb))`);
-    out.push(`end)\n`);
-    out.push(`_hex = nil`);
-    out.push(`_key = nil\n`);
-    out.push(`assert(type(_code) == "string", "APEX Error: Decoded data corrupted")`);
-    out.push(`assert(#_code > 0, "APEX Error: Decoded script content is empty")\n`);
-    out.push(`local _f, _e = loadstring(_code)`);
-    out.push(`if not _f then`);
-    out.push(`    warn("=== APEX HUB CLIENT DEBUG ===")`);
-    out.push(`    warn("Received Payload Size: " .. #_code .. " bytes")`);
-    out.push(`    error("APEX Hub Compile Error: " .. tostring(_e))`);
-    out.push(`end`);
-    out.push(`_code = nil`);
-    out.push(`_f()`);
-    out.push(`_f = nil`);
-    out.push(`collectgarbage("collect")`);
-    return out.join('\n');
-}
-
-// ============================================================
-// HTML PAGES
+// HTML PAGES (ĐẦY ĐỦ 6 TRANG BẢO VỆ & GATEWAY)
 // ============================================================
 function getProtectionPage() {
     return `<!DOCTYPE html>
@@ -1059,19 +1026,338 @@ function getProtectionPage() {
 }
 
 function getWelcomePage() {
-    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>APEX HUB | API Gateway</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);backdrop-filter:blur(36px);border-radius:18px;padding:52px 48px;border:1px solid var(--border);max-width:560px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)}.brand{font-size:28px;font-weight:600;letter-spacing:-0.03em}.sub{font-size:10px;text-transform:uppercase;letter-spacing:0.18em;color:#66666d;margin:6px 0 32px}.desc{font-size:14px;color:var(--t2);margin-bottom:32px}.sep{height:1px;background:var(--border);margin-bottom:28px}.ep{display:flex;align-items:center;gap:14px;padding:12px 16px;font-size:13px;font-family:monospace;border-radius:8px;transition:0.2s}.ep:hover{background:rgba(255,255,255,0.02)}.method{font-size:10px;text-transform:uppercase;padding:4px 10px;border-radius:6px;min-width:50px;text-align:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:var(--t2)}.footer{margin-top:32px;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t3)}</style></head><body><div class="card"><h1 class="brand">APEX HUB</h1><div class="sub">API Gateway</div><p class="desc">Production infrastructure for secure script delivery and API access.</p><div class="sep"></div><div class="ep"><span class="method">POST</span>/api/raw</div><div class="ep"><span class="method">PUT</span>/api/raw</div><div class="ep"><span class="method">GET</span>/api/raw?name=script</div><div class="ep"><span class="method">DEL</span>/api/raw?name=script</div><div class="footer">APEX HUB · API Infrastructure · V10</div></div></body></html>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX HUB | API Gateway</title>
+    <style>
+        :root {
+            --bg: #070708;
+            --card: rgba(18, 18, 21, 0.72);
+            --border: rgba(255, 255, 255, 0.07);
+            --t1: #f5f5f5;
+            --t2: #8b8b93;
+            --t3: #505057;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(36px);
+            border-radius: 18px;
+            padding: 52px 48px;
+            border: 1px solid var(--border);
+            max-width: 560px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+        }
+        .brand { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; }
+        .sub {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: #66666d;
+            margin: 6px 0 32px;
+        }
+        .desc { font-size: 14px; color: var(--t2); margin-bottom: 32px; }
+        .sep { height: 1px; background: var(--border); margin-bottom: 28px; }
+        .ep {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-family: monospace;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .ep:hover { background: rgba(255, 255, 255, 0.02); }
+        .method {
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 6px;
+            min-width: 50px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--t2);
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--t3);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 class="brand">APEX HUB</h1>
+        <div class="sub">API Gateway</div>
+        <p class="desc">Production infrastructure for secure script delivery and API access.</p>
+        <div class="sep"></div>
+        <div class="ep"><span class="method">POST</span>/api/raw</div>
+        <div class="ep"><span class="method">PUT</span>/api/raw</div>
+        <div class="ep"><span class="method">GET</span>/api/raw?name=script</div>
+        <div class="ep"><span class="method">DEL</span>/api/raw?name=script</div>
+        <div class="footer">APEX HUB · API Infrastructure · V10</div>
+    </div>
+</body>
+</html>`;
 }
 
 function getErrorPage(name) {
-    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>404 | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.5)}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.ref{display:inline-block;padding:8px 18px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:12px;color:var(--t2)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div class="card"><div class="code">404</div><div class="title">Resource not found</div><p class="msg">The requested script could not be located.</p><div class="ref">${name}</div><br><a href="https://apexhubeditor.vercel.app/">← Return to Gateway</a></div></body></html>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | APEX HUB</title>
+    <style>
+        :root {
+            --bg: #070708;
+            --card: rgba(18, 18, 21, 0.72);
+            --border: rgba(255, 255, 255, 0.07);
+            --t1: #f5f5f5;
+            --t2: #8b8b93;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 52px 48px;
+            border: 1px solid var(--border);
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+        }
+        .code { font-size: 5rem; font-family: monospace; color: var(--t2); margin-bottom: 8px; }
+        .title { font-size: 16px; font-weight: 500; margin-bottom: 12px; }
+        .msg { font-size: 14px; color: var(--t2); margin-bottom: 20px; }
+        .ref {
+            display: inline-block;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--t2);
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--t2);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        a:hover { color: var(--t1); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="code">404</div>
+        <div class="title">Resource not found</div>
+        <p class="msg">The requested script could not be located.</p>
+        <div class="ref">${name}</div>
+        <br>
+        <a href="https://apexhubeditor.vercel.app/">← Return to Gateway</a>
+    </div>
+</body>
+</html>`;
 }
 
 function getBannedPage() {
-    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Access Denied | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:24px}.panel{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div class="card"><div class="icon">—</div><div class="title">Access Denied</div><p class="msg">This request has been temporarily blocked by the APEX security gateway.</p><div class="panel"><div class="row"><span class="lbl">Event</span><span class="val">ACCESS POLICY VIOLATION</span></div><div class="row"><span class="lbl">Status</span><span class="val">TEMPORARILY BLOCKED</span></div></div><div class="ft">APEX HUB · Security Infrastructure</div></div></body></html>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | APEX HUB</title>
+    <style>
+        :root {
+            --bg: #070708;
+            --card: rgba(18, 18, 21, 0.72);
+            --border: rgba(255, 255, 255, 0.07);
+            --t1: #f5f5f5;
+            --t2: #8b8b93;
+            --t3: #505057;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 52px 48px;
+            border: 1px solid var(--border);
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+        }
+        .icon {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: var(--t2);
+        }
+        .title { font-size: 16px; margin-bottom: 12px; }
+        .msg { font-size: 14px; color: var(--t2); margin-bottom: 24px; }
+        .panel {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            text-align: left;
+        }
+        .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11px; }
+        .lbl { font-size: 10px; text-transform: uppercase; color: var(--t3); }
+        .val { font-family: monospace; color: var(--t2); }
+        .ft { margin-top: 24px; font-size: 10px; text-transform: uppercase; color: var(--t3); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">—</div>
+        <div class="title">Access Denied</div>
+        <p class="msg">This request has been temporarily blocked by the APEX security gateway.</p>
+        <div class="panel">
+            <div class="row"><span class="lbl">Event</span><span class="val">ACCESS POLICY VIOLATION</span></div>
+            <div class="row"><span class="lbl">Status</span><span class="val">TEMPORARILY BLOCKED</span></div>
+        </div>
+        <div class="ft">APEX HUB · Security Infrastructure</div>
+    </div>
+</body>
+</html>`;
 }
 
 function getRateLimitPage() {
-    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rate Limited | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.bar{width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:24px}.fill{width:100%;height:100%;background:rgba(255,255,255,0.15);animation:progress 60s linear}@keyframes progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}.panel{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div class="card"><div class="icon">—</div><div class="title">Request Throttled</div><p class="msg">Too many requests from this client.</p><div class="bar"><div class="fill"></div></div><div class="panel"><div class="row"><span class="lbl">Policy</span><span class="val">RATE LIMIT</span></div><div class="row"><span class="lbl">Status</span><span class="val">THROTTLED</span></div><div class="row"><span class="lbl">Retry</span><span class="val">AUTOMATIC</span></div></div><div class="ft">APEX HUB · Security Infrastructure</div></div></body></html>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limited | APEX HUB</title>
+    <style>
+        :root {
+            --bg: #070708;
+            --card: rgba(18, 18, 21, 0.72);
+            --border: rgba(255, 255, 255, 0.07);
+            --t1: #f5f5f5;
+            --t2: #8b8b93;
+            --t3: #505057;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--t1);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 52px 48px;
+            border: 1px solid var(--border);
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+        }
+        .icon {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: var(--t2);
+        }
+        .title { font-size: 16px; margin-bottom: 12px; }
+        .msg { font-size: 14px; color: var(--t2); margin-bottom: 20px; }
+        .bar {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin-bottom: 24px;
+        }
+        .fill {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: progress 60s linear;
+        }
+        @keyframes progress {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+        .panel {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            text-align: left;
+        }
+        .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11px; }
+        .lbl { font-size: 10px; text-transform: uppercase; color: var(--t3); }
+        .val { font-family: monospace; color: var(--t2); }
+        .ft { margin-top: 24px; font-size: 10px; text-transform: uppercase; color: var(--t3); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">—</div>
+        <div class="title">Request Throttled</div>
+        <p class="msg">Too many requests from this client.</p>
+        <div class="bar"><div class="fill"></div></div>
+        <div class="panel">
+            <div class="row"><span class="lbl">Policy</span><span class="val">RATE LIMIT</span></div>
+            <div class="row"><span class="lbl">Status</span><span class="val">THROTTLED</span></div>
+            <div class="row"><span class="lbl">Retry</span><span class="val">AUTOMATIC</span></div>
+        </div>
+        <div class="ft">APEX HUB · Security Infrastructure</div>
+    </div>
+</body>
+</html>`;
 }
 
 function getServiceUnavailablePage() {
@@ -1095,7 +1381,7 @@ export default async function handler(req, res) {
     }
 
     const ip = getClientIP(req);
-    console.log(`[APEX REQUEST] ${req.method} from${ip}`);
+    console.log(`[APEX REQUEST] ${req.method} from ${ip}`);
 
     // Rate limit check
     const limitResult = checkRateLimit(ip);
@@ -1118,7 +1404,7 @@ export default async function handler(req, res) {
         // GET HANDLER
         // ============================================================
         if (req.method === 'GET') {
-            const { name, key, raw, obf } = req.query;
+            const { name, key, raw } = req.query;
             const ua = (req.headers['user-agent'] || '').toLowerCase();
             const authKey = req.headers['x-auth-key'] || '';
             console.log(`[APEX GET] Name: ${name || 'N/A'}`);
@@ -1127,19 +1413,24 @@ export default async function handler(req, res) {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
                 return res.send(getWelcomePage());
             }
+
+            const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
+            const isBrowser = isBrowserRequest(req, isExecutor);
+            const hasValidKey = CONFIG.VALID_KEYS.includes(key) || CONFIG.VALID_KEYS.includes(authKey);
+            const wantsRaw = raw === 'true';
+
             if (!isValidName(name)) {
+                if (isBrowser) {
+                    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                    return res.status(403).send(getProtectionPage());
+                }
                 return res.status(400).json({ error: 'Invalid script name' });
             }
 
-            const hasValidKey = CONFIG.VALID_KEYS.includes(key) || CONFIG.VALID_KEYS.includes(authKey);
-            const wantsRaw = raw === 'true';
-            const wantsObf = obf === 'true';
-            const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
-
-            // Không có key, không raw, không executor → protection page (KHÔNG track)
-            if (!hasValidKey && !wantsRaw && !isExecutor) {
+            // Mọi truy cập trực tiếp bằng trình duyệt (hoặc không có quyền/không phải executor) -> Hiện Trang Bảo Vệ
+            if (isBrowser || (!hasValidKey && !wantsRaw && !isExecutor)) {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
-                return res.send(getProtectionPage());
+                return res.status(403).send(getProtectionPage());
             }
 
             let scriptData;
@@ -1157,52 +1448,42 @@ export default async function handler(req, res) {
                 return res.status(404).send(getErrorPage(name));
             }
 
-            // ANALYTICS: track load
+            // 👈 ANALYTICS: track load (chỉ khi thực sự serve script)
             trackScriptLoad(name, ip, ua);
 
-            // Return raw payload (Dành cho Web Editor đọc/chỉnh sửa code gốc)
-            if ((hasValidKey || wantsRaw) && !wantsObf && !isExecutor) {
-                const payload = encryptPayload(scriptData.code);
-                return res.json({
-                    success: true,
-                    payload: payload.data,
-                    decryptKey: payload.key
+            // Lấy script đã Obfuscate 100% qua API Catph
+            let obfCode;
+            try {
+                obfCode = await getOrObfuscateScript(name, scriptData);
+            } catch (obfError) {
+                console.error(`[APEX GET] CATPH OBF ERROR for ${name}:`, obfError.message);
+                if (isExecutor) {
+                    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+                    return res.status(503).send(`-- APEX Error: Catph Obfuscator API unavailable`);
+                }
+                return res.status(503).json({
+                    success: false,
+                    error: 'Catph Obfuscator API unavailable'
                 });
             }
 
-            // Return Obfuscated Luau cho Executor (hoặc khi test với ?obf=true kèm key)
-            if (isExecutor || (hasValidKey && wantsObf)) {
+            // Return obfuscated script for executors
+            if (isExecutor) {
                 res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-
-                // 1. Nếu đã có bản obfuscated trong Firebase/Cache -> trả về ngay lập tức
-                if (scriptData.obfuscatedCode && typeof scriptData.obfuscatedCode === 'string') {
-                    return res.send(scriptData.obfuscatedCode);
-                }
-
-                // 2. Nếu chưa có (script cũ hoặc lúc POST/PUT API Catph đang ngủ) -> gọi API Catph ngay
-                try {
-                    const obfCode = await obfuscateViaAPI(scriptData.code);
-                    scriptData.obfuscatedCode = obfCode;
-
-                    // Lưu lại vào Cache và cập nhật Firebase ngầm để các lần GET sau không phải chờ API
-                    cacheSet(`script:${name}`, scriptData, CONFIG.CACHE_TTL);
-                    saveScript(name, scriptData).catch(err =>
-                        console.error('[APEX GET] Background save obf error:', err.message)
-                    );
-
-                    return res.send(obfCode);
-                } catch (obfError) {
-                    console.error(`[APEX GET] OBF API FAILED for ${name}:`, obfError.message);
-                    if (CONFIG.OBF_FALLBACK_XOR) {
-                        console.log(`[APEX GET] Serving XOR Fallback Loader for ${name}`);
-                        const payload = encryptPayload(scriptData.code);
-                        return res.send(generateLoader(payload));
-                    }
-                    return res.status(503).send('-- APEX Error: Obfuscation service unavailable');
-                }
+                return res.send(obfCode);
             }
 
-            return res.json({ success: true, protected: true });
+            // Return JSON cho API / Web Editor (khi gọi qua fetch không phải trình duyệt mở tab trực tiếp)
+            if (hasValidKey || wantsRaw) {
+                return res.json({
+                    success: true,
+                    payload: obfCode,
+                    code: scriptData.code
+                });
+            }
+
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(403).send(getProtectionPage());
         }
 
         // ============================================================
@@ -1221,12 +1502,15 @@ export default async function handler(req, res) {
 
             const fullName = (uid || 'public') + '_' + normalizeName(name);
 
-            // Gọi API Catph để obfuscate trước khi lưu
-            let obfuscatedCode = null;
+            let obfuscatedCode;
             try {
                 obfuscatedCode = await obfuscateViaAPI(code);
             } catch (obfError) {
-                console.warn('[APEX POST] Obfuscate on save failed (will retry on GET):', obfError.message);
+                console.error('[APEX POST] CATPH OBF ERROR:', obfError.message);
+                return res.status(502).json({
+                    success: false,
+                    error: 'Failed to obfuscate script via Catph API'
+                });
             }
 
             const scriptData = {
@@ -1249,7 +1533,6 @@ export default async function handler(req, res) {
 
             return res.status(200).json({
                 success: true,
-                obfuscated: Boolean(obfuscatedCode),
                 raw: rawUrl,
                 rawWithKey: rawUrlWithKey,
                 name: fullName
@@ -1284,12 +1567,15 @@ export default async function handler(req, res) {
                 return res.status(403).json({ success: false, error: 'Not your script' });
             }
 
-            // Obfuscate lại code mới khi cập nhật
-            let obfuscatedCode = null;
+            let obfuscatedCode;
             try {
                 obfuscatedCode = await obfuscateViaAPI(code);
             } catch (obfError) {
-                console.warn('[APEX PUT] Obfuscate on update failed (will retry on GET):', obfError.message);
+                console.error('[APEX PUT] CATPH OBF ERROR:', obfError.message);
+                return res.status(502).json({
+                    success: false,
+                    error: 'Failed to obfuscate script via Catph API'
+                });
             }
 
             scriptData.code = code;
@@ -1304,7 +1590,6 @@ export default async function handler(req, res) {
 
             return res.status(200).json({
                 success: true,
-                obfuscated: Boolean(obfuscatedCode),
                 message: 'Updated successfully',
                 raw: buildRawUrl(req.headers.host, name),
                 name: name
