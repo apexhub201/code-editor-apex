@@ -1,14 +1,13 @@
 // ============================================================
 // api/raw.js - APEX HUB V11 (Firebase + Cache + Quota + ANALYTICS + OBF API)
 // Analytics tách sang Firebase Backup — CRUD giữ Firebase chính
-// Obfuscation: gọi API ngoài (catph) thay cho XOR loader cũ
+// Obfuscation: BẮT BUỘC qua API ngoài — không fallback code thô
 // ============================================================
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import crypto from 'crypto';
 
 // Vercel: cho phép function chạy tới 60s (Pro/Enterprise).
-// Hobby vẫn bị giới hạn 10s — nếu dùng Hobby, hãy chuyển obf sang service riêng.
 export const config = { maxDuration: 60 };
 
 // ============================================================
@@ -31,7 +30,6 @@ function initFirebase() {
             console.log('  Private Key:', privateKey ? 'SET' : 'MISSING');
             if (!projectId || !clientEmail || !privateKey) {
                 console.error('[APEX FIREBASE] INIT ERROR: Missing env vars');
-                console.error('Required: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY');
                 return false;
             }
             initializeApp({
@@ -133,19 +131,17 @@ const CONFIG = {
     ANALYTICS_UNIQUE_TTL: 24 * 60 * 60 * 1000,
     ANALYTICS_UNIQUE_MAX: 5000,
     ANALYTICS_FLUSH_RETRY_MAX: 2,
-    // Firestore batch safety (dưới 500 cứng)
+    // Firestore batch safety
     FIRESTORE_BATCH_MAX_OPS: 450,
-    // Obfuscation API
+    // Obfuscation API — BẮT BUỘC
     OBF_API_URL: process.env.OBF_API_URL || 'https://catph.onrender.com/api/obfuscate',
     OBF_API_TOKEN: process.env.OBF_API_TOKEN || 'TranTienThanhDepZai',
     OBF_TIMEOUT_MS: 60 * 1000,
     OBF_RETRY_MAX: 2,
     OBF_RETRY_BASE_DELAY: 800,
     OBF_CACHE_MAX: 200,
-    // Fallback: nếu obf fail, trả code thô để script vẫn fetch được.
-    // Đặt env OBF_FALLBACK_RAW=false để tắt (khi đó obf fail → 502).
-    OBF_FALLBACK_RAW: (process.env.OBF_FALLBACK_RAW || 'true').toLowerCase() !== 'false',
-    // Valid Keys — BẮT BUỘC env, không fallback key lộ
+    OBF_CACHE_VERSION: 'v2',   // đổi version → clear cache cũ (nếu từng cache code thô)
+    // Valid Keys — BẮT BUỘC env
     VALID_KEYS: (process.env.APEX_MASTER_KEYS || '').split(',').map(s => s.trim()).filter(Boolean),
     // Executor Patterns
     EXECUTOR_PATTERNS: [
@@ -157,8 +153,7 @@ const CONFIG = {
 };
 
 if (CONFIG.VALID_KEYS.length === 0) {
-    console.warn('[APEX CONFIG] APEX_MASTER_KEYS chưa set — request dùng ?key= sẽ luôn fail. ' +
-                 'Set env trước khi deploy production.');
+    console.warn('[APEX CONFIG] APEX_MASTER_KEYS chưa set — request dùng ?key= sẽ luôn fail.');
 }
 
 // ============================================================
@@ -229,7 +224,6 @@ function analyticsCleanup() {
 
 // ============================================================
 // TRACK SCRIPT LOAD (BUFFERED) — Analytics → BACKUP only
-// Chỉ gọi SAU KHI đã serve thành công script cho client.
 // ============================================================
 function trackScriptLoad(scriptName, ip, userAgent) {
     if (!backupReady || !backupDb || !scriptName) return;
@@ -574,7 +568,6 @@ function buildRawUrl(req, name, key = null) {
     return key ? `${baseUrl}&key=${encodeURIComponent(key)}` : baseUrl;
 }
 
-// Ưu tiên IP đáng tin do platform set; không tin x-forwarded-for nếu không có proxy tin cậy.
 function getClientIP(req) {
     const cf = req.headers['cf-connecting-ip'];
     if (cf) return cf;
@@ -594,7 +587,6 @@ function isValidName(name) {
     return true;
 }
 
-// raw/executor: chấp nhận "true", "1", "yes" (linh hoạt hơn)
 function wantsRawParam(v) {
     if (v === true) return true;
     if (typeof v !== 'string') return false;
@@ -603,7 +595,7 @@ function wantsRawParam(v) {
 }
 
 // ============================================================
-// OBFUSCATION VIA EXTERNAL API (retry + validate + log)
+// OBFUSCATION VIA EXTERNAL API — BẮT BUỘC, KHÔNG FALLBACK
 // ============================================================
 async function obfuscateCode(source, attempt = 1) {
     if (!source || typeof source !== 'string') {
@@ -623,14 +615,13 @@ async function obfuscateCode(source, attempt = 1) {
             body: JSON.stringify({
                 source: source,
                 target: 'luau',
-                minifiy: true,     // API dùng key "minifiy" (đúng curl mẫu)
+                minifiy: true,
                 antiTamper: true
             }),
             signal: controller.signal
         });
     } catch (err) {
         clearTimeout(timer);
-        // Network error / timeout → retry
         if (attempt <= CONFIG.OBF_RETRY_MAX) {
             const delay = CONFIG.OBF_RETRY_BASE_DELAY * attempt;
             console.warn(`[APEX OBF] Network/timeout (attempt ${attempt}/${CONFIG.OBF_RETRY_MAX + 1}), retry in ${delay}ms: ${err.message}`);
@@ -643,7 +634,6 @@ async function obfuscateCode(source, attempt = 1) {
     if (!resp.ok) {
         clearTimeout(timer);
         const text = await resp.text().catch(() => '');
-        // 5xx → retry; 4xx → fail luôn
         if (resp.status >= 500 && attempt <= CONFIG.OBF_RETRY_MAX) {
             const delay = CONFIG.OBF_RETRY_BASE_DELAY * attempt;
             console.warn(`[APEX OBF] HTTP ${resp.status} (attempt ${attempt}/${CONFIG.OBF_RETRY_MAX + 1}), retry in ${delay}ms`);
@@ -667,26 +657,33 @@ async function obfuscateCode(source, attempt = 1) {
     if (!out || typeof out !== 'string') {
         throw new Error(`Obf API empty/invalid result: ${JSON.stringify(json).substring(0, 300)}`);
     }
+    // Sanity check: nếu output giống hệt source (không đổi gì) → coi như API không obf
+    if (out.trim() === source.trim()) {
+        throw new Error('Obf API returned identical source (no obfuscation applied)');
+    }
     return out;
 }
 
 async function obfuscateCodeCached(source) {
-    const hash = crypto.createHash('sha1').update(source).digest('hex');
+    // Cache key có version để tránh dính cache cũ (có thể là code thô từ bản trước)
+    const hash = crypto.createHash('sha1')
+        .update(CONFIG.OBF_CACHE_VERSION + ':' + source)
+        .digest('hex');
     const cached = obfCache.data.get(hash);
     if (cached) {
-        // LRU touch
         obfCache.data.delete(hash);
         obfCache.data.set(hash, cached);
         console.log(`[APEX OBF] CACHE HIT ${hash.substring(0, 8)}`);
         return cached;
     }
+    console.log(`[APEX OBF] CACHE MISS ${hash.substring(0, 8)} — calling API`);
     const out = await obfuscateCode(source);
     obfCache.data.set(hash, out);
     if (obfCache.data.size > CONFIG.OBF_CACHE_MAX) {
         const firstKey = obfCache.data.keys().next().value;
         obfCache.data.delete(firstKey);
     }
-    console.log(`[APEX OBF] CACHE SET ${hash.substring(0, 8)}`);
+    console.log(`[APEX OBF] CACHE SET ${hash.substring(0, 8)} (in=${source.length}, out=${out.length})`);
     return out;
 }
 
@@ -1146,7 +1143,7 @@ export default async function handler(req, res) {
             const wantsRaw = wantsRawParam(raw);
             const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
 
-            // Debug endpoint: xem server state mà không cần executor
+            // Debug endpoint
             if (debug === '1' || debug === 'true') {
                 return res.status(200).json({
                     ok: true,
@@ -1159,7 +1156,8 @@ export default async function handler(req, res) {
                     ua: ua.substring(0, 200),
                     validKeysCount: CONFIG.VALID_KEYS.length,
                     obfApiUrl: CONFIG.OBF_API_URL,
-                    obfFallbackRaw: CONFIG.OBF_FALLBACK_RAW,
+                    obfCacheVersion: CONFIG.OBF_CACHE_VERSION,
+                    obfCacheSize: obfCache.data.size,
                     firebaseReady,
                     backupReady,
                     quotaCooldown: isQuotaCooldown(),
@@ -1169,7 +1167,7 @@ export default async function handler(req, res) {
                 });
             }
 
-            // Không có key, không raw, không executor → protection page (KHÔNG track)
+            // Không có key, không raw, không executor → protection page
             if (!hasValidKey && !wantsRaw && !isExecutor) {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
                 return res.send(getProtectionPage());
@@ -1190,46 +1188,39 @@ export default async function handler(req, res) {
             }
 
             // ============================================================
-            // OBFUSCATE VIA API — fallback code thô nếu obf fail
+            // OBFUSCATE — BẮT BUỘC, không fallback code thô
             // ============================================================
             let obfCode;
-            let obfFailed = false;
             try {
                 obfCode = await obfuscateCodeCached(scriptData.code);
             } catch (error) {
-                obfFailed = true;
                 console.error(`[APEX OBF] ERROR for ${name}:`, error.message);
-                if (!CONFIG.OBF_FALLBACK_RAW) {
-                    // Không fallback → trả 502 như cũ
-                    return res.status(502).json({
-                        success: false,
-                        error: 'Obfuscation service unavailable',
-                        detail: process.env.NODE_ENV === 'production' ? undefined : error.message
-                    });
-                }
-                // Fallback: trả code thô để script vẫn fetch được
-                console.warn(`[APEX OBF] FALLBACK RAW for ${name} (obf disabled)`);
-                obfCode = scriptData.code;
+                // Trả lỗi rõ ràng, KHÔNG trả code thô
+                return res.status(502).json({
+                    success: false,
+                    error: 'Obfuscation service unavailable',
+                    detail: process.env.NODE_ENV === 'production' ? undefined : error.message
+                });
             }
 
-            // Serve thành công (obf hoặc fallback) → track load
+            // Obf thành công → track load
             trackScriptLoad(name, ip, ua);
 
-            // Executor / raw → trả text thuần
+            // Executor / raw → trả text thuần (đã obf)
             if (isExecutor || wantsRaw) {
                 res.setHeader('Content-Type', 'text/plain; charset=utf-8');
                 res.setHeader('Cache-Control', 'no-store');
-                res.setHeader('X-APEX-Status', obfFailed ? 'fallback-raw' : 'obfuscated');
+                res.setHeader('X-APEX-Status', 'obfuscated');
+                res.setHeader('X-APEX-Obf-Len', String(obfCode.length));
                 return res.send(obfCode);
             }
 
-            // Có key → trả JSON để client tự loadstring
-            res.setHeader('X-APEX-Status', obfFailed ? 'fallback-raw' : 'obfuscated');
+            // Có key → trả JSON
+            res.setHeader('X-APEX-Status', 'obfuscated');
             return res.json({
                 success: true,
                 obfuscated: obfCode,
-                name: name,
-                fallback: obfFailed
+                name: name
             });
         }
 
