@@ -116,7 +116,7 @@ const CONFIG = {
     // Quota Protection (MAIN Firebase)
     QUOTA_COOLDOWN: 60 * 1000,
     // Rate Limit
-    RATE_LIMIT_MAX: 60,           // nới rộng để tránh ban oan sau NAT
+    RATE_LIMIT_MAX: 60,
     RATE_LIMIT_WINDOW: 60 * 1000,
     BURST_MAX: 15,
     BURST_WINDOW: 10 * 1000,
@@ -138,12 +138,15 @@ const CONFIG = {
     // Obfuscation API
     OBF_API_URL: process.env.OBF_API_URL || 'https://catph.onrender.com/api/obfuscate',
     OBF_API_TOKEN: process.env.OBF_API_TOKEN || 'TranTienThanhDepZai',
-    OBF_TIMEOUT_MS: 60 * 1000,    // tăng lên 60s để đủ cold start Render
-    OBF_RETRY_MAX: 2,             // retry 5xx / network
-    OBF_RETRY_BASE_DELAY: 800,    // backoff cơ bản (ms)
+    OBF_TIMEOUT_MS: 60 * 1000,
+    OBF_RETRY_MAX: 2,
+    OBF_RETRY_BASE_DELAY: 800,
     OBF_CACHE_MAX: 200,
+    // Fallback: nếu obf fail, trả code thô để script vẫn fetch được.
+    // Đặt env OBF_FALLBACK_RAW=false để tắt (khi đó obf fail → 502).
+    OBF_FALLBACK_RAW: (process.env.OBF_FALLBACK_RAW || 'true').toLowerCase() !== 'false',
     // Valid Keys — BẮT BUỘC env, không fallback key lộ
-    VALID_KEYS: (process.env.APEX_MASTER_KEYS || '').split(',').filter(Boolean),
+    VALID_KEYS: (process.env.APEX_MASTER_KEYS || '').split(',').map(s => s.trim()).filter(Boolean),
     // Executor Patterns
     EXECUTOR_PATTERNS: [
         'roblox', 'synapse', 'krnl', 'script-ware', 'sentinel',
@@ -226,7 +229,7 @@ function analyticsCleanup() {
 
 // ============================================================
 // TRACK SCRIPT LOAD (BUFFERED) — Analytics → BACKUP only
-// Chỉ nên gọi SAU KHI đã serve thành công script cho client.
+// Chỉ gọi SAU KHI đã serve thành công script cho client.
 // ============================================================
 function trackScriptLoad(scriptName, ip, userAgent) {
     if (!backupReady || !backupDb || !scriptName) return;
@@ -557,7 +560,6 @@ function normalizeName(name) {
 function detectProtocol(req) {
     const fwd = (req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
     if (fwd === 'http' || fwd === 'https') return fwd;
-    // fallback: coi localhost là http, còn lại https
     const host = (req.headers.host || '').toLowerCase();
     if (host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]')) {
         return 'http';
@@ -568,13 +570,12 @@ function detectProtocol(req) {
 function buildRawUrl(req, name, key = null) {
     const host = (req.headers.host || 'localhost:3000').replace(/\/$/, '');
     const proto = detectProtocol(req);
-    const baseUrl = `${proto}://${host}/api/raw?name=${encodeURIComponent(name)}`;
+    const baseUrl = `${proto}://${host}/api/raw?name=${encodeURIComponent(name)}&raw=true`;
     return key ? `${baseUrl}&key=${encodeURIComponent(key)}` : baseUrl;
 }
 
 // Ưu tiên IP đáng tin do platform set; không tin x-forwarded-for nếu không có proxy tin cậy.
 function getClientIP(req) {
-    // Vercel / Cloudflare set các header này ở edge, không bị client spoof.
     const cf = req.headers['cf-connecting-ip'];
     if (cf) return cf;
     const vercel = req.headers['x-vercel-forwarded-for'];
@@ -591,6 +592,14 @@ function isValidName(name) {
     if (name.length > 200) return false;
     if (!/^[a-zA-Z0-9_\-]+$/.test(name)) return false;
     return true;
+}
+
+// raw/executor: chấp nhận "true", "1", "yes" (linh hoạt hơn)
+function wantsRawParam(v) {
+    if (v === true) return true;
+    if (typeof v !== 'string') return false;
+    const s = v.trim().toLowerCase();
+    return s === 'true' || s === '1' || s === 'yes';
 }
 
 // ============================================================
@@ -651,7 +660,6 @@ async function obfuscateCode(source, attempt = 1) {
         clearTimeout(timer);
     }
 
-    // Log rõ khi API trả lỗi trong JSON thay vì HTTP error
     if (json && (json.success === false || json.error)) {
         throw new Error(`Obf API returned error: ${JSON.stringify(json).substring(0, 300)}`);
     }
@@ -1076,7 +1084,6 @@ function getRateLimitPage() {
     return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rate Limited | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%}.icon{width:48px;height:48px;border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;color:var(--t2)}.title{font-size:16px;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:20px}.bar{width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:24px;overflow:hidden}.fill{width:100%;height:100%;background:rgba(255,255,255,0.15);animation:progress 60s linear}@keyframes progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}.panel{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}</style></head><body><div class="card"><div class="icon">—</div><div class="title">Request Throttled</div><p class="msg">Too many requests from this client.</p><div class="bar"><div class="fill"></div></div><div class="panel"><div class="row"><span class="lbl">Policy</span><span class="val">RATE LIMIT</span></div><div class="row"><span class="lbl">Status</span><span class="val">THROTTLED</span></div><div class="row"><span class="lbl">Retry</span><span class="val">AUTOMATIC</span></div></div><div class="ft">APEX HUB · Security Infrastructure</div></div></body></html>`;
 }
 
-// Trang riêng cho 503 — KHÔNG dùng chung với protection page để tránh hiểu nhầm.
 function getServiceUnavailablePage() {
     return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>503 | APEX HUB</title><style>:root{--bg:#070708;--card:rgba(18,18,21,0.72);--border:rgba(255,255,255,0.07);--t1:#f5f5f5;--t2:#8b8b93;--t3:#505057}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;justify-content:center;align-items:center}.card{background:var(--card);border-radius:18px;padding:52px 48px;border:1px solid var(--border);text-align:center;max-width:480px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,0.5)}.code{font-size:5rem;font-family:monospace;color:var(--t2);margin-bottom:8px}.title{font-size:16px;font-weight:500;margin-bottom:12px}.msg{font-size:14px;color:var(--t2);margin-bottom:24px;line-height:1.6}.panel{background:rgba(255,255,255,0.015);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left}.row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}.lbl{font-size:10px;text-transform:uppercase;color:var(--t3)}.val{font-family:monospace;color:var(--t2)}.ft{margin-top:24px;font-size:10px;text-transform:uppercase;color:var(--t3)}a{display:inline-block;margin-top:20px;color:var(--t2);text-decoration:none;font-size:13px}a:hover{color:var(--t1)}</style></head><body><div class="card"><div class="code">503</div><div class="title">Service temporarily unavailable</div><p class="msg">The gateway is having trouble reaching an upstream service.<br>Please retry in a moment.</p><div class="panel"><div class="row"><span class="lbl">Event</span><span class="val">UPSTREAM UNAVAILABLE</span></div><div class="row"><span class="lbl">Status</span><span class="val">RETRY LATER</span></div></div><div class="ft">APEX HUB · Security Infrastructure</div></div></body></html>`;
 }
@@ -1098,7 +1105,8 @@ export default async function handler(req, res) {
     }
 
     const ip = getClientIP(req);
-    console.log(`[APEX REQUEST] ${req.method} from ${ip}`);
+    const uaRaw = req.headers['user-agent'] || '';
+    console.log(`[APEX REQUEST] ${req.method} ${req.url} from ${ip} UA=${uaRaw.substring(0, 80)}`);
 
     // Rate limit check
     const limitResult = checkRateLimit(ip);
@@ -1121,10 +1129,10 @@ export default async function handler(req, res) {
         // GET HANDLER
         // ============================================================
         if (req.method === 'GET') {
-            const { name, key, raw } = req.query;
-            const ua = (req.headers['user-agent'] || '').toLowerCase();
+            const { name, key, raw, debug } = req.query;
+            const ua = uaRaw.toLowerCase();
             const authKey = req.headers['x-auth-key'] || '';
-            console.log(`[APEX GET] Name: ${name || 'N/A'}`);
+            console.log(`[APEX GET] Name: ${name || 'N/A'} raw=${raw || 'N/A'} debug=${debug || 'N/A'}`);
 
             if (!name) {
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -1135,8 +1143,31 @@ export default async function handler(req, res) {
             }
 
             const hasValidKey = CONFIG.VALID_KEYS.includes(key) || CONFIG.VALID_KEYS.includes(authKey);
-            const wantsRaw = raw === 'true';
+            const wantsRaw = wantsRawParam(raw);
             const isExecutor = CONFIG.EXECUTOR_PATTERNS.some(p => ua.includes(p));
+
+            // Debug endpoint: xem server state mà không cần executor
+            if (debug === '1' || debug === 'true') {
+                return res.status(200).json({
+                    ok: true,
+                    name,
+                    validName: isValidName(name),
+                    hasValidKey,
+                    wantsRaw,
+                    rawValue: raw ?? null,
+                    isExecutor,
+                    ua: ua.substring(0, 200),
+                    validKeysCount: CONFIG.VALID_KEYS.length,
+                    obfApiUrl: CONFIG.OBF_API_URL,
+                    obfFallbackRaw: CONFIG.OBF_FALLBACK_RAW,
+                    firebaseReady,
+                    backupReady,
+                    quotaCooldown: isQuotaCooldown(),
+                    backupQuotaCooldown: isBackupQuotaCooldown(),
+                    ip,
+                    rateLimit: limitResult
+                });
+            }
 
             // Không có key, không raw, không executor → protection page (KHÔNG track)
             if (!hasValidKey && !wantsRaw && !isExecutor) {
@@ -1159,35 +1190,46 @@ export default async function handler(req, res) {
             }
 
             // ============================================================
-            // OBFUSCATE VIA API — chỉ track load SAU KHI obf thành công
+            // OBFUSCATE VIA API — fallback code thô nếu obf fail
             // ============================================================
             let obfCode;
+            let obfFailed = false;
             try {
                 obfCode = await obfuscateCodeCached(scriptData.code);
             } catch (error) {
+                obfFailed = true;
                 console.error(`[APEX OBF] ERROR for ${name}:`, error.message);
-                return res.status(502).json({
-                    success: false,
-                    error: 'Obfuscation service unavailable',
-                    detail: process.env.NODE_ENV === 'production' ? undefined : error.message
-                });
+                if (!CONFIG.OBF_FALLBACK_RAW) {
+                    // Không fallback → trả 502 như cũ
+                    return res.status(502).json({
+                        success: false,
+                        error: 'Obfuscation service unavailable',
+                        detail: process.env.NODE_ENV === 'production' ? undefined : error.message
+                    });
+                }
+                // Fallback: trả code thô để script vẫn fetch được
+                console.warn(`[APEX OBF] FALLBACK RAW for ${name} (obf disabled)`);
+                obfCode = scriptData.code;
             }
 
-            // Obf thành công → giờ mới track load
+            // Serve thành công (obf hoặc fallback) → track load
             trackScriptLoad(name, ip, ua);
 
-            // Executor / raw → trả script obf dạng text để loadstring
+            // Executor / raw → trả text thuần
             if (isExecutor || wantsRaw) {
                 res.setHeader('Content-Type', 'text/plain; charset=utf-8');
                 res.setHeader('Cache-Control', 'no-store');
+                res.setHeader('X-APEX-Status', obfFailed ? 'fallback-raw' : 'obfuscated');
                 return res.send(obfCode);
             }
 
             // Có key → trả JSON để client tự loadstring
+            res.setHeader('X-APEX-Status', obfFailed ? 'fallback-raw' : 'obfuscated');
             return res.json({
                 success: true,
                 obfuscated: obfCode,
-                name: name
+                name: name,
+                fallback: obfFailed
             });
         }
 
